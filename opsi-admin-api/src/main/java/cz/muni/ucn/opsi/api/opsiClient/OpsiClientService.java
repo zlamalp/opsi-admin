@@ -4,6 +4,7 @@
 package cz.muni.ucn.opsi.api.opsiClient;
 
 import java.util.List;
+import java.util.Map;
 
 import cz.muni.ucn.opsi.api.client.Client;
 import cz.muni.ucn.opsi.api.client.Hardware;
@@ -58,4 +59,6 @@ public interface OpsiClientService {
 	 */
 	List<Hardware> listHardware(Client client);
 
+	List<ProductPropertyState> getProductProperties(String objectId);
+	void setProductProperties(String objectId, List<ProductPropertyState> props);
 }
