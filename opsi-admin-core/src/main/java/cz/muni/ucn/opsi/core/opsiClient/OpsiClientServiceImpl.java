@@ -7,11 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.HostnameVerifier;
@@ -21,6 +17,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import cz.muni.ucn.opsi.api.opsiClient.ProductPropertyState;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -284,7 +281,34 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		return hw;
 	}
 
+	/**
+	 * Gets property values.
+	 * @param objectId hostname
+	 * @return list of properties
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProductPropertyState> getProductProperties(final String objectId) {
+		//prepare params
+		List<Object> attributes = Collections.emptyList();
+        Map<String,String> filter = new HashMap<String, String>() {{put("objectId",objectId);}};
+		//call
+        OpsiResponse response = callOpsi("productPropertyState_getObjects", attributes, filter);
+		//get result
+		List<Map<String,Object>> result = (List<Map<String, Object>>) response.getResult();
+		List<ProductPropertyState> l = new ArrayList<ProductPropertyState>(result.size());
+		for (Map<String, Object> pmap : result) {
+			l.add(new ProductPropertyState((String) pmap.get("objectId"), (String) pmap.get("productId"),
+					(String) pmap.get("propertyId"), (List<String>)pmap.get("values")
+					));
+		}
+		return l;
+	}
 
+	@Override
+	public void setProductProperties(String objectId, List<ProductPropertyState> props) {
+		callOpsi("productPropertyState_updateObject", props);
+	}
 
 	/**
 	 * @return
@@ -330,8 +354,9 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 	}
 
 	/**
-	 * @param object
-	 * @return
+	 * removes CR characters
+	 * @param s string
+	 * @return stirng with removed CR characters
 	 */
 	private String sanityString(String s) {
 		return StringUtils.replace(s, "\r", "");
