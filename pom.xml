@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.muni.ucn</groupId>
 	<artifactId>opsi-admin</artifactId>
@@ -17,17 +18,6 @@
 		<module>opsi-admin-core</module>
 		<module>opsi-admin-wui</module>
 	</modules>
-	<scm>
-		<connection>scm:svn:http://repo.chr.cz/u-2/svn/opsi-admin/trunk</connection>
-		<developerConnection>scm:svn:http://repo.chr.cz/u-2/svn/opsi-admin/trunk</developerConnection>
-		<url>https://repo.chr.cz/projects/opsi-admin/browser</url>
-	</scm>
-	<distributionManagement>
-		<site>
-			<id>herakles</id>
-			<url>file:///var/www/sites/opsi-admin</url>
-		</site>
-	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
