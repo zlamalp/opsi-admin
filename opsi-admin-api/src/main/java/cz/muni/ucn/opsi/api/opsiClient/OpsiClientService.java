@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.api.opsiClient;
 
 import java.util.List;
@@ -59,6 +56,20 @@ public interface OpsiClientService {
 	 */
 	List<Hardware> listHardware(Client client);
 
+	/**
+	 * List all "set" product properties
+	 *
+	 * @param objectId
+	 * @return
+	 */
 	List<ProductPropertyState> getProductProperties(String objectId);
-	void setProductProperties(String objectId, List<ProductPropertyState> props);
+
+	/**
+	 * Set new product properties for specific object
+	 *
+	 * @param props
+	 * @return
+	 */
+	void setProductProperties(List<ProductPropertyState> props);
+
 }
