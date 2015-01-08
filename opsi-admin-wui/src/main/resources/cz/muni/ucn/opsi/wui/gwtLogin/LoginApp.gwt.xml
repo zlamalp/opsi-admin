@@ -9,8 +9,15 @@
 	<extend-property name="locale" values="cs"/>
 	<set-property-fallback name="locale" value="cs"/>
 
+	<!-- GXT 2.2.4-gwt22 -->
 	<inherits name='com.extjs.gxt.ui.GXT'/>
 	<inherits name='com.extjs.gxt.themes.Themes' />
+
+	<!-- GXT 3.0.1
+	<inherits name='com.sencha.gxt.ui.GXT' />
+	<inherits name='com.sencha.gxt.legacy.Legacy' />
+	<stylesheet src="reset.css" />
+	-->
 
 	<stylesheet src="opsi-admin.css" />
 

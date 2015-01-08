@@ -15,9 +15,16 @@ import com.google.gwt.core.client.EntryPoint;
 
 import cz.muni.ucn.opsi.wui.gwtLogin.client.login.LoginController;
 
+/**
+ * Entry point for logging in to OPSI Admin WUI.
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
+ */
 public class LoginApp implements EntryPoint {
 
 	public void onModuleLoad() {
+
 		ThemeManager.register(Slate.SLATE);
 		GXT.setDefaultTheme(Slate.SLATE, true);
 
@@ -27,5 +34,7 @@ public class LoginApp implements EntryPoint {
 		dispatcher.dispatch(LoginController.LOGIN);
 
 		GXT.hideLoadingPanel("loading");
+
 	}
+
 }
