@@ -56,7 +56,7 @@ public class InstalationWindow extends Window {
 
 		setMinimizable(true);
 		setMaximizable(true);
-		setHeading("Správa instalací");
+		setHeadingHtml("Správa instalací");
 		setSize(840, 400);
 		setLayout(new FitLayout());
 

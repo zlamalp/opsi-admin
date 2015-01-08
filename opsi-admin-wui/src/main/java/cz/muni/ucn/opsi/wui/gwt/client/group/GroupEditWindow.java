@@ -189,9 +189,9 @@ public class GroupEditWindow extends Window {
 	 */
 	private void updateHeading() {
 		if (newGroup) {
-			setHeading("Nová skupina");
+			setHeadingHtml("Nová skupina");
 		} else {
-			setHeading("Úprava skupiny: " + group.getName());
+			setHeadingHtml("Úprava skupiny: " + group.getName());
 		}
 	}
 

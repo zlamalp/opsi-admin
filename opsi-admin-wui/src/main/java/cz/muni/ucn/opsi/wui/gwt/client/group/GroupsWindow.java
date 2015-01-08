@@ -70,7 +70,7 @@ public class GroupsWindow extends Window {
 
 		setMinimizable(true);
 		setMaximizable(true);
-		setHeading("Správa skupin");
+		setHeadingHtml("Správa skupin");
 		setSize(400, 400);
 		setLayout(new FitLayout());
 

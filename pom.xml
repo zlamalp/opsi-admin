@@ -19,6 +19,45 @@
 		<module>opsi-admin-wui</module>
 	</modules>
 
+	<build>
+
+		<pluginManagement>
+
+			<plugins>
+
+				<!-- mvn clean - cleans output folder (target) -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+
+				<!-- mvn compile - compile as Java 1.7 app in UTF-8 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+						<verbose>false</verbose>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+
+				<!-- mvn install - build artifact and install it in local repository (.m2 folder) -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -162,23 +201,25 @@
 				<version>${jackson.version}</version>
 			</dependency>
 
-
+			<!--
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-servlet</artifactId>
 				<version>${gwt.version}</version>
 			</dependency>
+			-->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>${gwt.version}</version>
 			</dependency>
+			<!--
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-dev</artifactId>
-				<version>${gwt.version}</version>
+				<version>2.6.1</version>
 			</dependency>
-
+			-->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-dev-ext</artifactId>
@@ -259,7 +300,7 @@
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<spring.security.version>3.0.3.RELEASE</spring.security.version>
 		<eis.core.version>0.5.4</eis.core.version>
-		<gwt.version>2.4.0</gwt.version>
+		<gwt.version>2.6.1</gwt.version>
 		<jackson.version>1.6.1</jackson.version>
 		<hibernate.version>3.6.0.Final</hibernate.version>
 		<hibernate-search.version>3.3.0.CR2</hibernate-search.version>

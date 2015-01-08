@@ -63,7 +63,7 @@ public class ClientHardwareWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(640, 350);
-		setHeading("Import klientů");
+		setHeadingHtml("Import klientů");
 //		setBodyStyle("padding: 0px; ");
 
 //		FormLayout layout = new FormLayout();

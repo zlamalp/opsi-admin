@@ -46,12 +46,12 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-<!--				<version>2.1-20101001.MGWT219</version> -->
+				<!--				<version>2.1-20101001.MGWT219</version> -->
 				<!--<version>2.3.0-1</version> -->
 				<!--<version>2.4.0</version>-->
 				<version>${gwt.version}</version>
 				<configuration>
-<!--					<runTarget>cz.u2.eis.business.wui.gwt.DesktopApp/index.html</runTarget>-->
+					<!--					<runTarget>cz.u2.eis.business.wui.gwt.DesktopApp/index.html</runTarget>-->
 					<runTarget>index.jsp</runTarget>
 					<includes>**/MyGwtTestSuite.java</includes>
 				</configuration>
@@ -59,11 +59,26 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
-<!--							<goal>generateAsync</goal> -->
+							<!--							<goal>generateAsync</goal> -->
 							<goal>test</goal>
 						</goals>
 					</execution>
 				</executions>
+				<!--
+				<dependencies>
+					<dependency>
+						<groupId>com.google.gwt</groupId>
+						<artifactId>gwt-dev</artifactId>
+						<version>2.7.0</version>
+						<exclusions>
+							<exclusion>
+								<groupId>cz.muni.ucn</groupId>
+								<artifactId>opsi-admin-wui</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+				</dependencies>
+				-->
 			</plugin>
 
 		</plugins>
@@ -172,12 +187,12 @@
 			<groupId>org.apache.cocoon</groupId>
 			<artifactId>cocoon-spring-configurator</artifactId>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-		</dependency>
--->
+		<!--
+				<dependency>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjweaver</artifactId>
+				</dependency>
+		-->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
@@ -201,16 +216,16 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-		</dependency>
--->
+		<!--
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-core</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-annotations</artifactId>
+				</dependency>
+		-->
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
@@ -246,34 +261,49 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!--
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-codeserver</artifactId>
+			<scope>provided</scope>
+		</dependency>
+				-->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev-ext</artifactId>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-dev</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.extjs.gxt</groupId>
-			<artifactId>gxt</artifactId>
-			<version>2.2.4-gwt22</version>
+			<version>2.6.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!--
+	<dependency>
+		<groupId>com.google.gwt</groupId>
+		<artifactId>gwt-dev-ext</artifactId>
+		<scope>provided</scope>
+	</dependency>
+
+	-->
+
+		<dependency>
+			<groupId>com.extjs</groupId>
+			<artifactId>gxt</artifactId>
+			<version>2.3.1a-gwt22</version>
+		</dependency>
+
+		<!--
+
 		<dependency>
 			<groupId>com.sencha.gxt</groupId>
 			<artifactId>gxt</artifactId>
@@ -293,13 +323,13 @@
 		</dependency>
 		-->
 
-<!--
-		<dependency>
-			<groupId>net.zschech.gwt</groupId>
-			<artifactId>gwt-comet</artifactId>
-			<version>1.1.6</version>
-		</dependency>
--->
+		<!--
+				<dependency>
+					<groupId>net.zschech.gwt</groupId>
+					<artifactId>gwt-comet</artifactId>
+					<version>1.1.6</version>
+				</dependency>
+		-->
 		<!-- GWT Event service -->
 		<dependency>
 			<groupId>de.novanic.eventservice</groupId>

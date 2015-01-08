@@ -92,7 +92,7 @@ public class ClientWindow extends Window {
 
 		setMinimizable(true);
 		setMaximizable(true);
-		setHeading("Správa klientů");
+		setHeadingHtml("Správa klientů");
 		setSize(900, 400);
 		setLayout(new FitLayout());
 

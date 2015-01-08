@@ -36,7 +36,7 @@ public class ClientExportCSVWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(540, 350);
-		setHeading("Export klientů do CSV");
+		setHeadingHtml("Export klientů do CSV");
 
 		setLayout(new FitLayout());
 

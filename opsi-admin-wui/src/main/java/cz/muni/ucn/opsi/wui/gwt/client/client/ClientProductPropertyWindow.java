@@ -50,7 +50,7 @@ public class ClientProductPropertyWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(340, 180);
-		setHeading("Instalace: " + instalace.getName());
+		setHeadingHtml("Instalace: " + instalace.getName());
 
 		setLayout(new FitLayout());
 

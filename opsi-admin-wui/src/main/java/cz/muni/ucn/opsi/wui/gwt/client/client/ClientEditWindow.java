@@ -283,9 +283,9 @@ public class ClientEditWindow extends Window {
 	 */
 	private void updateHeading() {
 		if (newClient) {
-			setHeading("Nový klient");
+			setHeadingHtml("Nový klient");
 		} else {
-			setHeading("Úprava klienta: " + client.getName());
+			setHeadingHtml("Úprava klienta: " + client.getName());
 		}
 	}
 

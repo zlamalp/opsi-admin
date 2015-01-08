@@ -73,7 +73,7 @@ public class ClientImportWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(640, 350);
-		setHeading("Import klientů do skupiny " + group.getName());
+		setHeadingHtml("Import klientů do skupiny " + group.getName());
 //		setBodyStyle("padding: 0px; ");
 
 //		FormLayout layout = new FormLayout();

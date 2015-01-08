@@ -21,6 +21,8 @@
 	<stylesheet src="reset.css" />
 	-->
 
+	<add-linker name="xsiframe"/>
+
 	<stylesheet src="opsi-admin.css" />
 
 	<entry-point class='cz.muni.ucn.opsi.wui.gwt.client.OpsiAdminApp' />
