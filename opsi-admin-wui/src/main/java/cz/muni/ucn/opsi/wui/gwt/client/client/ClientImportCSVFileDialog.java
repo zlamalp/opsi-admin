@@ -1,12 +1,6 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
-import com.extjs.gxt.ui.client.event.EventType;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.FormEvent;
-import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.*;
 import com.extjs.gxt.ui.client.util.IconHelper;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -23,24 +17,33 @@ import com.google.gwt.core.client.GWT;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 
 /**
- * @author Jan Dosoudil
+ * Import CSV file dialog used to load data to server and return parsed clients to WUI.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientImportCSVFileDialog extends Dialog {
 
 	private static final String IMPORT_CSV_URL = "remote/clients/importCsv";
 	private FormPanel form;
+	private ClientConstants clientConstants;
 	protected String returnedData;
 
 	public static final EventType IMPORT_EVENT_TYPE = new EventType();
 
 	/**
+	 * Create import CSV file dialog window.
 	 *
+	 * @group Group to import Clients into
 	 */
 	public ClientImportCSVFileDialog(GroupJSO group) {
+
 		super();
 
-		setButtons(OKCANCEL);
+		setButtons("");
+
+		clientConstants = GWT.create(ClientConstants.class);
+		setHeading(clientConstants.getClientImportCSV());
 
 		setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
@@ -60,7 +63,7 @@ public class ClientImportCSVFileDialog extends Dialog {
 		uploadField.setName("importFile");
 		uploadField.setAllowBlank(false);
 		uploadField.setFieldLabel("CSV soubor");
-
+		uploadField.getMessages().setBrowseText("Procházet...");
 
 		form.add(uploadField, new FormData("100%"));
 
@@ -69,8 +72,9 @@ public class ClientImportCSVFileDialog extends Dialog {
 		groupUuid.setName("groupUuid");
 		form.add(groupUuid);
 
+		// Once form is submitted and file processed, take result (string data in JSON)
+		// and pass it as normal import event
 		form.addListener(Events.Submit, new Listener<FormEvent>() {
-
 			@Override
 			public void handleEvent(FormEvent fe) {
 				String data = fe.getResultHtml();
@@ -85,20 +89,59 @@ public class ClientImportCSVFileDialog extends Dialog {
 
 	}
 
+	/*
+	* (non-Javadoc)
+    *
+    * @see com.extjs.gxt.ui.client.widget.Dialog#createButtons()
+    */
+	@Override
+	protected void createButtons() {
+		super.createButtons();
+
+		Button cancel = new Button("Storno");
+		cancel.setItemId(CANCEL);
+		cancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			public void componentSelected(ButtonEvent ce) {
+				onButtonPressed(ce.getButton());
+			}
+		});
+
+		Button upload = new Button("Nahrát");
+		upload.setItemId(OK);
+		upload.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			public void componentSelected(ButtonEvent ce) {
+				onButtonPressed(ce.getButton());
+			}
+		});
+
+		addButton(upload);
+		addButton(cancel);
+
+	}
+
 	/* (non-Javadoc)
 	 * @see com.extjs.gxt.ui.client.widget.Dialog#onButtonPressed(com.extjs.gxt.ui.client.widget.button.Button)
 	 */
+	@Override
 	protected void onButtonPressed(Button button) {
+
 		super.onButtonPressed(button);
 		if (button == getButtonBar().getItemByItemId(OK)) {
 			form.submit();
 		}
+		if (button == getButtonBar().getItemByItemId(CANCEL)) {
+			this.hide();
+		}
+
 	}
 
 	/**
-	 * @return the returnedData
+	 * Get data returned from server (parsed CSV file content)
+	 *
+	 * @return Data in JSON format, should be list of Clients
 	 */
 	public String getReturnedData() {
 		return returnedData;
 	}
+
 }

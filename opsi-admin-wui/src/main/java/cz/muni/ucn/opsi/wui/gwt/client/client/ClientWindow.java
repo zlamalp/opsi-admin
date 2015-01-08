@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.ArrayList;
@@ -57,8 +54,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalationService;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window with clients organized in groups. Clients can be created / updated / deleted / installed
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zláma <zlamal@cesnet.cz>
  */
 public class ClientWindow extends Window {
 
@@ -72,6 +71,7 @@ public class ClientWindow extends Window {
 	private Button buttonEdit;
 	private Button buttonRemove;
 	private Button buttonImport;
+	private Button buttonExport;
 	private MenuItem contextMenuNew;
 	private MenuItem contextMenuEdit;
 	private MenuItem contextMenuRemove;
@@ -81,7 +81,7 @@ public class ClientWindow extends Window {
 	private Button buttonInstall;
 
 	/**
-	 *
+	 * Create new instance of this window.
 	 */
 	public ClientWindow() {
 		clientFactory = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME);
@@ -89,7 +89,6 @@ public class ClientWindow extends Window {
 
 		clientConstants = GWT.create(ClientConstants.class);
 		groupConstants = GWT.create(GroupConstants.class);
-
 
 		setMinimizable(true);
 		setMaximizable(true);
@@ -104,7 +103,6 @@ public class ClientWindow extends Window {
 		createGroups();
 
 		createClients();
-
 
 		ContentPanel panel = new ContentPanel();
 		panel.setHeaderVisible(false);
@@ -121,8 +119,6 @@ public class ClientWindow extends Window {
 		panel.add(clientsGrid, center);
 
 		add(panel);
-
-
 
 	}
 
@@ -288,10 +284,12 @@ public class ClientWindow extends Window {
 					buttonInstall.enable();
 					buttonRemove.enable();
 					contextMenuRemove.enable();
+					buttonExport.enable();
 				} else {
 					buttonInstall.disable();
 					buttonRemove.disable();
 					contextMenuRemove.disable();
+					buttonExport.disable();
 				}
 			}
 		};
@@ -415,34 +413,50 @@ public class ClientWindow extends Window {
 
 		final Menu importMenu = new Menu();
 
-		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi());
+		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi()+"...");
 		importOpsi.setIcon(IconHelper.createStyle("import"));
 		importOpsi.setData("event", ClientController.CLIENT_IMPORT);
 		importOpsi.addSelectionListener(menuListener);
 		importMenu.add(importOpsi);
 
-		MenuItem importOpsi2 = new MenuItem(clientConstants.getClientImportOpsi2());
+		MenuItem importOpsi2 = new MenuItem(clientConstants.getClientImportOpsi2()+"...");
 		importOpsi2.setIcon(IconHelper.createStyle("import"));
 		importOpsi2.setData("event", ClientController.CLIENT_IMPORT2);
 		importOpsi2.addSelectionListener(menuListener);
 		importMenu.add(importOpsi2);
-		
-		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV());
+
+		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV()+"...");
 		importCSV.setIcon(IconHelper.createStyle("import"));
 		importCSV.setData("event", ClientController.CLIENT_IMPORT_CSV);
 		importCSV.addSelectionListener(menuListener);
 		importMenu.add(importCSV);
 
 		buttonImport.setMenu(importMenu);
+		buttonExport = new Button(clientConstants.getClientExport());
+		buttonExport.setIcon(IconHelper.createStyle("export"));
+		buttonExport.disable();
+		toolbar.add(buttonExport);
 
+		final Menu exportMenu = new Menu();
+
+		MenuItem exportCSV = new MenuItem(clientConstants.getClientExportCSV()+"...");
+		exportCSV.setIcon(IconHelper.createStyle("export"));
+		exportCSV.setData("event", ClientController.CLIENT_EXPORT_CSV);
+		exportCSV.addSelectionListener(menuListener);
+		exportMenu.add(exportCSV);
+
+		buttonExport.setMenu(exportMenu);
 
 		return toolbar;
 	}
 
 	/**
-	 * @return
+	 * Create menu for Product (OS) installations.
+	 *
+	 * @return installations menu instance
 	 */
 	private Menu createInstallMenu() {
+
 		final Menu installMenu = new Menu();
 		final SelectionListener<? extends MenuEvent> installListener = new InstalaceMenuListener();
 
@@ -452,10 +466,16 @@ public class ClientWindow extends Window {
 			@Override
 			public void onRequestSuccess(List<InstalaceJSO> v) {
 				for (InstalaceJSO in : v) {
-					MenuItem mi = new MenuItem(in.getName());
+					// TODO & FIXME - support only win7-64 to configure netboot now.
+					MenuItem mi = new MenuItem((in.getId().equals("win7-x64")) ? in.getName()+"..." : in.getName());
 					mi.addSelectionListener(installListener);
 					mi.setData("instalace", in);
-					mi.setData("event", ClientController.CLIENT_INSTALL);
+					if (in.getId().equals("win7-x64")) {
+						// TODO & FIXME - support only win7-64 to configure netboot now.
+						mi.setData("event", ClientController.CLIENT_PRODUCT_PROPERTY);
+					} else {
+						mi.setData("event", ClientController.CLIENT_INSTALL);
+					}
 					installMenu.add(mi);
 				}
 			}
@@ -469,9 +489,12 @@ public class ClientWindow extends Window {
 	}
 
 	/**
-	 * @return
+	 * Create context menu for table/grid with clients.
+	 *
+	 * @return context menu instance
 	 */
 	private Menu createGridContextMenu() {
+
 		SelectionListener<? extends MenuEvent> buttonListener = new GridContextMenuListener();
 
 		Menu menu = new Menu();
@@ -495,18 +518,21 @@ public class ClientWindow extends Window {
 		menu.add(contextMenuRemove);
 
 		return menu;
+
 	}
 
 	/**
-	 * @param le
+	 * Handle app-wide life-cycle events. This method ensures thate data about clients are up-to-date.
+	 *
+	 * @param le life-cycle events
 	 */
 	public void onLifecycleEvent(LifecycleEventJSO le) {
 
 		ListStore<BeanModel> store = clientStore;
 
 		BeanModel model;
-        if ("cz.muni.ucn.opsi.api.client.Client".equals(le.getBeanClass())) {
-        	store = clientStore;
+		if ("cz.muni.ucn.opsi.api.client.Client".equals(le.getBeanClass())) {
+			store = clientStore;
 			model = clientFactory.createModel(le.getBean());
 
 			if (getSelectedGroupItem() == null) {
@@ -518,14 +544,12 @@ public class ClientWindow extends Window {
 				return;
 			}
 
-        } else if ("cz.muni.ucn.opsi.api.group.Group".equals(le.getBeanClass())) {
-        	store = groupsStore;
-        	model = groupFactory.createModel(le.getBean());
-        } else {
-        	return;
-        }
-
-
+		} else if ("cz.muni.ucn.opsi.api.group.Group".equals(le.getBeanClass())) {
+			store = groupsStore;
+			model = groupFactory.createModel(le.getBean());
+		} else {
+			return;
+		}
 
 		if (LifecycleEventJSO.CREATED == le.getEventType()) {
 			store.add(model);
@@ -538,8 +562,9 @@ public class ClientWindow extends Window {
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * ToolbarButtonListener handles click/selection events in menu
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class ToolbarButtonListener extends SelectionListener<ButtonEvent> {
 		@Override
@@ -554,7 +579,7 @@ public class ClientWindow extends Window {
 			}
 			if (null == clients) {
 				AppEvent event = new AppEvent(type);
-//				event.setData("client", null);
+				//event.setData("client", null);
 				event.setData("group", getSelectedGroupItem().getBean());
 				Dispatcher.forwardEvent(event);
 			} else {
@@ -569,8 +594,9 @@ public class ClientWindow extends Window {
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * GridContextMenuListener handles click/selection events in grid/table
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class GridContextMenuListener extends	SelectionListener<MenuEvent> {
 		@Override
@@ -585,7 +611,7 @@ public class ClientWindow extends Window {
 			}
 			if (null == clients) {
 				AppEvent event = new AppEvent(type);
-//				event.setData("client", null);
+				//event.setData("client", null);
 				event.setData("group", getSelectedGroupItem().getBean());
 				Dispatcher.forwardEvent(event);
 			} else {
@@ -601,8 +627,9 @@ public class ClientWindow extends Window {
 
 
 	/**
-	 * @author Jan Dosoudil
+	 * InstalaceMenuListener handles click/selection events in menu for Product (OS) installations.
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class InstalaceMenuListener extends SelectionListener<MenuEvent> {
 		@Override
@@ -611,29 +638,38 @@ public class ClientWindow extends Window {
 			final InstalaceJSO instalace = ce.getItem().getData("instalace");
 			final List<BeanModel> clients = clientsGrid.getSelectionModel().getSelectedItems();
 
-			MessageBox.confirm("Provést instalaci?",
-					"Opravdu provést instalaci " + instalace.getName() +
-					" na " + clients.size() + " počítačů?" ,
-					new Listener<MessageBoxEvent>() {
+			if (type.equals(ClientController.CLIENT_INSTALL)) {
 
-						@Override
-						public void handleEvent(MessageBoxEvent be) {
-							if (be.getButtonClicked() == null) {
-								return;
-							}
-							if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
-								return;
-							}
-							AppEvent event = new AppEvent(type);
-							event.setData("clients", clients);
-							event.setData("instalace", instalace);
-							event.setData("group", getSelectedGroupItem().getBean());
-							Dispatcher.forwardEvent(event);
-
+				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + instalace.getName() + " na "
+						+ clients.size() + " počítačů?" , new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						if (be.getButtonClicked() == null) {
+							return;
 						}
+						if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
+							return;
+						}
+						AppEvent event = new AppEvent(type);
+						event.setData("clients", clients);
+						event.setData("instalace", instalace);
+						event.setData("group", getSelectedGroupItem().getBean());
+						Dispatcher.forwardEvent(event);
 
-			});
+					}
 
+				});
+
+			} else {
+
+				// CONFIGURE INSTALL-CLIENT EVENT
+				GWT.log(type+"");
+				AppEvent event = new AppEvent(type);
+				event.setData("clients", clients);
+				event.setData("instalace", instalace);
+				Dispatcher.forwardEvent(event);
+
+			}
 
 		}
 	}

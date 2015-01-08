@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -16,12 +13,16 @@ import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events on importing clients.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientImportView extends View {
 
 	/**
+	 * Create new instance of this view
+	 *
 	 * @param controller
 	 */
 	public ClientImportView(Controller controller) {
@@ -43,15 +44,19 @@ public class ClientImportView extends View {
 	}
 
 	public EventType getWindowEventType() {
+		// import from local OPSI
 		return ClientController.CLIENT_IMPORT;
 	}
 	public EventType getWindowEventType2() {
+		// import from remote OPSI
 		return ClientController.CLIENT_IMPORT2;
 	}
 
 	/**
-	 * @param group
-	 * @param master 
+	 * Method ensuring async loading of UI
+	 *
+	 * @param group Group to import Clients into
+	 * @param master TRUE = import from local OPSI / FALSE = import from remote OPSI
 	 */
 	private void clientImport(final GroupJSO group, final boolean master) {
 		GWT.runAsync(new RunAsyncCallback() {
@@ -70,17 +75,20 @@ public class ClientImportView extends View {
 	}
 
 	/**
-	 * @param group
-	 * @param master 
+	 * Trigger showing ClientImport window (must be called asynchronously).
+	 *
+	 * @param group Group to import Clients into
+	 * @param master TRUE = import from local OPSI / FALSE = import from remote OPSI
 	 */
 	protected void importClientAsync(GroupJSO group, boolean master) {
 		importGroupWindow(group, master);
 	}
 
 	/**
-	 * @param master 
-	 * @param client
-	 * @param b
+	 * Show ClientImport window (attach it to the desktop)
+	 *
+	 * @param group Group to import Clients into
+	 * @param master TRUE = import from local OPSI / FALSE = import from remote OPSI
 	 */
 	protected void importGroupWindow(GroupJSO group, boolean master) {
 		ClientImportWindow w = createWindow(group, master);
@@ -89,10 +97,11 @@ public class ClientImportView extends View {
 	}
 
 	/**
-	 * @param group
-	 * @param master 
-	 * @param newGroup
-	 * @return
+	 * Return instance of ClientImport window.
+	 *
+	 * @param group Group to import clients into.
+	 * @param master TRUE = import from local OPSI / FALSE = import from remote OPSI
+	 * @return new instance of ClientImportWindow
 	 */
 	protected ClientImportWindow createWindow(GroupJSO group, boolean master) {
 		return new ClientImportWindow(group, master);

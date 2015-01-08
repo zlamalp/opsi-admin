@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.List;
@@ -27,14 +24,18 @@ import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events related to Clients (create /update / delete / install).
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientView extends View {
 
 	private ClientWindow window;
 
 	/**
+	 * Create instance of this view
+	 *
 	 * @param controller
 	 */
 	public ClientView(Controller controller) {
@@ -63,17 +64,15 @@ public class ClientView extends View {
 	}
 
 	/**
-	 *
+	 * Method ensuring async loading of UI
 	 */
 	private void showClients() {
 		GWT.runAsync(new RunAsyncCallback() {
-
 			@Override
 			public void onSuccess() {
 				if (null == window) {
 					window = new ClientWindow();
 				}
-
 				Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, window);
 				if (window.isVisible()) {
 					window.toFront();
@@ -81,7 +80,6 @@ public class ClientView extends View {
 					window.show();
 				}
 			}
-
 			@Override
 			public void onFailure(Throwable reason) {
 				MessageDialog.showError("Akci nelze provést", reason.getMessage());
@@ -91,9 +89,12 @@ public class ClientView extends View {
 	}
 
 	/**
+	 * Delete Clients from OPSI.
 	 *
+	 * @param clients Clients to be deleted
 	 */
 	private void deleteClients(final List<BeanModel> clients) {
+
 		String clientsStr = "";
 		for (BeanModel beanModel : clients) {
 			ClientJSO c = beanModel.getBean();
@@ -132,8 +133,12 @@ public class ClientView extends View {
 	}
 
 	/**
-	 * @param clients
-	 * @param instalace
+	 * Perform client installation.
+	 *
+	 * This will update OPSI and start installing selected product (OS) to all passed Clients.
+	 *
+	 * @param clients Clients to start installation for
+	 * @param instalace Product (OS) to install.
 	 */
 	private void installClients(List<BeanModel> clients, InstalaceJSO instalace) {
 		for (BeanModel beanModel : clients) {
@@ -153,14 +158,15 @@ public class ClientView extends View {
 
 
 	/**
-	 * @param lifecycleEventJSO
+	 * Handle app wide life-cycle events
+	 *
+	 * @param lifecycleEventJSO Event to pass
 	 */
 	private void onLifecycleEvent(LifecycleEventJSO lifecycleEventJSO) {
 		if (null == window) {
 			return;
 		}
 		window.onLifecycleEvent(lifecycleEventJSO);
-
 	}
 
 }

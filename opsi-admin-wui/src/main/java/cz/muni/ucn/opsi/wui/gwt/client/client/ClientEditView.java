@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.HashMap;
@@ -22,14 +19,19 @@ import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events on creating and editing clients.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientEditView extends View {
 
+	// mapping clients to their editing window
 	private Map<ClientJSO, ClientEditWindow> windows = new HashMap<ClientJSO, ClientEditWindow>();
 
 	/**
+	 * Create new instance of this view
+	 *
 	 * @param controller
 	 */
 	public ClientEditView(Controller controller) {
@@ -55,11 +57,13 @@ public class ClientEditView extends View {
 	}
 
 	/**
-	 * @param data
+	 * Method ensuring async loading of UI
+	 *
+	 * @param group Group to create / edit Client in.
+	 * @param client Client to edit or NULL when creating new.
 	 */
 	private void clientEdit(final GroupJSO group, final ClientJSO client) {
 		GWT.runAsync(new RunAsyncCallback() {
-
 			@Override
 			public void onSuccess() {
 				editClientAsync(group, client);
@@ -74,15 +78,19 @@ public class ClientEditView extends View {
 	}
 
 	/**
-	 * @param client
+	 * Call to retrieve data from OPSI. THIS ENSURE THAT DATA IN FORM ARE UP-TO-DATE !!
+	 * For new clients, server side creates UUID and set group. To store created client see "saveClient" method in api.
+	 *
+	 * @param group Group to create new client in
+	 * @param client Client to edit
 	 */
 	protected void editClientAsync(GroupJSO group, ClientJSO client) {
 		ClientService clientService = ClientService.getInstance();
 		if (null == client) {
 			clientService.createClient(group, new RemoteRequestCallback<ClientJSO>() {
 				@Override
-				public void onRequestSuccess(ClientJSO user) {
-					editGroupWindow(user, true);
+				public void onRequestSuccess(ClientJSO client) {
+					editGroupWindow(client, true);
 				}
 
 				@Override
@@ -104,24 +112,26 @@ public class ClientEditView extends View {
 			});
 
 		}
-
 	}
 
 	/**
-	 * @param client
-	 * @param b
+	 * Show ClientEdit window (attach it to the desktop) or switch focus in already opened.
+	 *
+	 * @param client Client to edit / create
+	 * @param newClient TRUE if creating new client / FALSE editing existing
 	 */
-	protected void editGroupWindow(ClientJSO client, boolean newGroup) {
+	protected void editGroupWindow(ClientJSO client, boolean newClient) {
 		ClientEditWindow w;
 		if (windows.containsKey(client)) {
 			w = windows.get(client);
-			w.setGroupModel(client);
+			w.setClientModel(client);
 		} else {
-			w = createWindow(client, newGroup);
+			w = createWindow(newClient);
 			windows.put(client, w);
 			Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, w);
 		}
-		w.setGroupModel(client);
+		// set Client model to window !!
+		w.setClientModel(client);
 		if (w.isVisible()) {
 			w.toFront();
 		} else {
@@ -131,12 +141,13 @@ public class ClientEditView extends View {
 	}
 
 	/**
-	 * @param group
-	 * @param newGroup
-	 * @return
+	 * Return new instance of ClientEdit window.
+	 *
+	 * @param newClient TRUE = creating new client mode / FALSE = editing existing client (object must be set to window later !!)
+	 * @return new instance of ClientEditWindow
 	 */
-	private ClientEditWindow createWindow(ClientJSO group, boolean newGroup) {
-		return new ClientEditWindow(newGroup);
+	private ClientEditWindow createWindow(boolean newClient) {
+		return new ClientEditWindow(newClient);
 	}
 
 }

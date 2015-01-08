@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.remote.client;
 
 import java.io.IOException;
@@ -16,6 +13,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
+import cz.muni.ucn.opsi.api.opsiClient.OpsiClientService;
+import cz.muni.ucn.opsi.api.opsiClient.ProductPropertyState;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,14 +33,19 @@ import cz.muni.ucn.opsi.api.instalation.Instalation;
 import cz.muni.ucn.opsi.api.instalation.InstalationService;
 
 /**
- * @author Jan Dosoudil
+ * Server side API (controller) for handling requests on Clients.
  *
+ * @see cz.muni.ucn.opsi.wui.gwt.client.client.ClientService for client side of this API.
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Controller
 public class ClientController {
 
 	private ClientService clientService;
 	private InstalationService instalationService;
+	private OpsiClientService opsiService;
 	private Validator validator;
 	private ObjectMapper mapper;
 
@@ -52,6 +56,7 @@ public class ClientController {
 	public void setClientService(ClientService clientService) {
 		this.clientService = clientService;
 	}
+
 	/**
 	 * @param instalationService the instalationService to set
 	 */
@@ -59,6 +64,14 @@ public class ClientController {
 	public void setInstalationService(InstalationService instalationService) {
 		this.instalationService = instalationService;
 	}
+	/**
+	 * @param opsiService the opsiService to set
+	 */
+	@Autowired
+	public void setClientService(OpsiClientService opsiService) {
+		this.opsiService = opsiService;
+	}
+
 	/**
 	 * @param validator the validator to set
 	 */
@@ -100,7 +113,7 @@ public class ClientController {
 
 	@RequestMapping(value = "/clients/install", method = RequestMethod.PUT)
 	public @ResponseBody void installClient(@RequestBody Client client,
-			@RequestParam String instalaceId) {
+	                                        @RequestParam String instalaceId) {
 
 		Instalation i = instalationService.getInstalationById(instalaceId);
 
@@ -114,7 +127,7 @@ public class ClientController {
 
 	@RequestMapping(value = "/clients/import/list", method = RequestMethod.GET)
 	public @ResponseBody List<Client> listClientsForImport(@RequestParam String groupUuid,
-			@RequestParam String opsi) {
+	                                                       @RequestParam String opsi) {
 		return clientService.listClientsForImport(UUID.fromString(groupUuid), opsi);
 	}
 
@@ -125,8 +138,8 @@ public class ClientController {
 
 	@RequestMapping(value = "/clients/importCsv", method = RequestMethod.POST)
 	public void importCSV(@RequestParam String groupUuid,
-			@RequestParam("importFile") MultipartFile file,
-			HttpServletResponse response, OutputStream os) throws IOException {
+	                      @RequestParam("importFile") MultipartFile file,
+	                      HttpServletResponse response, OutputStream os) throws IOException {
 
 		UUID group = UUID.fromString(groupUuid);
 
@@ -147,6 +160,16 @@ public class ClientController {
 		response.setContentType("text/html");
 		mapper.writeValue(os, clients);
 
-
 	}
+
+	@RequestMapping(value = "/clients/productProperty/list", method = RequestMethod.GET)
+	public @ResponseBody List<ProductPropertyState> listProductProperties(@RequestParam String client) {
+		return opsiService.getProductProperties(client);
+	}
+
+	@RequestMapping(value = "/clients/productProperty/update", method = RequestMethod.POST)
+	public void updateProductProperties(@RequestBody List<ProductPropertyState> properties) {
+		opsiService.setProductProperties(properties);
+	}
+
 }

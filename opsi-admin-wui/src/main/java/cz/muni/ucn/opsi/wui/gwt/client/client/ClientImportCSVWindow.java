@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.ArrayList;
@@ -12,23 +9,29 @@ import com.google.gwt.core.client.JsArray;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 
 /**
- * @author Jan Dosoudil
+ * Extension class for importing clients from CSV.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-public class ClientImportCSVWindow extends  ClientImportWindow {
+public class ClientImportCSVWindow extends ClientImportWindow {
 
 	private final String data;
 
-
 	/**
-	 * @param group
+	 * Create window for importing clients from CSV
+	 *
+	 * @param group group
+	 * @param data data about clients in JSON format
 	 */
 	public ClientImportCSVWindow(GroupJSO group, String data) {
 		super(group, true);
 		this.data = data;
 	}
 
-
+	/**
+	 * Converts JSON string with clients to JSO objects and set them to Window
+	 */
 	protected void loadData() {
 
 		JsArray<ClientJSO> clientsA = ClientJSO.fromJSONArray(data);
@@ -40,6 +43,7 @@ public class ClientImportCSVWindow extends  ClientImportWindow {
 		List<BeanModel> clientModels = clientFactory.createModel(clients);
 		clientStore.add(clientModels);
 		clientsGrid.unmask();
+
 	}
 
 }

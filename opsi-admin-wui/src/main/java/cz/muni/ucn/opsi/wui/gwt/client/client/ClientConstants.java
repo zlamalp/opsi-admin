@@ -1,13 +1,12 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import com.google.gwt.i18n.client.Constants;
 
 /**
- * @author Jan Dosoudil
+ * Interface for fixed strings (possible translation)
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public interface ClientConstants extends Constants {
 	@Key("client.name")
@@ -36,4 +35,8 @@ public interface ClientConstants extends Constants {
 	String getClientImportOpsi2();
 	@Key("client.clientImportCSV")
 	String getClientImportCSV();
+	@Key("client.clientExport")
+	String getClientExport();
+	@Key("client.clientExportCSV")
+	String getClientExportCSV();
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.ArrayList;
@@ -12,6 +9,8 @@ import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.data.ModelComparer;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
@@ -34,29 +33,35 @@ import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window for importing clients.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientImportWindow extends Window {
 
-
 	private ClientConstants clientConstants;
-//	private FormPanel form;
+	//	private FormPanel form;
 
+	// group to import clients into
 	private GroupJSO group;
+	// import from local or remote OPSI
 	private boolean master;
 	protected ListStore<BeanModel> clientStore;
 	protected Grid<BeanModel> clientsGrid;
 	protected BeanModelFactory clientFactory;
-
+	// import counter
 	private int importCount = 0;
-
+	private Button buttonOK;
 
 	/**
-	 * @param master 
-	 * @param newClient
+	 * Create window for importing clients
+	 *
+	 * @param group Group to import clients into
+	 * @param master TRUE = import from local OPSI / FALSE = import from remote OPSI
 	 */
 	public ClientImportWindow(GroupJSO group, boolean master) {
+
 		this.group = group;
 		this.master = master;
 
@@ -68,7 +73,7 @@ public class ClientImportWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(640, 350);
-		setHeading("Import klientů");
+		setHeading("Import klientů do skupiny " + group.getName());
 //		setBodyStyle("padding: 0px; ");
 
 //		FormLayout layout = new FormLayout();
@@ -134,13 +139,24 @@ public class ClientImportWindow extends Window {
 
 		add(clientsGrid, new FitData());
 
-
 		clientsGrid.mask(GXT.MESSAGES.loadMask_msg());
 
+		SelectionChangedListener<BeanModel> selectionListener = new SelectionChangedListener<BeanModel>() {
 
-
+			@Override
+			public void selectionChanged(SelectionChangedEvent<BeanModel> se) {
+				int selectionSize = se.getSelection().size();
+				if (selectionSize >= 1) {
+					buttonOK.enable();
+				} else {
+					buttonOK.disable();
+				}
+			}
+		};
+		clientsGrid.getSelectionModel().addSelectionChangedListener(selectionListener);
 
 		generateButtons();
+
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +168,11 @@ public class ClientImportWindow extends Window {
 		loadData();
 	}
 
+	/**
+	 * Retrieve data from OPSI for import
+	 */
 	protected void loadData() {
+
 		ClientService clientService = ClientService.getInstance();
 
 		clientService.listClientsForImport(this.group, master, new RemoteRequestCallback<List<ClientJSO>>() {
@@ -170,13 +190,16 @@ public class ClientImportWindow extends Window {
 				MessageDialog.showError("Chyba při získávání seznamu klientů pro import: ", th.getMessage());
 				clientsGrid.unmask();
 			}
+
 		});
+
 	}
 
 	/**
-	 *
+	 * Generate Import (save) and cancel buttons
 	 */
 	private void generateButtons() {
+
 		Button buttonCancel = new Button("Zavřít");
 		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -188,8 +211,9 @@ public class ClientImportWindow extends Window {
 		});
 		addButton(buttonCancel);
 
-		Button buttonOK = new Button("Importovat vybrané položky");
+		buttonOK = new Button("Importovat vybrané položky");
 		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		buttonOK.disable();
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -237,7 +261,6 @@ public class ClientImportWindow extends Window {
 		addButton(buttonOK);
 
 	}
-
 
 	/**
 	 *

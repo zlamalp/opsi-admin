@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import java.util.List;
@@ -37,14 +34,15 @@ import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window for editing client details like name, ip, mac address etc.
+ * It's used also for creating new client !!
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class ClientEditWindow extends Window {
 
-	/**
-	 *
-	 */
+	// regular expression for client name
 	private static final String NAME_REGEXP = "^([a-zA-Z0-9\\-\\_]+)\\.([a-zA-Z0-9\\-\\_\\.]+)$";
 
 	private static final String FIELD_SPEC = "-18";
@@ -58,9 +56,12 @@ public class ClientEditWindow extends Window {
 	private ClientJSO client;
 
 	/**
-	 * @param newClient
+	 * Create new instance of Window for creating/editing clients.
+	 *
+	 * @param newClient TRUE = use empty form in order to create new client / FALSE = edit existing client
 	 */
 	public ClientEditWindow(boolean newClient) {
+
 		this.newClient = newClient;
 
 		clientConstants = GWT.create(ClientConstants.class);
@@ -197,20 +198,20 @@ public class ClientEditWindow extends Window {
 		notes.setFieldLabel(clientConstants.getNotes());
 		formPanel.add(notes, new FormData(FIELD_SPEC));
 
-
-
 		add(form, new FitData());
 
 		binding = new FormBinding(form, true);
 		binding.setUpdateOriginalValue(true);
 
 		generateButtons();
+
 	}
 
 	/**
-	 *
+	 * Generate buttons for submission and canceling input form in this window.
 	 */
 	private void generateButtons() {
+
 		Button buttonCancel = new Button("Zrušit");
 		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -255,7 +256,7 @@ public class ClientEditWindow extends Window {
 					@Override
 					public void onRequestFailed(Throwable th) {
 						ClientEditWindow.this.enable();
-						MessageDialog.showError("Nelze uložit skupinu", th.getMessage());
+						MessageDialog.showError("Nelze uložit klienta", th.getMessage());
 					}
 				});
 
@@ -266,24 +267,25 @@ public class ClientEditWindow extends Window {
 	}
 
 	/**
-	 * @param group
+	 * Method for setting existing client to this window (for editing)
+	 *
+	 * @param client Client to edit
 	 */
-	public void setGroupModel(ClientJSO group) {
-		this.client = group;
-		BeanModel model = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME).createModel(group);
+	public void setClientModel(ClientJSO client) {
+		this.client = client;
+		BeanModel model = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME).createModel(client);
 		binding.bind(model);
-
 		updateHeading();
 	}
 
 	/**
-	 *
+	 * Set proper window heading - creating new client / edit exiting
 	 */
 	private void updateHeading() {
 		if (newClient) {
-			setHeading("Nová skupina");
+			setHeading("Nový klient");
 		} else {
-			setHeading("Úprava skupiny: " + client.getName());
+			setHeading("Úprava klienta: " + client.getName());
 		}
 	}
 
@@ -294,7 +296,9 @@ public class ClientEditWindow extends Window {
 	}
 
 	/**
-	 * @return
+	 * Validate input form of this window
+	 *
+	 * @return TRUE = valid / FALSE = invalid
 	 */
 	protected boolean validate() {
 		List<Field<?>> fields = form.getFields();
