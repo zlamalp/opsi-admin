@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.client;
 
 import java.util.ArrayList;
@@ -19,17 +16,26 @@ import cz.muni.ucn.opsi.api.group.Group;
 import cz.muni.ucn.opsi.core.group.GroupHibernate;
 
 /**
- * @author Jan Dosoudil
+ * Implementation class for storing and listing Clients to DB.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Repository
-public class ClientDaoHibernate implements ClientDao {
+public class ClientDaoImpl implements ClientDao {
 
 	private SessionFactory sessionFactory;
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.client.ClientDao#get(java.util.UUID)
+	/**
+	 * Setter for sessionFactory
+	 *
+	 * @param sessionFactory the sessionFactory to set
 	 */
+	@Autowired
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	@Override
 	public Client get(UUID uuid) {
 		Session session = sessionFactory.getCurrentSession();
@@ -38,9 +44,6 @@ public class ClientDaoHibernate implements ClientDao {
 		return transform(clientH);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.client.ClientDao#save(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public void save(Client client) {
 		Session session = sessionFactory.getCurrentSession();
@@ -69,9 +72,6 @@ public class ClientDaoHibernate implements ClientDao {
 		session.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.client.ClientDao#delete(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public void delete(Client client) {
 		Session session = sessionFactory.getCurrentSession();
@@ -80,9 +80,6 @@ public class ClientDaoHibernate implements ClientDao {
 		session.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.client.ClientDao#list(cz.muni.ucn.opsi.api.group.Group)
-	 */
 	@Override
 	public List<Client> list(Group group) {
 		Session session = sessionFactory.getCurrentSession();
@@ -96,9 +93,6 @@ public class ClientDaoHibernate implements ClientDao {
 		return transform(list);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.client.ClientDao#listNamesAll()
-	 */
 	@Override
 	public List<String> listNamesAll() {
 		Session session = sessionFactory.getCurrentSession();
@@ -111,32 +105,28 @@ public class ClientDaoHibernate implements ClientDao {
 	}
 
 	/**
-	 * @param sessionFactory the sessionFactory to set
+	 * Transform Hibernate version to API version of Installation
+	 *
+	 * @see cz.muni.ucn.opsi.core.client.ClientHibernate
+	 * @see cz.muni.ucn.opsi.api.client.Client
+	 *
+	 * @param hibernate Hibernate version of object
+	 * @return API version of Client object
 	 */
-	@Autowired
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-
-	/**
-	 * @param clientH
-	 * @return
-	 */
-	private Client transform(ClientHibernate clientH) {
-		if (null == clientH) {
+	private Client transform(ClientHibernate hibernate) {
+		if (null == hibernate) {
 			return null;
 		}
 
 		Client c = new Client();
-		c.setUuid(clientH.getUuid());
-		c.setName(clientH.getName());
-		c.setDescription(clientH.getDescription());
-		c.setNotes(clientH.getNotes());
-		c.setIpAddress(clientH.getIpAddress());
-		c.setMacAddress(clientH.getMacAddress());
+		c.setUuid(hibernate.getUuid());
+		c.setName(hibernate.getName());
+		c.setDescription(hibernate.getDescription());
+		c.setNotes(hibernate.getNotes());
+		c.setIpAddress(hibernate.getIpAddress());
+		c.setMacAddress(hibernate.getMacAddress());
 
-		GroupHibernate groupH = clientH.getGroup();
+		GroupHibernate groupH = hibernate.getGroup();
 		Group g = new Group();
 		g.setUuid(groupH.getUuid());
 		g.setName(groupH.getName());
@@ -148,26 +138,38 @@ public class ClientDaoHibernate implements ClientDao {
 	}
 
 	/**
-	 * @param list
-	 * @return
+	 * Transform list of Hibernate version to API version of Installations
+	 *
+	 * @see cz.muni.ucn.opsi.core.client.ClientHibernate
+	 * @see cz.muni.ucn.opsi.api.client.Client
+	 *
+	 * @param hibernate list of Hibernate version of objects
+	 * @return List of API version of Installation objects
 	 */
-	private List<Client> transform(List<ClientHibernate> list) {
-		if (null == list) {
+	private List<Client> transform(List<ClientHibernate> hibernate) {
+		if (null == hibernate) {
 			return null;
 		}
-		List<Client> ret = new ArrayList<Client>(list.size());
-		for (ClientHibernate clientHibernate : list) {
+		List<Client> ret = new ArrayList<Client>(hibernate.size());
+		for (ClientHibernate clientHibernate : hibernate) {
 			ret.add(transform(clientHibernate));
 		}
 		return ret;
 	}
 
 	/**
-	 * @param loaded
-	 * @param client
-	 * @return
+	 * Transform API version to Hibernate version of Client while using
+	 * current Hibernate version of object to update values.
+	 *
+	 * @see cz.muni.ucn.opsi.core.client.ClientHibernate
+	 * @see cz.muni.ucn.opsi.api.client.Client
+	 *
+	 * @param loaded current Hibernate object from DB
+	 * @param client API version of Client object
+	 * @return Hibernate version of object
 	 */
 	private ClientHibernate transform(ClientHibernate loaded, Client client) {
+
 		Session session = sessionFactory.getCurrentSession();
 
 		ClientHibernate toSave = loaded;
@@ -186,6 +188,7 @@ public class ClientDaoHibernate implements ClientDao {
 		toSave.setGroup(groupH);
 
 		return toSave;
+
 	}
 
 }

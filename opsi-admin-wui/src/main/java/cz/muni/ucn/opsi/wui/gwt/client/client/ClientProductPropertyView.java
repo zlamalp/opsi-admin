@@ -14,7 +14,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 
 import cz.muni.ucn.opsi.wui.gwt.client.DesktopController;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 
 /**
  * @author Pavel Zlámal
@@ -35,28 +35,28 @@ public class ClientProductPropertyView extends View {
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
 		List<ClientJSO> clients = new ArrayList<ClientJSO>();
-		InstalaceJSO instalace = null;
+		InstallationJSO instalation = null;
 		if (ClientController.CLIENT_PRODUCT_PROPERTY == type) {
 			List<BeanModel> cls = event.getData("clients");
 
 			for (BeanModel beanModel : cls) {
 				clients.add((ClientJSO) beanModel.getBean());
 			}
-			instalace = event.getData("instalace");
+			instalation = event.getData("instalace");
 		}
-		getClientProductProperty(clients, instalace);
+		getClientProductProperty(clients, instalation);
 	}
 
 	/**
 	 * @param clients
-	 * @param instalace
+	 * @param instalation
 	 */
-	private void getClientProductProperty(final List<ClientJSO> clients, final InstalaceJSO instalace) {
+	private void getClientProductProperty(final List<ClientJSO> clients, final InstallationJSO instalation) {
 		GWT.runAsync(new RunAsyncCallback() {
 
 			@Override
 			public void onSuccess() {
-				getClientProductPropertyAsync(clients, instalace);
+				getClientProductPropertyAsync(clients, instalation);
 			}
 
 			@Override
@@ -71,7 +71,7 @@ public class ClientProductPropertyView extends View {
 	 * @param clients
 	 * @param instalace
 	 */
-	protected void getClientProductPropertyAsync(List<ClientJSO> clients, InstalaceJSO instalace) {
+	protected void getClientProductPropertyAsync(List<ClientJSO> clients, InstallationJSO instalace) {
 		clientProductProperty(clients, instalace);
 	}
 
@@ -79,7 +79,7 @@ public class ClientProductPropertyView extends View {
 	 * @param clients
 	 * @param instalace
 	 */
-	protected void clientProductProperty(List<ClientJSO> clients, InstalaceJSO instalace) {
+	protected void clientProductProperty(List<ClientJSO> clients, InstallationJSO instalace) {
 		ClientProductPropertyWindow w = createWindow(clients, instalace);
 		Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, w);
 		w.show();
@@ -90,7 +90,7 @@ public class ClientProductPropertyView extends View {
 	 * @param instalace
 	 * @return
 	 */
-	private ClientProductPropertyWindow createWindow(List<ClientJSO> clients, InstalaceJSO instalace) {
+	private ClientProductPropertyWindow createWindow(List<ClientJSO> clients, InstallationJSO instalace) {
 		return new ClientProductPropertyWindow(clients, instalace);
 	}
 

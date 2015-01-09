@@ -14,19 +14,19 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
  * @author Jan Dosoudil
  *
  */
-public class InstalationController extends Controller {
+public class InstallationController extends Controller {
 
 	public static final EventType INSTALATIONS = new EventType();
 	public static final EventType INSTALATIONS_SAVE = new EventType();
 
-	private InstalationView instalationView;
+	private InstallationView installationView;
 
 	/**
 	 *
 	 */
-	public InstalationController() {
-		registerEventTypes(InstalationController.INSTALATIONS);
-		registerEventTypes(InstalationController.INSTALATIONS_SAVE);
+	public InstallationController() {
+		registerEventTypes(InstallationController.INSTALATIONS);
+		registerEventTypes(InstallationController.INSTALATIONS_SAVE);
 		registerEventTypes(CometController.LIFECYCLE_EVENT_TYPE);
 	}
 
@@ -36,10 +36,10 @@ public class InstalationController extends Controller {
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (InstalationController.INSTALATIONS == type) {
-			showInstalations(event);
-		} else if (InstalationController.INSTALATIONS_SAVE == type) {
-				saveInstalations(event);
+		if (InstallationController.INSTALATIONS == type) {
+			showInstallations(event);
+		} else if (InstallationController.INSTALATIONS_SAVE == type) {
+				saveInstallations(event);
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
 			onLifecycleEvent(event);
 		}
@@ -51,21 +51,21 @@ public class InstalationController extends Controller {
 	@Override
 	protected void initialize() {
 		super.initialize();
-		instalationView = new InstalationView(this);
+		installationView = new InstallationView(this);
 	}
 
 	/**
 	 * @param event
 	 */
-	private void showInstalations(AppEvent event) {
-		forwardToView(instalationView, event);
+	private void showInstallations(AppEvent event) {
+		forwardToView(installationView, event);
 	}
 
 	/**
 	 * @param event
 	 */
-	private void saveInstalations(AppEvent event) {
-		forwardToView(instalationView, event);
+	private void saveInstallations(AppEvent event) {
+		forwardToView(installationView, event);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class InstalationController extends Controller {
         if (!"cz.muni.ucn.opsi.api.instalation.Instalation".equals(le.getBeanClass())) {
                 return;
         }
-		forwardToView(instalationView, event);
+		forwardToView(installationView, event);
 	}
 
 }

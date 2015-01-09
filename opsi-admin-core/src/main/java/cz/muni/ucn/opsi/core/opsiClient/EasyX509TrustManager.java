@@ -23,7 +23,6 @@
  * <http://www.apache.org/>.
  *
  */
-
 package cz.muni.ucn.opsi.core.opsiClient;
 
 import java.security.KeyStore;
@@ -59,9 +58,8 @@ import org.apache.commons.logging.LogFactory;
  * for use without additional customization.
  * </p>
  */
+public class EasyX509TrustManager implements X509TrustManager {
 
-public class EasyX509TrustManager implements X509TrustManager
-{
     private X509TrustManager standardTrustManager = null;
 
     /** Log object for this class. */
@@ -111,4 +109,5 @@ public class EasyX509TrustManager implements X509TrustManager
     public X509Certificate[] getAcceptedIssuers() {
         return this.standardTrustManager.getAcceptedIssuers();
     }
+
 }

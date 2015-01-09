@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.group;
 
 import java.util.ArrayList;
@@ -16,17 +13,27 @@ import org.springframework.stereotype.Repository;
 import cz.muni.ucn.opsi.api.group.Group;
 
 /**
- * @author Jan Dosoudil
+ * Implementation class for storing and listing Groups to DB.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Repository
-public class GroupDaoHibernate implements GroupDao {
+public class GroupDaoImpl implements GroupDao {
 
 	private SessionFactory sessionFactory;
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.group.GroupDao#get(java.util.UUID)
+	/**
+	 * Setter for sessionFactory
+	 *
+	 * @param sessionFactory the sessionFactory to set
 	 */
+	@Autowired
+	@Qualifier("opsi")
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	@Override
 	public Group get(UUID uuid) {
 		Session session = sessionFactory.getCurrentSession();
@@ -34,9 +41,6 @@ public class GroupDaoHibernate implements GroupDao {
 		return transform(groupH);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.group.GroupDao#save(cz.muni.ucn.opsi.api.group.Group)
-	 */
 	@Override
 	public void save(Group group) {
 		Session session = sessionFactory.getCurrentSession();
@@ -48,10 +52,6 @@ public class GroupDaoHibernate implements GroupDao {
 		session.flush();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.group.GroupDao#delete(cz.muni.ucn.opsi.api.group.Group)
-	 */
 	@Override
 	public void delete(Group group) {
 		Session session = sessionFactory.getCurrentSession();
@@ -60,9 +60,6 @@ public class GroupDaoHibernate implements GroupDao {
 		session.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.core.group.GroupDao#list()
-	 */
 	@Override
 	public List<Group> list() {
 		Session session = sessionFactory.getCurrentSession();
@@ -73,39 +70,55 @@ public class GroupDaoHibernate implements GroupDao {
 	}
 
 	/**
-	 * @param groupH
-	 * @return
+	 * Transform Hibernate version to API version of Group
+	 *
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
+	 *
+	 * @param hibernate Hibernate version of object
+	 * @return API version of Group object
 	 */
-	private Group transform(GroupHibernate groupH) {
-		if (null == groupH) {
+	private Group transform(GroupHibernate hibernate) {
+		if (null == hibernate) {
 			return null;
 		}
-		Group g = new Group();
-		g.setUuid(groupH.getUuid());
-		g.setName(groupH.getName());
-		g.setRole(groupH.getRole());
-		return g;
+		Group group = new Group();
+		group.setUuid(hibernate.getUuid());
+		group.setName(hibernate.getName());
+		group.setRole(hibernate.getRole());
+		return group;
 	}
 
 	/**
-	 * @param list
-	 * @return
+	 * Transform list of Hibernate version to API version of Groups
+	 *
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
+	 *
+	 * @param hibernate list of Hibernate version of objects
+	 * @return list of API version of Group objects
 	 */
-	private List<Group> transform(List<GroupHibernate> list) {
-		if (null == list) {
+	private List<Group> transform(List<GroupHibernate> hibernate) {
+		if (null == hibernate) {
 			return null;
 		}
-		List<Group> groups = new ArrayList<Group>(list.size());
-		for (GroupHibernate groupHibernate : list) {
+		List<Group> groups = new ArrayList<Group>(hibernate.size());
+		for (GroupHibernate groupHibernate : hibernate) {
 			groups.add(transform(groupHibernate));
 		}
 		return groups;
 	}
 
 	/**
-	 * @param saved
-	 * @param group
-	 * @return
+	 * Transform API version to Hibernate version of Group while using
+	 * current Hibernate version of object to update values.
+	 *
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
+	 *
+	 * @param saved current Hibernate object from DB
+	 * @param group API version of Group object
+	 * @return Hibernate version of object
 	 */
 	private GroupHibernate transform(final GroupHibernate saved, final Group group) {
 		GroupHibernate toSave = saved;
@@ -118,12 +131,4 @@ public class GroupDaoHibernate implements GroupDao {
 		return toSave;
 	}
 
-	/**
-	 * @param sessionFactory the sessionFactory to set
-	 */
-	@Autowired
-	@Qualifier("opsi")
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
 }

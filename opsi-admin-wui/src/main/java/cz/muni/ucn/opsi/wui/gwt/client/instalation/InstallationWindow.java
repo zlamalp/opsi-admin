@@ -34,10 +34,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
  * @author Jan Dosoudil
  *
  */
-public class InstalationWindow extends Window {
+public class InstallationWindow extends Window {
 
 	private BeanModelFactory factory;
-	private InstalationConstants instalationConstants;
+	private InstallationConstants installationConstants;
 	private Button buttonSave;
 	private ListStore<BeanModel> fromStore;
 	private ListStore<BeanModel> toStore;
@@ -48,10 +48,11 @@ public class InstalationWindow extends Window {
 	/**
 	 *
 	 */
-	public InstalationWindow() {
-		factory = BeanModelLookup.get().getFactory(InstalaceJSO.CLASS_NAME);
+	public InstallationWindow() {
 
-		instalationConstants = GWT.create(InstalationConstants.class);
+		factory = BeanModelLookup.get().getFactory(InstallationJSO.CLASS_NAME);
+
+		installationConstants = GWT.create(InstallationConstants.class);
 
 
 		setMinimizable(true);
@@ -110,11 +111,11 @@ public class InstalationWindow extends Window {
 		lists.mask(GXT.MESSAGES.loadMask_msg());
 
 
-	    InstalationService groupService = InstalationService.getInstance();
+	    InstallationService groupService = InstallationService.getInstance();
 
-		groupService.listInstalationsAll(new RemoteRequestCallback<List<InstalaceJSO>>() {
+		groupService.listInstallationsAll(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstalaceJSO> instalations) {
+			public void onRequestSuccess(List<InstallationJSO> instalations) {
 				List<BeanModel> groupModels = factory.createModel(instalations);
 				fromStore.removeAll();
 				fromStore.add(groupModels);
@@ -128,9 +129,9 @@ public class InstalationWindow extends Window {
 			}
 		});
 
-		groupService.listInstalations(new RemoteRequestCallback<List<InstalaceJSO>>() {
+		groupService.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstalaceJSO> instalations) {
+			public void onRequestSuccess(List<InstallationJSO> instalations) {
 				List<BeanModel> groupModels = factory.createModel(instalations);
 				toStore.removeAll();
 				toStore.add(groupModels);
@@ -171,9 +172,9 @@ public class InstalationWindow extends Window {
 	private ToolBar createToolbar() {
 		ToolBar toolbar = new ToolBar();
 
-		buttonSave = new Button(instalationConstants.getInstalationsSave());
+		buttonSave = new Button(installationConstants.getInstalationsSave());
 		buttonSave.setIcon(IconHelper.createStyle("save"));
-		buttonSave.setData("event", InstalationController.INSTALATIONS_SAVE);
+		buttonSave.setData("event", InstallationController.INSTALATIONS_SAVE);
 		buttonSave.addSelectionListener(new SaveButtonListener());
 		toolbar.add(buttonSave);
 
@@ -204,12 +205,12 @@ public class InstalationWindow extends Window {
 		public void componentSelected(ButtonEvent ce) {
 			List<BeanModel> instalations = toStore.getModels();
 
-			InstalationService instalationService = InstalationService.getInstance();
-			List<InstalaceJSO> instalace = new ArrayList<InstalaceJSO>();
+			InstallationService installationService = InstallationService.getInstance();
+			List<InstallationJSO> instalace = new ArrayList<InstallationJSO>();
 			for (BeanModel beanModel : instalations) {
-				instalace.add((InstalaceJSO) beanModel.getBean());
+				instalace.add((InstallationJSO) beanModel.getBean());
 			}
-			instalationService.saveInstalations(instalace, new RemoteRequestCallback<Object>() {
+			installationService.saveInstallations(instalace, new RemoteRequestCallback<Object>() {
 
 				@Override
 				public void onRequestSuccess(Object v) {

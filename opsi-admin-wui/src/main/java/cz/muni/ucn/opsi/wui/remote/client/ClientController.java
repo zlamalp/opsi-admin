@@ -29,8 +29,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import cz.muni.ucn.opsi.api.client.Client;
 import cz.muni.ucn.opsi.api.client.ClientService;
 import cz.muni.ucn.opsi.api.client.Hardware;
-import cz.muni.ucn.opsi.api.instalation.Instalation;
-import cz.muni.ucn.opsi.api.instalation.InstalationService;
+import cz.muni.ucn.opsi.api.instalation.Installation;
+import cz.muni.ucn.opsi.api.instalation.InstallationService;
 
 /**
  * Server side API (controller) for handling requests on Clients.
@@ -44,7 +44,7 @@ import cz.muni.ucn.opsi.api.instalation.InstalationService;
 public class ClientController {
 
 	private ClientService clientService;
-	private InstalationService instalationService;
+	private InstallationService installationService;
 	private OpsiClientService opsiService;
 	private Validator validator;
 	private ObjectMapper mapper;
@@ -58,11 +58,11 @@ public class ClientController {
 	}
 
 	/**
-	 * @param instalationService the instalationService to set
+	 * @param installationService the installationService to set
 	 */
 	@Autowired
-	public void setInstalationService(InstalationService instalationService) {
-		this.instalationService = instalationService;
+	public void setInstallationService(InstallationService installationService) {
+		this.installationService = installationService;
 	}
 	/**
 	 * @param opsiService the opsiService to set
@@ -79,6 +79,7 @@ public class ClientController {
 	public void setValidator(Validator validator) {
 		this.validator = validator;
 	}
+
 	/**
 	 * @param mapper the mapper to set
 	 */
@@ -112,11 +113,8 @@ public class ClientController {
 	}
 
 	@RequestMapping(value = "/clients/install", method = RequestMethod.PUT)
-	public @ResponseBody void installClient(@RequestBody Client client,
-	                                        @RequestParam String instalaceId) {
-
-		Instalation i = instalationService.getInstalationById(instalaceId);
-
+	public @ResponseBody void installClient(@RequestBody Client client, @RequestParam String instalaceId) {
+		Installation i = installationService.getInstallationById(instalaceId);
 		clientService.installClient(client, i);
 	}
 
@@ -133,12 +131,11 @@ public class ClientController {
 
 	@RequestMapping(value = "/clients/hardware/list", method = RequestMethod.GET)
 	public @ResponseBody List<Hardware> listHardware(@RequestParam String uuid) {
-		return clientService.listHardare(UUID.fromString(uuid));
+		return clientService.listHardware(UUID.fromString(uuid));
 	}
 
 	@RequestMapping(value = "/clients/importCsv", method = RequestMethod.POST)
-	public void importCSV(@RequestParam String groupUuid,
-	                      @RequestParam("importFile") MultipartFile file,
+	public void importCSV(@RequestParam String groupUuid, @RequestParam("importFile") MultipartFile file,
 	                      HttpServletResponse response, OutputStream os) throws IOException {
 
 		UUID group = UUID.fromString(groupUuid);
@@ -168,8 +165,11 @@ public class ClientController {
 	}
 
 	@RequestMapping(value = "/clients/productProperty/update", method = RequestMethod.POST)
-	public void updateProductProperties(@RequestBody List<ProductPropertyState> properties) {
+	public void updateProductProperties(@RequestBody ProductPropertyList properties) {
 		opsiService.setProductProperties(properties);
 	}
+
+	@SuppressWarnings("serial")
+	public static class ProductPropertyList extends ArrayList<ProductPropertyState> { }
 
 }

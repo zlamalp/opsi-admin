@@ -1,39 +1,44 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.opsiClient;
 
 /**
- * @author Jan Dosoudil
+ * Exception thrown when OPSI server returns response with error message.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class OpsiException extends RuntimeException {
 
 	private static final long serialVersionUID = 6742229821639572698L;
 
 	/**
-	 *
+	 * Create new instance of OpsiException
 	 */
 	public OpsiException() {
 	}
 
 	/**
-	 * @param message
+	 * Create new instance of OpsiException
+	 *
+	 * @param message Messaged returned from OPSI server
 	 */
 	public OpsiException(String message) {
 		super(message);
 	}
 
 	/**
-	 * @param cause
+	 * Create new instance of OpsiException
+	 *
+	 * @param cause Original exception causing this one
 	 */
 	public OpsiException(Throwable cause) {
 		super(cause);
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * Create new instance of OpsiException
+	 *
+	 * @param message Messaged returned from OPSI server
+	 * @param cause Original exception causing this one
 	 */
 	public OpsiException(String message, Throwable cause) {
 		super(message, cause);

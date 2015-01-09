@@ -49,8 +49,8 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupConstants;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupService;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalationService;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationService;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
@@ -84,6 +84,7 @@ public class ClientWindow extends Window {
 	 * Create new instance of this window.
 	 */
 	public ClientWindow() {
+
 		clientFactory = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME);
 		groupFactory = BeanModelLookup.get().getFactory(GroupJSO.CLASS_NAME);
 
@@ -123,9 +124,11 @@ public class ClientWindow extends Window {
 	}
 
 	/**
-	 *
+	 * Create left section of window with Groups list, also load data into it.
 	 */
 	private void createGroups() {
+
+		// create data store
 		groupsStore = new ListStore<BeanModel>();
 		groupsStore.sort("name", SortDir.ASC);
 		groupsStore.setKeyProvider(new ModelKeyProvider<BeanModel>() {
@@ -149,18 +152,18 @@ public class ClientWindow extends Window {
 			}
 		});
 
+		// create column config
 		ColumnConfig nazev = new ColumnConfig("name", groupConstants.getName(), 180);
-
 		List<ColumnConfig> config = new ArrayList<ColumnConfig>();
-
 		config.add(nazev);
-
 		final ColumnModel cm = new ColumnModel(config);
 
+		// create grid
 		groupGrid = new Grid<BeanModel>(groupsStore, cm);
 		groupGrid.setBorders(true);
 		groupGrid.setColumnReordering(true);
 
+		// enable selection
 		SelectionChangedListener<BeanModel> selectionListener = new SelectionChangedListener<BeanModel>() {
 
 			@Override
@@ -176,31 +179,24 @@ public class ClientWindow extends Window {
 					updateClients(null);
 				} else {
 					buttonNew.enable();
-//					buttonEdit.enable();
-//					buttonRemove.enable();
-//					buttonInstall.enable();
 					buttonImport.enable();
 					contextMenuNew.enable();
-//					contextMenuEdit.enable();
-//					contextMenuRemove.enable();
 					updateClients(se.getSelectedItem());
 				}
 			}
 		};
 		groupGrid.getSelectionModel().addSelectionChangedListener(selectionListener);
 
+		// enable filters
 		GridFilters filters = new GridFilters();
 		filters.setLocal(true);
-
 		filters.addFilter(new StringFilter("group"));
-
 		groupGrid.addPlugin(filters);
-
-
-		GroupService groupService = GroupService.getInstance();
 
 		groupGrid.mask(GXT.MESSAGES.loadMask_msg());
 
+		// load data
+		GroupService groupService = GroupService.getInstance();
 		groupService.listGroups(new RemoteRequestCallback<List<GroupJSO>>() {
 			@Override
 			public void onRequestSuccess(List<GroupJSO> groups) {
@@ -216,10 +212,14 @@ public class ClientWindow extends Window {
 			}
 		});
 
-
 	}
 
+	/**
+	 * Create main part of window with clients
+	 */
 	private void createClients() {
+
+		// create data store
 		clientStore = new ListStore<BeanModel>();
 		clientStore.sort("name", SortDir.ASC);
 		clientStore.setKeyProvider(new ModelKeyProvider<BeanModel>() {
@@ -243,6 +243,7 @@ public class ClientWindow extends Window {
 			}
 		});
 
+		// create column config
 		ColumnConfig name = new ColumnConfig("name", clientConstants.getName(), 180);
 		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
 		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
@@ -262,12 +263,14 @@ public class ClientWindow extends Window {
 
 		final ColumnModel cm = new ColumnModel(config);
 
+		// create grid
 		clientsGrid = new Grid<BeanModel>(clientStore, cm);
 		clientsGrid.setBorders(true);
 		clientsGrid.setColumnReordering(true);
 		clientsGrid.setSelectionModel(sm);
 		clientsGrid.addPlugin(sm);
 
+		// enable selection
 		SelectionChangedListener<BeanModel> selectionListener = new SelectionChangedListener<BeanModel>() {
 
 			@Override
@@ -295,16 +298,16 @@ public class ClientWindow extends Window {
 		};
 		clientsGrid.getSelectionModel().addSelectionChangedListener(selectionListener);
 
+		// enable filters
 		GridFilters filters = new GridFilters();
 		filters.setLocal(true);
-
 		filters.addFilter(new StringFilter("name"));
 		filters.addFilter(new StringFilter("description"));
 		filters.addFilter(new StringFilter("ipAddress"));
 		filters.addFilter(new StringFilter("macAddress"));
-
 		clientsGrid.addPlugin(filters);
 
+		// enable double click event
 		clientsGrid.addListener(Events.RowDoubleClick, new Listener<GridEvent<BeanModel>>() {
 
 			@Override
@@ -321,13 +324,18 @@ public class ClientWindow extends Window {
 
 		});
 
+		// enable context menu (right-click event)
 		clientsGrid.setContextMenu(createGridContextMenu());
+
 	}
 
 	/**
-	 * @param selectedItem
+	 * Update list of clients in main window. Called when some Group is selected in left section of window.
+	 *
+	 * @param selectedItem selected Group
 	 */
 	protected void updateClients(BeanModel selectedItem) {
+
 		this.selectedGroupItem = selectedItem;
 
 		if (null == selectedItem) {
@@ -354,9 +362,12 @@ public class ClientWindow extends Window {
 				clientsGrid.unmask();
 			}
 		});
+
 	}
 
 	/**
+	 * Get currently selected group
+	 *
 	 * @return the selectedGroupItem
 	 */
 	public BeanModel getSelectedGroupItem() {
@@ -364,9 +375,12 @@ public class ClientWindow extends Window {
 	}
 
 	/**
-	 * @return
+	 * Create toolbar for this window with all menus.
+	 *
+	 * @return ToolBar instance
 	 */
 	private ToolBar createToolbar() {
+
 		SelectionListener<ButtonEvent> buttonListener = new ToolbarButtonListener();
 		GridContextMenuListener menuListener = new GridContextMenuListener();
 
@@ -398,13 +412,6 @@ public class ClientWindow extends Window {
 		buttonInstall.disable();
 		buttonInstall.setMenu(createInstallMenu());
 		toolbar.add(buttonInstall);
-
-//		buttonImport = new Button(clientConstants.getClientImport());
-//		buttonImport.setIcon(IconHelper.createStyle("import"));
-//		buttonImport.setData("event", ClientController.CLIENT_IMPORT);
-//		buttonImport.addSelectionListener(buttonListener);
-//		buttonImport.disable();
-//		toolbar.add(buttonImport);
 
 		buttonImport = new Button(clientConstants.getClientImport());
 		buttonImport.setIcon(IconHelper.createStyle("import"));
@@ -448,6 +455,7 @@ public class ClientWindow extends Window {
 		buttonExport.setMenu(exportMenu);
 
 		return toolbar;
+
 	}
 
 	/**
@@ -460,14 +468,14 @@ public class ClientWindow extends Window {
 		final Menu installMenu = new Menu();
 		final SelectionListener<? extends MenuEvent> installListener = new InstalaceMenuListener();
 
-		InstalationService service = InstalationService.getInstance();
-		service.listInstalations(new RemoteRequestCallback<List<InstalaceJSO>>() {
+		InstallationService service = InstallationService.getInstance();
+		service.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
 
 			@Override
-			public void onRequestSuccess(List<InstalaceJSO> v) {
-				for (InstalaceJSO in : v) {
+			public void onRequestSuccess(List<InstallationJSO> v) {
+				for (InstallationJSO in : v) {
 					// TODO & FIXME - support only win7-64 to configure netboot now.
-					MenuItem mi = new MenuItem((in.getId().equals("win7-x64")) ? in.getName()+"..." : in.getName());
+					MenuItem mi = new MenuItem((in.getId().equals("win7-x64")) ? in.getName() + "..." : in.getName());
 					mi.addSelectionListener(installListener);
 					mi.setData("instalace", in);
 					if (in.getId().equals("win7-x64")) {
@@ -635,7 +643,7 @@ public class ClientWindow extends Window {
 		@Override
 		public void componentSelected(MenuEvent ce) {
 			final EventType type = ce.getItem().getData("event");
-			final InstalaceJSO instalace = ce.getItem().getData("instalace");
+			final InstallationJSO instalace = ce.getItem().getData("instalace");
 			final List<BeanModel> clients = clientsGrid.getSelectionModel().getSelectedItems();
 
 			if (type.equals(ClientController.CLIENT_INSTALL)) {
@@ -653,9 +661,7 @@ public class ClientWindow extends Window {
 						AppEvent event = new AppEvent(type);
 						event.setData("clients", clients);
 						event.setData("instalace", instalace);
-						event.setData("group", getSelectedGroupItem().getBean());
 						Dispatcher.forwardEvent(event);
-
 					}
 
 				});
@@ -663,7 +669,6 @@ public class ClientWindow extends Window {
 			} else {
 
 				// CONFIGURE INSTALL-CLIENT EVENT
-				GWT.log(type+"");
 				AppEvent event = new AppEvent(type);
 				event.setData("clients", clients);
 				event.setData("instalace", instalace);

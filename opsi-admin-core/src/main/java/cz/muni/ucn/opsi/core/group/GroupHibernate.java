@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.group;
 
 import java.util.List;
@@ -18,12 +15,17 @@ import cz.muni.ucn.opsi.core.client.ClientHibernate;
 import cz.u2.eis.valueObjects.hibernate.HibernateValueObject;
 
 /**
- * @author Jan Dosoudil
+ * Hibernate representation of Group object.
  *
+ * @see cz.muni.ucn.opsi.api.group.Group
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Entity(name="Group")
 @Table(name="GROUPS", uniqueConstraints={@UniqueConstraint(columnNames="name", name="u_name")})
 public class GroupHibernate extends HibernateValueObject {
+
 	private static final long serialVersionUID = 3151715438105784467L;
 
 	private String name;
@@ -32,32 +34,44 @@ public class GroupHibernate extends HibernateValueObject {
 	private List<ClientHibernate> clients;
 
 	/**
-	 *
+	 * Create new instance
 	 */
 	public GroupHibernate() {
 		super();
 	}
+
 	/**
-	 * @param uuid
+	 * Create new instance
+	 *
+	 * @param uuid UUID of Group
 	 */
 	public GroupHibernate(UUID uuid) {
 		super(uuid);
 	}
+
 	/**
-	 * @return the name
+	 * Get name of Group
+	 *
+	 * @return the Group name
 	 */
 	@Length(min=1, max=50)
 	@Column(length=50)
 	public String getName() {
 		return name;
 	}
+
 	/**
+	 * Set name of Group
+	 *
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	/**
+	 * Get role associated with Group
+	 *
 	 * @return the role
 	 */
 	@Length(max=50)
@@ -65,20 +79,29 @@ public class GroupHibernate extends HibernateValueObject {
 	public String getRole() {
 		return role;
 	}
+
 	/**
+	 * Set role associated with Group
+	 *
 	 * @param role the role to set
 	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
+
 	/**
-	 * @return the clients
+	 * Get list of Clients in this Group
+	 *
+	 * @return List of clients in Group
 	 */
 	@OneToMany(mappedBy="group")
 	public List<ClientHibernate> getClients() {
 		return clients;
 	}
+
 	/**
+	 * Set Clients to Group
+	 *
 	 * @param clients the clients to set
 	 */
 	public void setClients(List<ClientHibernate> clients) {

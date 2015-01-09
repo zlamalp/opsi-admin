@@ -1,35 +1,46 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.api.instalation;
 
 /**
- * @author Jan Dosoudil
+ * Object representing Installation, aka NetBootProduct in OPSI.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-public class Instalation {
+public class Installation {
+
 	private String id;
 	private String name;
 
 	/**
+	 * Get ID of installation
+	 *
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
+
 	/**
+	 * Set ID of installation
+	 *
 	 * @param id the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	/**
+	 * Get name of Installation
+	 *
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
+
 	/**
+	 * Set name of Installation
+	 *
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
@@ -46,6 +57,7 @@ public class Instalation {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -60,7 +72,7 @@ public class Instalation {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Instalation other = (Instalation) obj;
+		Installation other = (Installation) obj;
 		if (id == null) {
 			if (other.id != null) {
 				return false;
@@ -70,6 +82,5 @@ public class Instalation {
 		}
 		return true;
 	}
-
 
 }

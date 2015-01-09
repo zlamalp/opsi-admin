@@ -20,7 +20,7 @@ import cz.muni.ucn.opsi.wui.gwt.client.DesktopController;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.event.CometController;
 import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
@@ -55,7 +55,7 @@ public class ClientView extends View {
 			deleteClients(clients);
 		} else if (ClientController.CLIENT_INSTALL == type) {
 			List<BeanModel> clients = event.getData("clients");
-			InstalaceJSO instalace = event.getData("instalace");
+			InstallationJSO instalace = event.getData("instalace");
 			installClients(clients, instalace);
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
 			LifecycleEventJSO lifecycleEventJSO = (LifecycleEventJSO)event.getData();
@@ -140,7 +140,7 @@ public class ClientView extends View {
 	 * @param clients Clients to start installation for
 	 * @param instalace Product (OS) to install.
 	 */
-	private void installClients(List<BeanModel> clients, InstalaceJSO instalace) {
+	private void installClients(List<BeanModel> clients, InstallationJSO instalace) {
 		for (BeanModel beanModel : clients) {
 			ClientJSO client = beanModel.getBean();
 			ClientService.getInstance().installClient(client, instalace, new RemoteRequestCallback<Object>() {

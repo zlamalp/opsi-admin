@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client;
 
 import com.google.gwt.json.client.JSONBoolean;

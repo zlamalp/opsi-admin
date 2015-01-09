@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.group;
 
 import java.util.ArrayList;
@@ -27,23 +24,47 @@ import cz.u2.eis.api.events.data.LifecycleEvent;
 import cz.u2.eis.api.events.data.SecuredLifecycleEvent;
 
 /**
- * @author Jan Dosoudil
+ * Implementing service class used to manage Groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@censet.cz>
  */
 @Service
 @Transactional(readOnly=true)
-public class GroupServiceImpl implements GroupService, ApplicationEventPublisherAware{
+public class GroupServiceImpl implements GroupService, ApplicationEventPublisherAware {
 
-//	private final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
+	//private final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
 
 	private ApplicationEventPublisher eventPublisher;
 	private AccessDecisionManager accessDecisionManager;
 
 	private GroupDao groupDao;
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#createGroup()
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		this.eventPublisher = applicationEventPublisher;
+	}
+
+	/**
+	 * Setter for groupDao
+	 *
+	 * @param groupDao the groupDao to set
 	 */
+	@Autowired
+	public void setGroupDao(GroupDao groupDao) {
+		this.groupDao = groupDao;
+	}
+
+	/**
+	 * Setter for accessDecisionManager
+	 *
+	 * @param accessDecisionManager the accessDecisionManager to set
+	 */
+	@Autowired
+	public void setAccessDecisionManager(AccessDecisionManager accessDecisionManager) {
+		this.accessDecisionManager = accessDecisionManager;
+	}
+
 	@Override
 	@Transactional
 	public Group createGroup() {
@@ -51,42 +72,33 @@ public class GroupServiceImpl implements GroupService, ApplicationEventPublisher
 		return group;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#editGroup(java.util.UUID)
-	 */
 	@Override
 	@Transactional
 	public Group editGroup(UUID uuid) {
 		return groupDao.get(uuid);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#saveGroup(cz.muni.ucn.opsi.api.group.Group)
-	 */
 	@Override
 	@Transactional(readOnly=false)
 	public void saveGroup(Group group) {
-        Group loaded = groupDao.get(group.getUuid());
-        boolean newGroup = (null == loaded);
+		Group loaded = groupDao.get(group.getUuid());
+		boolean newGroup = (null == loaded);
 
-        groupDao.save(group);
+		groupDao.save(group);
 
-        SecuredLifecycleEvent event;
-        if (newGroup) {
-        	event = new SecuredLifecycleEvent(LifecycleEvent.CREATED,
-        			group, "ROLE_ADMIN");
-        } else {
-        	event = new SecuredLifecycleEvent(LifecycleEvent.MODIFIED,
-        			group, "ROLE_ADMIN");
-        }
+		SecuredLifecycleEvent event;
+		if (newGroup) {
+			event = new SecuredLifecycleEvent(LifecycleEvent.CREATED,
+					group, "ROLE_ADMIN");
+		} else {
+			event = new SecuredLifecycleEvent(LifecycleEvent.MODIFIED,
+					group, "ROLE_ADMIN");
+		}
 
-        eventPublisher.publishEvent(event);
+		eventPublisher.publishEvent(event);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#removeGroup(cz.muni.ucn.opsi.api.group.Group)
-	 */
 	@Override
 	@Transactional(readOnly=false)
 	public void deleteGroup(Group group) {
@@ -95,12 +107,10 @@ public class GroupServiceImpl implements GroupService, ApplicationEventPublisher
 		eventPublisher.publishEvent(new SecuredLifecycleEvent(LifecycleEvent.DELETED, group, "ROLE_ADMIN"));
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#listGroups()
-	 */
 	@Override
 	@Transactional
 	public List<Group> listGroups() {
+
 		List<Group> list = groupDao.list();
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -129,40 +139,13 @@ public class GroupServiceImpl implements GroupService, ApplicationEventPublisher
 		}
 
 		return retList;
+
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.group.GroupService#getGroup(java.util.UUID)
-	 */
 	@Override
 	@Transactional
 	public Group getGroup(UUID uuid) {
 		return groupDao.get(uuid);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)
-	 */
-	@Override
-	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-			this.eventPublisher = applicationEventPublisher;
-	}
-
-	/**
-	 * @param groupDao the groupDao to set
-	 */
-	@Autowired
-	public void setGroupDao(GroupDao groupDao) {
-		this.groupDao = groupDao;
-	}
-
-	/**
-	 * @param accessDecisionManager the accessDecisionManager to set
-	 */
-	@Autowired
-	public void setAccessDecisionManager(
-			AccessDecisionManager accessDecisionManager) {
-		this.accessDecisionManager = accessDecisionManager;
-	}
 }

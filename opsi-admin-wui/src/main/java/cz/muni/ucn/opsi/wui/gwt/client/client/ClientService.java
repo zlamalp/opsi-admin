@@ -10,7 +10,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequest;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
@@ -187,7 +187,7 @@ public class ClientService {
 	 * @param instalace Product (OS) to install.
 	 * @param callback Callback to handle response
 	 */
-	public void installClient(ClientJSO client, InstalaceJSO instalace, RemoteRequestCallback<Object> callback) {
+	public void installClient(ClientJSO client, InstallationJSO instalace, RemoteRequestCallback<Object> callback) {
 
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.PUT,
 				URL.encode(GWT.getHostPageBaseURL() + CLIENT_INSTALL_URL +

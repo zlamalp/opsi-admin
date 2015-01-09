@@ -21,7 +21,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 
 import cz.muni.ucn.opsi.wui.gwt.client.client.ClientController;
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupController;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalationController;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationController;
 import cz.muni.ucn.opsi.wui.gwt.client.login.LoginController;
 
 /**
@@ -158,7 +158,7 @@ public class DesktopController extends Controller {
 		Shortcut s5 = new Shortcut();
 		s5.setText("Nastavení instalací");
 		s5.setId("intalace-shortcut");
-		s5.setData("event", InstalationController.INSTALATIONS);
+		s5.setData("event", InstallationController.INSTALATIONS);
 		s5.addSelectionListener(shortcutListener);
 		desktop.addShortcut(s5);
 
@@ -191,7 +191,7 @@ public class DesktopController extends Controller {
 		menuItem = new MenuItem("Nastavení instalací");
 		menuItem.setIcon(IconHelper.createStyle("instalace"));
 		menuItem.addSelectionListener(menuListener);
-		menuItem.setData("event", InstalationController.INSTALATIONS);
+		menuItem.setData("event", InstallationController.INSTALATIONS);
 		menu.add(menuItem);
 
 /*

@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.remote.group;
 
 import java.util.List;
@@ -23,8 +20,12 @@ import cz.muni.ucn.opsi.api.group.Group;
 import cz.muni.ucn.opsi.api.group.GroupService;
 
 /**
- * @author Jan Dosoudil
+ * Server side API (controller) for handling requests on Groups.
  *
+ * @see cz.muni.ucn.opsi.wui.gwt.client.group.GroupService for client side of this API.
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Controller
 public class GroupController {
@@ -33,6 +34,8 @@ public class GroupController {
 	private Validator validator;
 
 	/**
+	 * Setter for groupService
+	 *
 	 * @param groupService the groupService to set
 	 */
 	@Autowired
@@ -41,6 +44,8 @@ public class GroupController {
 	}
 
 	/**
+	 * Setter for bean validator
+	 *
 	 * @param validator the validator to set
 	 */
 	@Autowired

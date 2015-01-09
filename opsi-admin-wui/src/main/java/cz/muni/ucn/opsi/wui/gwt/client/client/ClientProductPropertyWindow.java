@@ -3,20 +3,18 @@ package cz.muni.ucn.opsi.wui.gwt.client.client;
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.binding.FormBinding;
 import com.extjs.gxt.ui.client.event.*;
+import com.extjs.gxt.ui.client.mvc.AppEvent;
+import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.util.IconHelper;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.Label;
-import com.extjs.gxt.ui.client.widget.Text;
-import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.*;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.*;
 import com.extjs.gxt.ui.client.widget.layout.*;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelFactory;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 import java.util.*;
@@ -29,7 +27,7 @@ import java.util.*;
 public class ClientProductPropertyWindow extends Window {
 
 	private List<ClientJSO> clients;
-	private InstalaceJSO instalace;
+	private InstallationJSO instalace;
 	private FormPanel form;
 	private FormBinding binding;
 	protected BeanModelFactory propertyFactory;
@@ -39,7 +37,7 @@ public class ClientProductPropertyWindow extends Window {
 
 	private static final String FIELD_SPEC = "-18";
 
-	public ClientProductPropertyWindow(List<ClientJSO> clients, InstalaceJSO instalace) {
+	public ClientProductPropertyWindow(final List<ClientJSO> clients, final InstallationJSO instalace) {
 
 		this.clients = clients;
 		this.instalace = instalace;
@@ -183,9 +181,28 @@ public class ClientProductPropertyWindow extends Window {
 		buttonInstall.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				// TODO - start install instead of cancel
 				if (simpleComboBox.getSelectedIndex() != 0) storeData();
 				ClientProductPropertyWindow.this.hide(ce.getButton());
+
+				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + instalace.getName() + " na "
+						+ clients.size() + " počítačů?", new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						if (be.getButtonClicked() == null) {
+							return;
+						}
+						if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
+							return;
+						}
+						AppEvent event = new AppEvent(ClientController.CLIENT_INSTALL);
+						event.setData("clients", clients);
+						event.setData("instalace", instalace);
+						Dispatcher.forwardEvent(event);
+
+					}
+
+				});
+
 			}
 		});
 		addButton(buttonInstall);
@@ -218,12 +235,6 @@ public class ClientProductPropertyWindow extends Window {
 		clientService.listClientProductProperties(this.clients.get(0), new RemoteRequestCallback<List<ProductPropertyJSO>>() {
 			@Override
 			public void onRequestSuccess(List<ProductPropertyJSO> productProperties) {
-
-				for (ProductPropertyJSO jso : productProperties) {
-					GWT.log(jso.getObjectId()+";"+jso.getProductId()+";"+jso.getPropertyId());
-				}
-				//List<BeanModel> properties = propertyFactory.createModel(productProperties);
-				// TODO fill
 				form.unmask();
 			}
 
@@ -259,12 +270,10 @@ public class ClientProductPropertyWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při ukládání nastavení instalace pro klienta: ", th.getMessage());
+				MessageDialog.showError("Chyba při ukládání nastavení instalace: ", th.getMessage());
 				form.unmask();
 			}
 		});
-
-		// TODO start install - show warning
 
 	}
 
@@ -273,7 +282,7 @@ public class ClientProductPropertyWindow extends Window {
 	 *
 	 * @return list of properties
 	 */
-	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstalaceJSO instalace) {
+	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstallationJSO instalace) {
 
 		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
 

@@ -20,14 +20,14 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
  * @author Jan Dosoudil
  *
  */
-public class InstalationView extends View {
+public class InstallationView extends View {
 
-	private InstalationWindow window;
+	private InstallationWindow window;
 
 	/**
 	 * @param controller
 	 */
-	public InstalationView(Controller controller) {
+	public InstallationView(Controller controller) {
 		super(controller);
 	}
 
@@ -37,10 +37,10 @@ public class InstalationView extends View {
 	@Override
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (InstalationController.INSTALATIONS == type) {
-			showInstalations();
+		if (InstallationController.INSTALATIONS == type) {
+			showInstallations();
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
-			LifecycleEventJSO lifecycleEventJSO = (LifecycleEventJSO)event.getData();
+			LifecycleEventJSO lifecycleEventJSO = event.getData();
 			onLifecycleEvent(lifecycleEventJSO);
 		}
 	}
@@ -48,13 +48,13 @@ public class InstalationView extends View {
 	/**
 	 *
 	 */
-	private void showInstalations() {
+	private void showInstallations() {
 		GWT.runAsync(new RunAsyncCallback() {
 
 			@Override
 			public void onSuccess() {
 				if (null == window) {
-					window = new InstalationWindow();
+					window = new InstallationWindow();
 				}
 
 				Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, window);
