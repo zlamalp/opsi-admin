@@ -27,7 +27,7 @@ import java.util.*;
 public class ClientProductPropertyWindow extends Window {
 
 	private List<ClientJSO> clients;
-	private InstallationJSO instalace;
+	private InstallationJSO installation;
 	private FormPanel form;
 	private FormBinding binding;
 	protected BeanModelFactory propertyFactory;
@@ -37,10 +37,10 @@ public class ClientProductPropertyWindow extends Window {
 
 	private static final String FIELD_SPEC = "-18";
 
-	public ClientProductPropertyWindow(final List<ClientJSO> clients, final InstallationJSO instalace) {
+	public ClientProductPropertyWindow(final List<ClientJSO> clients, final InstallationJSO installation) {
 
 		this.clients = clients;
-		this.instalace = instalace;
+		this.installation = installation;
 
 		this.propertyFactory = BeanModelLookup.get().getFactory(ProductPropertyJSO.CLASS_NAME);
 
@@ -48,7 +48,7 @@ public class ClientProductPropertyWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(340, 180);
-		setHeadingHtml("Instalace: " + instalace.getName());
+		setHeadingHtml("Instalace: " + installation.getName());
 
 		setLayout(new FitLayout());
 
@@ -122,7 +122,7 @@ public class ClientProductPropertyWindow extends Window {
 		size.setVisible(false);
 
 		final Text info = new Text();
-		final String instalaceNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + instalace.getName() + ".";
+		final String instalaceNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + installation.getName() + ".";
 		info.setText(instalaceNoChange);
 		info.setAutoHeight(true);
 
@@ -184,7 +184,7 @@ public class ClientProductPropertyWindow extends Window {
 				if (simpleComboBox.getSelectedIndex() != 0) storeData();
 				ClientProductPropertyWindow.this.hide(ce.getButton());
 
-				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + instalace.getName() + " na "
+				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + installation.getName() + " na "
 						+ clients.size() + " počítačů?", new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
@@ -196,7 +196,7 @@ public class ClientProductPropertyWindow extends Window {
 						}
 						AppEvent event = new AppEvent(ClientController.CLIENT_INSTALL);
 						event.setData("clients", clients);
-						event.setData("instalace", instalace);
+						event.setData("instalace", installation);
 						Dispatcher.forwardEvent(event);
 
 					}
@@ -259,7 +259,7 @@ public class ClientProductPropertyWindow extends Window {
 		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
 
 		for (final ClientJSO client : this.clients) {
-			properties.addAll(constructProperties(client, instalace));
+			properties.addAll(constructProperties(client, installation));
 		}
 
 		clientService.updateClientProductProperties(properties, new RemoteRequestCallback<Object>() {

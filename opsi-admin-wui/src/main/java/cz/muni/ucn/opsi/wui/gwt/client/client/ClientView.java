@@ -138,12 +138,12 @@ public class ClientView extends View {
 	 * This will update OPSI and start installing selected product (OS) to all passed Clients.
 	 *
 	 * @param clients Clients to start installation for
-	 * @param instalace Product (OS) to install.
+	 * @param installation Product (OS) to install.
 	 */
-	private void installClients(List<BeanModel> clients, InstallationJSO instalace) {
+	private void installClients(List<BeanModel> clients, InstallationJSO installation) {
 		for (BeanModel beanModel : clients) {
 			ClientJSO client = beanModel.getBean();
-			ClientService.getInstance().installClient(client, instalace, new RemoteRequestCallback<Object>() {
+			ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
 				}
@@ -156,9 +156,8 @@ public class ClientView extends View {
 		}
 	}
 
-
 	/**
-	 * Handle app wide life-cycle events
+	 * Handle app wide life-cycle events. Pass them to windows.
 	 *
 	 * @param lifecycleEventJSO Event to pass
 	 */

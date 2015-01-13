@@ -50,6 +50,8 @@ public class ClientController {
 	private ObjectMapper mapper;
 
 	/**
+	 * Setter for ClientService
+	 *
 	 * @param clientService the clientService to set
 	 */
 	@Autowired
@@ -58,6 +60,8 @@ public class ClientController {
 	}
 
 	/**
+	 * Setter for InstallationService
+	 *
 	 * @param installationService the installationService to set
 	 */
 	@Autowired
@@ -65,14 +69,18 @@ public class ClientController {
 		this.installationService = installationService;
 	}
 	/**
+	 * Setter for OpsiService
+	 *
 	 * @param opsiService the opsiService to set
 	 */
 	@Autowired
-	public void setClientService(OpsiClientService opsiService) {
+	public void setOpsiService(OpsiClientService opsiService) {
 		this.opsiService = opsiService;
 	}
 
 	/**
+	 * Setter for validator
+	 *
 	 * @param validator the validator to set
 	 */
 	@Autowired
@@ -81,6 +89,8 @@ public class ClientController {
 	}
 
 	/**
+	 * Setter for mapper
+	 *
 	 * @param mapper the mapper to set
 	 */
 	@Autowired

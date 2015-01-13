@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.instalation;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -17,14 +14,18 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.CometController;
 import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events on listing Installations.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class InstallationView extends View {
 
 	private InstallationWindow window;
 
 	/**
+	 * Create new instance of view
+	 *
 	 * @param controller
 	 */
 	public InstallationView(Controller controller) {
@@ -46,7 +47,7 @@ public class InstallationView extends View {
 	}
 
 	/**
-	 *
+	 * Method ensuring async loading of UI
 	 */
 	private void showInstallations() {
 		GWT.runAsync(new RunAsyncCallback() {
@@ -56,7 +57,6 @@ public class InstallationView extends View {
 				if (null == window) {
 					window = new InstallationWindow();
 				}
-
 				Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, window);
 				if (window.isVisible()) {
 					window.toFront();
@@ -74,14 +74,15 @@ public class InstallationView extends View {
 	}
 
 	/**
-	 * @param lifecycleEventJSO
+	 * Handle app wide life-cycle events. Pass them to windows.
+	 *
+	 * @param lifecycleEventJSO Event to pass
 	 */
 	private void onLifecycleEvent(LifecycleEventJSO lifecycleEventJSO) {
 		if (null == window) {
 			return;
 		}
 		window.onLifecycleEvent(lifecycleEventJSO);
-
 	}
 
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.group;
 
 import java.util.ArrayList;
@@ -16,8 +13,12 @@ import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequest;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Client side API for calls related to the Groups.
  *
+ * @see cz.muni.ucn.opsi.wui.remote.group.GroupController for server side of this API
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class GroupService {
 
@@ -37,7 +38,9 @@ public class GroupService {
 	}
 
 	/**
-	 * @param remoteRequestCallback
+	 * List all groups in OPSI-ADMIN
+	 *
+	 * @param callback Callback to handle response
 	 */
 	public void listGroups(RemoteRequestCallback<List<GroupJSO>> callback) {
 
@@ -46,7 +49,7 @@ public class GroupService {
 
 			@Override
 			protected List<GroupJSO> transformResponse(String text) {
-				return transformArray(text);
+				return transformArrayGroup(text);
 			}
 		};
 		listGroupsRequest.execute(callback);
@@ -54,7 +57,12 @@ public class GroupService {
 	}
 
 	/**
-	 * @param remoteRequestCallback
+	 * Create an empty client object for group.
+	 *
+	 * THIS METHOD DOESN'T CREATE GROUP IN OPSI-ADMIN !!
+	 * It just returns Group object with generated UUID.
+	 *
+	 * @param callback Callback to handle response
 	 */
 	public void createGroup(RemoteRequestCallback<GroupJSO> callback) {
 
@@ -71,11 +79,13 @@ public class GroupService {
 	}
 
 	/**
-	 * @param group
-	 * @param remoteRequestCallback
+	 * Retrieve Group for editing from opsi-admin app (not OPSI).
+	 * This is used to ensure data are up-to date in edit group forms.
+	 *
+	 * @param group Group to edit.
+	 * @param callback Callback to handle response.
 	 */
 	public void editGroup(GroupJSO group, RemoteRequestCallback<GroupJSO> callback) {
-
 
 		RemoteRequest<GroupJSO> request = new RemoteRequest<GroupJSO>(RequestBuilder.POST,
 				URL.encode(GWT.getHostPageBaseURL() + GROUP_EDIT_URL)) {
@@ -85,7 +95,6 @@ public class GroupService {
 				return transform(text);
 			}
 		};
-
 		request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		StringBuilder requestData = new StringBuilder();
@@ -98,14 +107,17 @@ public class GroupService {
 	}
 
 	/**
-	 * @param group
-	 * @param remoteRequestCallback
+	 * Save group to OPSI-ADMIN server.
+	 *
+	 * Before sending group object make sure you retrieved new one by either #editGroup or #createGroup method.
+	 *
+	 * @param group Group to be saved
+	 * @param callback Callback to handle response
 	 */
 	public void saveGroup(GroupJSO group, RemoteRequestCallback<Object> callback) {
 
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.PUT,
 				URL.encode(GWT.getHostPageBaseURL() + GROUP_SAVE_URL)) {
-
 			@Override
 			protected Object transformResponse(String text) {
 				return null;
@@ -125,11 +137,13 @@ public class GroupService {
 	}
 
 	/**
+	 * Delete group from OPSI-admin server.
 	 *
-	 * @param group
-	 * @param callback
+	 * @param group Group to be deleted
+	 * @param callback Callback to handle response
 	 */
 	public void deleteGroup(GroupJSO group, RemoteRequestCallback<Object> callback) {
+
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.DELETE,
 				URL.encode(GWT.getHostPageBaseURL() + GROUP_DELETE_URL)) {
 
@@ -148,14 +162,17 @@ public class GroupService {
 		request.setHeader("Content-Type", "application/json");
 
 		request.execute(callback);
+
 	}
 
 	/**
-	 * @param text
-	 * @return
+	 * Transform JSON to list of GroupJSO
+	 *
+	 * @param json json to parse
+	 * @return List of GroupJSO
 	 */
-	protected List<GroupJSO> transformArray(String text) {
-        JsArray<GroupJSO> array = GroupJSO.fromJSONArray(text);
+	protected List<GroupJSO> transformArrayGroup(String json) {
+        JsArray<GroupJSO> array = GroupJSO.fromJSONArray(json);
         List<GroupJSO> users = new ArrayList<GroupJSO>();
         for(int i = 0; i < array.length(); i++) {
                 users.add(array.get(i));
@@ -163,23 +180,26 @@ public class GroupService {
         return users;
 	}
 
-    /**
-     * @param jsonObject
-     * @return
-     */
-    private GroupJSO transform(String u) {
-    	return GroupJSO.fromJSON(u);
+	/**
+	 * Transform JSON to GroupJSO object
+	 *
+	 * @param json json to parse
+	 * @return GroupJSO object
+	 */
+    private GroupJSO transform(String json) {
+    	return GroupJSO.fromJSON(json);
     }
 
-    /**
-     * @param user
-     * @return
-     */
-    private JSONObject transform(GroupJSO u) {
-    	JSONObject jsonObject = new JSONObject(u);
+	/**
+	 * Transform GroupJSO to JSON object
+	 *
+	 * @param group group to convert
+	 * @return JSON object
+	 */
+    private JSONObject transform(GroupJSO group) {
+    	JSONObject jsonObject = new JSONObject(group);
     	jsonObject.put("$H", null);
     	return jsonObject;
     }
-
 
 }

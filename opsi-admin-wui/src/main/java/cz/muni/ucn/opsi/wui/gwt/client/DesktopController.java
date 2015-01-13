@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client;
 
 import com.extjs.gxt.desktop.client.Desktop;
@@ -25,13 +22,16 @@ import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationController;
 import cz.muni.ucn.opsi.wui.gwt.client.login.LoginController;
 
 /**
- * @author Jan Dosoudil
+ * Controller class for handling web app "desktop" environment
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class DesktopController extends Controller {
 
 	private Desktop desktop;
 
+	// define events
 	public static final EventType WINDOW_CREATED = new EventType();
 	public static final EventType WINDOW_DESTROYED = new EventType();
 	public static final EventType INIT = new EventType();
@@ -39,33 +39,26 @@ public class DesktopController extends Controller {
 	private boolean first = true;
 
 	/**
-	 *
+	 * Create new instance
 	 */
 	public DesktopController() {
-//		registerEventTypes(LoginController.LOGIN_OK);
+		//registerEventTypes(LoginController.LOGIN_OK);
 		registerEventTypes(LoginController.LOGGED_OUT);
 		registerEventTypes(DesktopController.WINDOW_CREATED);
 		registerEventTypes(DesktopController.WINDOW_DESTROYED);
 		registerEventTypes(DesktopController.INIT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.extjs.gxt.ui.client.mvc.Controller#handleEvent(com.extjs.gxt.ui.client
-	 * .mvc.AppEvent)
-	 */
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
 		if (DesktopController.INIT == type) {
 			showDesktop();
-//			JSONObject object = event.getData();
-//			desktop.getStartMenu().setHeading(object.get("displayName").isString().stringValue());
+			//JSONObject object = event.getData();
+			//desktop.getStartMenu().setHeading(object.get("displayName").isString().stringValue());
 		} else if (LoginController.LOGGED_OUT == type) {
 			com.google.gwt.user.client.Window.Location.assign("index.html");
-/*
+		/*
 		} else if (LoginController.LOGGED_OUT == type) {
 
 			List<Window> windows = desktop.getWindows();
@@ -94,6 +87,11 @@ public class DesktopController extends Controller {
 		}
 	}
 
+	/**
+	 * Handle selection event (show window associated with bookmark)
+	 *
+	 * @param ce object event triggering it
+	 */
 	private void itemSelected(final ComponentEvent ce) {
 		Window w;
 		EventType event;
@@ -120,12 +118,13 @@ public class DesktopController extends Controller {
 		}
 	}
 
+	/**
+	 * Build "desktop" environment
+	 */
 	public void showDesktop() {
 
-
-//		desktop.getStartMenu().removeAll();
-//		desktop.getDesktop().removeAll();
-
+		//desktop.getStartMenu().removeAll();
+		//desktop.getDesktop().removeAll();
 
 		SelectionListener<MenuEvent> menuListener = new SelectionListener<MenuEvent>() {
 			@Override
@@ -162,14 +161,15 @@ public class DesktopController extends Controller {
 		s5.addSelectionListener(shortcutListener);
 		desktop.addShortcut(s5);
 
-/*
+		/*
 		Shortcut s5 = new Shortcut();
 		s5.setText("Úkoly");
 		s5.setId("tasks-shortcut");
 		s5.setData("event", TasksController.TASKS);
 		s5.addSelectionListener(shortcutListener);
 		desktop.addShortcut(s5);
-*/
+		*/
+
 		TaskBar taskBar = desktop.getTaskBar();
 
 		StartMenu menu = taskBar.getStartMenu();
@@ -194,13 +194,14 @@ public class DesktopController extends Controller {
 		menuItem.setData("event", InstallationController.INSTALATIONS);
 		menu.add(menuItem);
 
-/*
+		/*
 		menuItem = new MenuItem("Úkoly");
 		menuItem.setIcon(IconHelper.createStyle("tasks"));
 		menuItem.addSelectionListener(menuListener);
 		menuItem.setData("event", TasksController.TASKS);
 		menu.add(menuItem);
-*/
+		*/
+
 		if (!first) {
 			return;
 		}
@@ -228,11 +229,9 @@ public class DesktopController extends Controller {
 			}
 		});
 		menu.addTool(tool);
+
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		desktop = new Desktop();

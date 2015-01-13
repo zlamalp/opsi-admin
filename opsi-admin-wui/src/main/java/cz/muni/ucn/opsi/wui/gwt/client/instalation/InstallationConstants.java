@@ -10,10 +10,10 @@ import com.google.gwt.i18n.client.Constants;
  */
 public interface InstallationConstants extends Constants {
 
-	@Key("instalation.name")
+	@Key("installation.name")
 	String getName();
 
-	@Key("instalation.save")
-	String getInstalationsSave();
+	@Key("installation.save")
+	String getInstallationsSave();
 
 }

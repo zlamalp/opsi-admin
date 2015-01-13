@@ -152,7 +152,7 @@ public class ClientService {
 	}
 
 	/**
-	 * Delete client form OPSI server.
+	 * Delete client from OPSI server.
 	 *
 	 * @param client Client to be deleted
 	 * @param callback Callback to handle response
@@ -184,14 +184,14 @@ public class ClientService {
 	 * Trigger installation of some product (OS) to Client in OPSI.
 	 *
 	 * @param client Client to install to.
-	 * @param instalace Product (OS) to install.
+	 * @param installation Product (OS) to install.
 	 * @param callback Callback to handle response
 	 */
-	public void installClient(ClientJSO client, InstallationJSO instalace, RemoteRequestCallback<Object> callback) {
+	public void installClient(ClientJSO client, InstallationJSO installation, RemoteRequestCallback<Object> callback) {
 
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.PUT,
 				URL.encode(GWT.getHostPageBaseURL() + CLIENT_INSTALL_URL +
-						"?instalaceId=" + instalace.getId())) {
+						"?instalaceId=" + installation.getId())) {
 
 			@Override
 			protected Object transformResponse(String text) {

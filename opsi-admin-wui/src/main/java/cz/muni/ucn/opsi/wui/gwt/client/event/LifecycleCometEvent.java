@@ -1,13 +1,12 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.event;
 
 import de.novanic.eventservice.client.event.Event;
 
 /**
- * @author Jan Dosoudil
+ * LifeCycle Event object for Comet service
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal
  */
 public class LifecycleCometEvent implements Event {
 
@@ -16,13 +15,14 @@ public class LifecycleCometEvent implements Event {
 	private String jsonObject;
 
 	/**
-	 *
+	 * Create new instance
 	 */
-	public LifecycleCometEvent() {
-	}
+	public LifecycleCometEvent() {}
 
 	/**
-	 * @param jsonObject
+	 * Create new instance
+	 *
+	 * @param jsonObject Object associated with event
 	 */
 	public LifecycleCometEvent(String jsonObject) {
 		super();
@@ -30,6 +30,8 @@ public class LifecycleCometEvent implements Event {
 	}
 
 	/**
+	 * Get JSON object associated with event
+	 *
 	 * @return the jsonObject
 	 */
 	public String getJsonObject() {
@@ -37,11 +39,12 @@ public class LifecycleCometEvent implements Event {
 	}
 
 	/**
+	 * Set JSON object associated with event
+	 *
 	 * @param jsonObject the jsonObject to set
 	 */
 	public void setJsonObject(String jsonObject) {
 		this.jsonObject = jsonObject;
 	}
-
 
 }

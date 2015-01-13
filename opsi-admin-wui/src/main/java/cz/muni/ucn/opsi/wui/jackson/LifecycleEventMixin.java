@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.jackson;
 
 import java.io.Serializable;
@@ -13,8 +10,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Typing;
 
 /**
- * @author Jan Dosoudil
+ * JSON Mixin config for LifeCycleEvent
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @JsonTypeInfo(include=As.PROPERTY, use=Id.CLASS)
 public abstract class LifecycleEventMixin {

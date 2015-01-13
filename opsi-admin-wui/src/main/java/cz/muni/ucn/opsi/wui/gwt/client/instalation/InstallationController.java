@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.instalation;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -11,8 +8,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.CometController;
 import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 
 /**
- * @author Jan Dosoudil
+ * Controller for handling app events associated with Installations.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class InstallationController extends Controller {
 
@@ -22,7 +21,7 @@ public class InstallationController extends Controller {
 	private InstallationView installationView;
 
 	/**
-	 *
+	 * Create new instance of Controller
 	 */
 	public InstallationController() {
 		registerEventTypes(InstallationController.INSTALATIONS);
@@ -45,9 +44,6 @@ public class InstallationController extends Controller {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();
@@ -55,21 +51,27 @@ public class InstallationController extends Controller {
 	}
 
 	/**
-	 * @param event
+	 * Forward event to InstallationView
+	 *
+	 * @param event Event to pass
 	 */
 	private void showInstallations(AppEvent event) {
 		forwardToView(installationView, event);
 	}
 
 	/**
-	 * @param event
+	 * Forward event to InstallationView
+	 *
+	 * @param event Event to pass
 	 */
 	private void saveInstallations(AppEvent event) {
 		forwardToView(installationView, event);
 	}
 
 	/**
-	 * @param event
+	 * Handle app wide life-cycle events
+	 *
+	 * @param event Event to pass
 	 */
 	private void onLifecycleEvent(AppEvent event) {
         LifecycleEventJSO le = (LifecycleEventJSO) event.getData();

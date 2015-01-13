@@ -18,22 +18,51 @@ public class ProductPropertyJSO extends JavaScriptObject implements BeanModelTag
 	protected ProductPropertyJSO() {
 	}
 
+	/**
+	 * Get Clients name associated with this ProductProperty (usually hostname)
+	 *
+	 * @see cz.muni.ucn.opsi.api.client.Client
+	 *
+	 * @return Name of Client associated with this ProductProperty
+	 */
 	public final native String getObjectId() /*-{
 		return this.objectId;
 	}-*/;
 
+	/**
+	 * Get ID property of Installation object associated with this ProductProperty
+	 *
+	 * @see cz.muni.ucn.opsi.api.instalation.Installation
+	 *
+	 * @return ID property of Installation associated with this ProductProperty
+	 */
 	public final native String getProductId() /*-{
 		return this.productId;
 	}-*/;
 
+	/**
+	 * Get ID (name) of this ProductProperty
+	 *
+	 * @return ID (name) of this ProductProperty
+	 */
 	public final native String getPropertyId() /*-{
 		return this.propertyId;
 	}-*/;
 
+	/**
+	 * Get values set for this ProductProperty
+	 *
+	 * @return List of values set for this ProductProperty
+	 */
 	public final native JsArrayString getValues() /*-{
 		return this.values;
 	}-*/;
 
+	/**
+	 * Get object type
+	 *
+	 * @return "ProductPropertyState"
+	 */
 	public final native String getType() /*-{
 		return this.type;
 	}-*/;

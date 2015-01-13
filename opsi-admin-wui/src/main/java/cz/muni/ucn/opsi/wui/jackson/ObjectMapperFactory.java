@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.jackson;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,8 +9,10 @@ import cz.u2.eis.valueObjects.Stub;
 import cz.u2.eis.valueObjects.ValueObject;
 
 /**
- * @author Jan Dosoudil
+ * Mapper for objects applied to serializer and deserializer
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Component("objectMapper")
 public class ObjectMapperFactory implements FactoryBean<ObjectMapper> {
@@ -23,7 +22,9 @@ public class ObjectMapperFactory implements FactoryBean<ObjectMapper> {
 	 */
 	@Override
 	public ObjectMapper getObject() throws Exception {
+
 		ObjectMapper mapper = new ObjectMapper();
+
 		mapper.getSerializationConfig().addMixInAnnotations(ValueObject.class, ValueObjectMixin.class);
 		mapper.getDeserializationConfig().addMixInAnnotations(ValueObject.class, ValueObjectMixin.class);
 
@@ -33,9 +34,10 @@ public class ObjectMapperFactory implements FactoryBean<ObjectMapper> {
 		mapper.getSerializationConfig().addMixInAnnotations(Stub.class, StubMixin.class);
 		mapper.getDeserializationConfig().addMixInAnnotations(Stub.class, StubMixin.class);
 
-//		mapper.enableDefaultTyping(DefaultTyping.OBJECT_AND_NON_CONCRETE, As.PROPERTY);
+		//mapper.enableDefaultTyping(DefaultTyping.OBJECT_AND_NON_CONCRETE, As.PROPERTY);
 
 		return mapper;
+
 	}
 
 	/* (non-Javadoc)

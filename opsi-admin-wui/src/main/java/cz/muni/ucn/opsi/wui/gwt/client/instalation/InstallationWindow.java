@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.instalation;
 
 import java.util.ArrayList;
@@ -31,8 +28,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window for managing Installation
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class InstallationWindow extends Window {
 
@@ -46,26 +45,25 @@ public class InstallationWindow extends Window {
 	private DualListField<BeanModel> lists;
 
 	/**
-	 *
+	 * Create new instance of installation Window
 	 */
 	public InstallationWindow() {
 
 		factory = BeanModelLookup.get().getFactory(InstallationJSO.CLASS_NAME);
-
 		installationConstants = GWT.create(InstallationConstants.class);
 
-
+		// set window properties
 		setMinimizable(true);
 		setMaximizable(true);
 		setHeadingHtml("Správa instalací");
 		setSize(840, 400);
 		setLayout(new FitLayout());
 
+		// create new toolbar
 		ToolBar toolbar = createToolbar();
-
 		setTopComponent(toolbar);
 
-
+		// set model provider
 		ModelKeyProvider<BeanModel> keyProvider = new ModelKeyProvider<BeanModel>() {
 
 			@Override
@@ -87,6 +85,7 @@ public class InstallationWindow extends Window {
 			}
 		};
 
+		// lists of installations
 	    lists = new DualListField<BeanModel>();
 	    lists.setMode(Mode.APPEND);
 	    lists.setFieldLabel("instalace");
@@ -107,12 +106,10 @@ public class InstallationWindow extends Window {
 	    toStore.setModelComparer(comparer);
 	    to.setStore(toStore);
 
-
 		lists.mask(GXT.MESSAGES.loadMask_msg());
-
-
 	    InstallationService groupService = InstallationService.getInstance();
 
+		// load all installations
 		groupService.listInstallationsAll(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
 			public void onRequestSuccess(List<InstallationJSO> instalations) {
@@ -129,6 +126,7 @@ public class InstallationWindow extends Window {
 			}
 		});
 
+		// load available installations
 		groupService.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
 			public void onRequestSuccess(List<InstallationJSO> instalations) {
@@ -147,12 +145,10 @@ public class InstallationWindow extends Window {
 
 		add(lists);
 
-
-
 	}
 
 	/**
-	 *
+	 * Move installations between stores (allowed / not allowed)
 	 */
 	protected void updateState() {
 		if (!loadedFrom || !loadedTo) {
@@ -163,66 +159,71 @@ public class InstallationWindow extends Window {
 			fromStore.remove(m);
 		}
 		lists.unmask();
-
 	}
 
 	/**
-	 * @return
+	 * Create Toolbar buttons
+	 *
+	 * @return Instance of ToolBar
 	 */
 	private ToolBar createToolbar() {
+
 		ToolBar toolbar = new ToolBar();
 
-		buttonSave = new Button(installationConstants.getInstalationsSave());
+		buttonSave = new Button(installationConstants.getInstallationsSave());
 		buttonSave.setIcon(IconHelper.createStyle("save"));
 		buttonSave.setData("event", InstallationController.INSTALATIONS_SAVE);
 		buttonSave.addSelectionListener(new SaveButtonListener());
 		toolbar.add(buttonSave);
 
 		return toolbar;
+
 	}
 
 	/**
-	 * @param le
+	 * Handle app-wide life-cycle events. This method ensures that data about clients are up-to-date.
+	 *
+	 * @param le life-cycle events
 	 */
 	public void onLifecycleEvent(LifecycleEventJSO le) {
+
+		// LIFE-CYCLE EVENTS ARE NOT SUPPORTED ON INSTALLATIONS
 		BeanModel model = factory.createModel(le.getBean());
 		if (LifecycleEventJSO.CREATED == le.getEventType()) {
-//			store.add(model);
+			//store.add(model);
 		} else if (LifecycleEventJSO.MODIFIED == le.getEventType()) {
-//			store.update(model);
+			//store.update(model);
 		} else if (LifecycleEventJSO.DELETED == le.getEventType()) {
-//			store.remove(model);
+			//store.remove(model);
 		}
 
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * Save button listener
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class SaveButtonListener extends SelectionListener<ButtonEvent> {
 		@Override
 		public void componentSelected(ButtonEvent ce) {
-			List<BeanModel> instalations = toStore.getModels();
+			List<BeanModel> installations = toStore.getModels();
 
 			InstallationService installationService = InstallationService.getInstance();
-			List<InstallationJSO> instalace = new ArrayList<InstallationJSO>();
-			for (BeanModel beanModel : instalations) {
-				instalace.add((InstallationJSO) beanModel.getBean());
+			List<InstallationJSO> install = new ArrayList<InstallationJSO>();
+			for (BeanModel beanModel : installations) {
+				install.add((InstallationJSO) beanModel.getBean());
 			}
-			installationService.saveInstallations(instalace, new RemoteRequestCallback<Object>() {
-
+			installationService.saveInstallations(install, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
 					MessageDialog.showMessage("Uloženo", "Seznam instalací byl úspěšně uložen.");
 				}
-
 				@Override
 				public void onRequestFailed(Throwable th) {
 					MessageDialog.showError("Nelze uložit seznam instalací", th.getMessage());
 				}
 			});
-
 		}
 	}
 

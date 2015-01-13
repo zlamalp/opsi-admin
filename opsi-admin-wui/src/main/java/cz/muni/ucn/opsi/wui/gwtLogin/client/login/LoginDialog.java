@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwtLogin.client.login;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -24,8 +21,10 @@ import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.google.gwt.json.client.JSONObject;
 
 /**
- * @author Jan Dosoudil
+ * Dialog for handling user login
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class LoginDialog extends Dialog {
 
@@ -38,9 +37,10 @@ public class LoginDialog extends Dialog {
 	private LoginService loginService = LoginService.getInstance();
 
 	/**
-	 *
+	 * Create new instance of login dialog
 	 */
 	public LoginDialog() {
+
 		FormLayout layout = new FormLayout();
 		layout.setLabelWidth(100);
 		layout.setDefaultWidth(200);
@@ -74,9 +74,6 @@ public class LoginDialog extends Dialog {
 		userName.addKeyListener(keyListener);
 		userName.setName("j_username");
 		userName.addKeyListener(new KeyListener() {
-			/* (non-Javadoc)
-			 * @see com.extjs.gxt.ui.client.event.KeyListener#componentKeyPress(com.extjs.gxt.ui.client.event.ComponentEvent)
-			 */
 			@Override
 			public void componentKeyPress(ComponentEvent event) {
 				if(event.getKeyCode() == KeyboardEvents.Enter.getEventCode()) {
@@ -93,9 +90,6 @@ public class LoginDialog extends Dialog {
 		password.addKeyListener(keyListener);
 		password.setName("j_password");
 		password.addKeyListener(new KeyListener() {
-			/* (non-Javadoc)
-			 * @see com.extjs.gxt.ui.client.event.KeyListener#componentKeyPress(com.extjs.gxt.ui.client.event.ComponentEvent)
-			 */
 			@Override
 			public void componentKeyPress(ComponentEvent event) {
 				if(event.getKeyCode() == KeyboardEvents.Enter.getEventCode()) {
@@ -110,13 +104,9 @@ public class LoginDialog extends Dialog {
 		setFocusWidget(userName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.extjs.gxt.ui.client.widget.Dialog#createButtons()
-	 */
 	@Override
 	protected void createButtons() {
+
 		super.createButtons();
 		status = new Status();
 		status.setBusy("prosím čekejte...");
@@ -150,24 +140,32 @@ public class LoginDialog extends Dialog {
 
 	}
 
+	/**
+	 * Check if field has value
+	 *
+	 * @param field field to check
+	 * @return TRUE = has value / FALSE = is empty
+	 */
 	protected boolean hasValue(TextField<String> field) {
 		return field.getValue() != null && field.getValue().length() > 0;
 	}
 
 	/**
-	 *
+	 * Validate form
 	 */
 	protected void validate() {
 		login.setEnabled(hasValue(userName) && hasValue(password));
 	}
 
+	/**
+	 * Disable buttons onSubmiting the form
+	 */
 	protected void onSubmit() {
+
 		status.show();
 		getButtonBar().disable();
 
-		loginService.login(userName.getValue(), password.getValue(),
-				new LoginService.LoginCallback() {
-
+		loginService.login(userName.getValue(), password.getValue(), new LoginService.LoginCallback() {
 			@Override
 			public void onLoginOk(JSONObject loginStatus) {
 				Dispatcher.forwardEvent(LoginController.LOGIN_OK, loginStatus);
@@ -183,19 +181,24 @@ public class LoginDialog extends Dialog {
 
 	}
 
-
+	/**
+	 * Show error message
+	 *
+	 * @param message error message
+	 */
 	private void showError(String message) {
 		enableButtons();
-		MessageBox.alert("Neúspěšné přihlášení",
-				"Neplatné jméno nebo heslo<br/>\n"+message,
+		MessageBox.alert("Neúspěšné přihlášení", "Neplatné jméno nebo heslo<br/>\n"+message,
 				new Listener<MessageBoxEvent>() {
-
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
 					}
 				});
 	}
 
+	/**
+	 * Enable buttons
+	 */
 	private void enableButtons() {
 		getButtonBar().enable();
 		status.hide();
@@ -204,4 +207,5 @@ public class LoginDialog extends Dialog {
 		userName.focus();
 		userName.selectAll();
 	}
+
 }

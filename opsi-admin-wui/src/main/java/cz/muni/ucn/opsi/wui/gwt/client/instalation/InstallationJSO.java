@@ -6,7 +6,7 @@ import com.google.gwt.core.client.JsArray;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelTag;
 
 /**
- * Object representing Installation, aka NetBootProduct in OPSI.
+ * JSO wrapper object representing Installation, aka NetBootProduct in OPSI.
  *
  * @author Jan Dosoudil
  * @author Pavel Zlámal <zlamal@cesnet.cz>

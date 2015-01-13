@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.remote.authentication;
 
 import java.util.ArrayList;
@@ -23,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @author Jan Dosoudil
+ * Server side of apps API for handling logging-in
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Controller
 @RequestMapping("/loginStatus")
@@ -34,14 +33,14 @@ public class LoginStatusController {
 
 	@RequestMapping(method=RequestMethod.GET)
 	public @ResponseBody AuthenticationStatus getLoginStatus() {
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (null == authentication) {
 			return new AuthenticationStatus(AuthenticationStatus.STATUS_NOT_LOGGED_IN);
 		}
 
 		try {
-			decisionManager.decide(authentication, null,
-					Arrays.asList((ConfigAttribute) new SecurityConfig("IS_AUTHENTICATED_REMEMBERED")));
+			decisionManager.decide(authentication, null, Arrays.asList((ConfigAttribute) new SecurityConfig("IS_AUTHENTICATED_REMEMBERED")));
 
 			Collection<GrantedAuthority> authorities = authentication.getAuthorities();
 			List<String> auths = new ArrayList<String>();
@@ -61,10 +60,13 @@ public class LoginStatusController {
 	}
 
 	/**
+	 * Setter for accessDecisionManager
+	 *
 	 * @param decisionManager the decisionManager to set
 	 */
 	@Resource(name="accessDecisionManager")
 	public void setDecisionManager(AccessDecisionManager decisionManager) {
 		this.decisionManager = decisionManager;
 	}
+
 }

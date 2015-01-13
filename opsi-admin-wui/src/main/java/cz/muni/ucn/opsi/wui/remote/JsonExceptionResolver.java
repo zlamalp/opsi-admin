@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.remote;
 
 import java.util.Map;
@@ -19,8 +16,10 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import cz.muni.ucn.opsi.api.RequestError;
 
 /**
- * @author Jan Dosoudil
+ * Resolver for handling server exceptions sent to the client
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class JsonExceptionResolver extends AbstractHandlerExceptionResolver {
 

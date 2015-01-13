@@ -40,7 +40,7 @@ public class ClientJSO extends JavaScriptObject implements BeanModelTag {
 	}-*/;
 
 	/**
-	 * Get instance of JsArray this objects from JSON string
+	 * Get instance of JsArray of this objects from JSON string
 	 *
 	 * @param source JSON source
 	 * @return List of objects parsed from JSON

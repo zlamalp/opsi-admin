@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.group;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -11,21 +8,25 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.CometController;
 import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 
 /**
- * @author Jan Dosoudil
+ * Controller for handling app events associated with Groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class GroupController extends Controller {
 
+	// Available events for Groups
 	public static final EventType GROUPS = new EventType();
 	public static final EventType GROUP_NEW = new EventType();
 	public static final EventType GROUP_EDIT = new EventType();
 	public static final EventType GROUP_DELETE = new EventType();
 
+	// Views associated with events
 	private GroupsView groupsView;
 	private GroupEditView groupEditView;
 
 	/**
-	 *
+	 * Create controller for handling app events associated with Groups.
 	 */
 	public GroupController() {
 		registerEventTypes(GroupController.GROUPS);
@@ -35,9 +36,6 @@ public class GroupController extends Controller {
 		registerEventTypes(CometController.LIFECYCLE_EVENT_TYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#handleEvent(com.extjs.gxt.ui.client.mvc.AppEvent)
-	 */
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
@@ -54,9 +52,6 @@ public class GroupController extends Controller {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();
@@ -65,41 +60,51 @@ public class GroupController extends Controller {
 	}
 
 	/**
-	 * @param event
+	 * Forward event to Groups view
+	 *
+	 * @param event Event to pass
 	 */
 	private void showGroups(AppEvent event) {
 		forwardToView(groupsView, event);
 	}
 
 	/**
-	 * @param event
+	 * Forward event to GroupNew view
+	 *
+	 * @param event Event to pass
 	 */
 	private void groupNew(AppEvent event) {
 		forwardToView(groupEditView, event);
 	}
 
 	/**
-	 * @param event
+	 * Forward event to GroupEdit view
+	 *
+	 * @param event Event to pass
 	 */
 	private void groupEdit(AppEvent event) {
 		forwardToView(groupEditView, event);
 	}
 
 	/**
-	 * @param event
+	 * Forward event to GroupDelete view
+	 *
+	 * @param event Event to pass
 	 */
 	private void groupDelete(AppEvent event) {
 		forwardToView(groupsView, event);
 	}
 
 	/**
-	 * @param event
+	 * Handle app wide life-cycle events
+	 *
+	 * @param event Event to pass
 	 */
 	private void onLifecycleEvent(AppEvent event) {
-        LifecycleEventJSO le = (LifecycleEventJSO) event.getData();
-        if (!"cz.muni.ucn.opsi.api.group.Group".equals(le.getBeanClass())) {
-                return;
-        }
+		LifecycleEventJSO le = (LifecycleEventJSO) event.getData();
+		if (!"cz.muni.ucn.opsi.api.group.Group".equals(le.getBeanClass())) {
+			return;
+		}
 		forwardToView(groupsView, event);
 	}
 

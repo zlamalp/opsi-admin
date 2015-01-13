@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwtLogin.client.login;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -15,11 +12,14 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 
 /**
- * @author Jan Dosoudil
+ * Controller for events associated with loggin-in. Logging-off is part of the main GWT module "OpsiAdminApp"
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class LoginController extends Controller {
 
+	// events
 	public static final EventType LOGIN = new EventType();
 	public static final EventType LOGIN_OK = new EventType();
 	public static final EventType LOGIN_FAIL = new EventType();
@@ -27,7 +27,7 @@ public class LoginController extends Controller {
 	private LoginView loginView;
 
 	/**
-	 *
+	 * Create new instance
 	 */
 	public LoginController() {
 		registerEventTypes(LoginController.LOGIN);
@@ -35,9 +35,6 @@ public class LoginController extends Controller {
 		registerEventTypes(LoginController.LOGIN_FAIL);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#handleEvent(com.extjs.gxt.ui.client.mvc.AppEvent)
-	 */
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
@@ -51,7 +48,9 @@ public class LoginController extends Controller {
 	}
 
 	/**
+	 * Action on logging
 	 *
+	 * @param event application event
 	 */
 	protected void onLoginEvent(final AppEvent event) {
 
@@ -70,37 +69,35 @@ public class LoginController extends Controller {
 
 			@Override
 			public void onStatusFailed(String message) {
-				MessageBox.alert("Nelze zjistit stav přihlášní", message,
-						new Listener<MessageBoxEvent>() {
-							@Override
-							public void handleEvent(MessageBoxEvent be) {
-							}
-						});
+				MessageBox.alert("Nelze zjistit stav přihlášní", message, new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+					}
+				});
 			}
 		});
 
 	}
 
 	/**
-	 * @param event
+	 * Action on login OK
 	 *
+	 * @param event application event
 	 */
 	protected void onLoginOkEvent(AppEvent event) {
+		// redirect to another GWT module "OpsiAdminApp"
 		Window.Location.assign("index.jsp");
 	}
 
-
 	/**
-	 * @param event
+	 * Action on login fail
 	 *
+	 * @param event application event
 	 */
 	protected void onLoginFailEvent(AppEvent event) {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();

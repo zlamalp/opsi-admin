@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.remote.authentication;
 
 import java.io.IOException;
@@ -29,33 +26,26 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
- * @author Jan Dosoudil
+ * Application initializing bean class handles user log-in and log-out.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-public class AuthenticationHandler implements AuthenticationFailureHandler,
-		AuthenticationSuccessHandler, LogoutSuccessHandler, InitializingBean {
+public class AuthenticationHandler implements AuthenticationFailureHandler, AuthenticationSuccessHandler, LogoutSuccessHandler, InitializingBean {
 
 	private static Logger logger = LoggerFactory.getLogger(AuthenticationHandler.class);
 
 	private JsonFactory jsonFactory;
 	private ObjectMapper objectMapper;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		jsonFactory = new JsonFactory();
 		jsonFactory.setCodec(objectMapper);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.AuthenticationSuccessHandler#onAuthenticationSuccess(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.Authentication)
-	 */
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request,
-			HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
 		AuthenticationStatus as = new AuthenticationStatus();
 		as.setStatus(AuthenticationStatus.STATUS_LOGGED_IN);
@@ -81,13 +71,8 @@ public class AuthenticationHandler implements AuthenticationFailureHandler,
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.AuthenticationFailureHandler#onAuthenticationFailure(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
-	 */
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request,
-			HttpServletResponse response, AuthenticationException exception)
-			throws IOException, ServletException {
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("authentication failure", exception);
@@ -100,13 +85,8 @@ public class AuthenticationHandler implements AuthenticationFailureHandler,
 		writeResponse(response, as);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.logout.LogoutSuccessHandler#onLogoutSuccess(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.Authentication)
-	 */
 	@Override
-	public void onLogoutSuccess(HttpServletRequest request,
-			HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException {
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
 		AuthenticationStatus as = new AuthenticationStatus();
 		as.setStatus(AuthenticationStatus.STATUS_NOT_LOGGED_IN);
@@ -116,14 +96,13 @@ public class AuthenticationHandler implements AuthenticationFailureHandler,
 	}
 
 	/**
-	 * @param response
-	 * @param authenticationStatus
-	 * @param status
-	 * @param message
+	 * Write authentication response in JSON
+	 *
+	 * @param response response
+	 * @param authenticationStatus authentication status
 	 * @throws IOException
 	 */
-	private void writeResponse(HttpServletResponse response,
-			AuthenticationStatus authenticationStatus) throws IOException {
+	private void writeResponse(HttpServletResponse response, AuthenticationStatus authenticationStatus) throws IOException {
 
 		PrintWriter writer = response.getWriter();
 
@@ -135,10 +114,13 @@ public class AuthenticationHandler implements AuthenticationFailureHandler,
 	}
 
 	/**
+	 * Setter for objectMapper
+	 *
 	 * @param objectMapper the objectMapper to set
 	 */
 	@Autowired
 	public void setObjectMapper(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
+
 }

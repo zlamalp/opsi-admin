@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.security;
 
 import java.util.HashSet;
@@ -13,11 +10,13 @@ import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopul
 import org.springframework.util.StringUtils;
 
 /**
- * @author dosoudilj
+ * LDAP populator class is responsible for reading user roles from LDAP. It's by default based on
+ * group names user is memberOf.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal
  */
-public class OpsiLdapAuthoritiesPopulator extends
-		DefaultLdapAuthoritiesPopulator {
+public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
 
 	private String userGroup = null;
 	private String userRole = "ROLE_USER";
@@ -27,20 +26,18 @@ public class OpsiLdapAuthoritiesPopulator extends
     private String rolePrefix = "ROLE_";
 
 	/**
-	 * @param contextSource
-	 * @param groupSearchBase
+	 * Create new instance
+	 *
+	 * @param contextSource Context
+	 * @param groupSearchBase Search base
 	 */
-	public OpsiLdapAuthoritiesPopulator(ContextSource contextSource,
-			String groupSearchBase) {
+	public OpsiLdapAuthoritiesPopulator(ContextSource contextSource, String groupSearchBase) {
 		super(contextSource, groupSearchBase);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator#getGroupMembershipRoles(java.lang.String, java.lang.String)
-	 */
 	@Override
-	public Set<GrantedAuthority> getGroupMembershipRoles(String userDn,
-			String username) {
+	public Set<GrantedAuthority> getGroupMembershipRoles(String userDn, String username) {
+
 		Set<GrantedAuthority> authorities = super.getGroupMembershipRoles(userDn, username);
 		Set<String> roles = new HashSet<String>();
 		for (GrantedAuthority authority : authorities) {
@@ -51,10 +48,18 @@ public class OpsiLdapAuthoritiesPopulator extends
 		addGroupRoles(authorities, roles, userGroup, userRole);
 
 		return authorities;
+
 	}
 
-	private void addGroupRoles(Set<GrantedAuthority> authorities,
-			Set<String> roles, String group, String role) {
+	/**
+	 * Convert LDAP group name to user role name
+	 *
+	 * @param authorities authorities user have
+	 * @param roles roles user have
+	 * @param group group to add
+	 * @param role role to add
+	 */
+	private void addGroupRoles(Set<GrantedAuthority> authorities, Set<String> roles, String group, String role) {
 		if (StringUtils.hasText(group)) {
 			String roleName = rolePrefix;
 			if (convertToUpperCase) {
@@ -68,17 +73,12 @@ public class OpsiLdapAuthoritiesPopulator extends
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator#setConvertToUpperCase(boolean)
-	 */
 	@Override
 	public void setConvertToUpperCase(boolean convertToUpperCase) {
 		this.convertToUpperCase = convertToUpperCase;
 		super.setConvertToUpperCase(convertToUpperCase);
 	}
-	/* (non-Javadoc)
-	 * @see org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator#setRolePrefix(java.lang.String)
-	 */
+
 	@Override
 	public void setRolePrefix(String rolePrefix) {
 		this.rolePrefix = rolePrefix;
@@ -86,12 +86,17 @@ public class OpsiLdapAuthoritiesPopulator extends
 	}
 
 	/**
+	 * Set LDAP group name used to identify role ADMIN
+	 *
 	 * @param adminGroup the adminGroup to set
 	 */
 	public void setAdminGroup(String adminGroup) {
 		this.adminGroup = adminGroup;
 	}
+
 	/**
+	 * Get group name associated with role ADMIN
+	 *
 	 * @return the adminGroup
 	 */
 	public String getAdminGroup() {
@@ -99,12 +104,17 @@ public class OpsiLdapAuthoritiesPopulator extends
 	}
 
 	/**
+	 * Set LDAP group name used to identify role USER
+	 *
 	 * @param userGroup the userGroup to set
 	 */
 	public void setUserGroup(String userGroup) {
 		this.userGroup = userGroup;
 	}
+
 	/**
+	 * Get group name associated with role USER
+	 *
 	 * @return the userGroup
 	 */
 	public String getUserGroup() {
@@ -112,27 +122,39 @@ public class OpsiLdapAuthoritiesPopulator extends
 	}
 
 	/**
+	 * Set admin role name
+	 *
 	 * @param adminRole the adminRole to set
 	 */
 	public void setAdminRole(String adminRole) {
 		this.adminRole = adminRole;
 	}
+
 	/**
+	 * Get admin role name
+	 *
 	 * @return the adminRole
 	 */
 	public String getAdminRole() {
 		return adminRole;
 	}
+
 	/**
+	 * Set user role name
+	 *
 	 * @param userRole the userRole to set
 	 */
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+
 	/**
+	 * Get user role name
+	 *
 	 * @return the userRole
 	 */
 	public String getUserRole() {
 		return userRole;
 	}
+
 }

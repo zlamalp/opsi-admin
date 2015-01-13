@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.login;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -11,8 +8,10 @@ import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 
 /**
- * @author Jan Dosoudil
+ * Controller for handling app events associated with logging-off. Logging-in is handled by own GWT module "LoginApp"
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class LoginController extends Controller {
 
@@ -21,16 +20,13 @@ public class LoginController extends Controller {
 
 
 	/**
-	 *
+	 * New instance of controller
 	 */
 	public LoginController() {
 		registerEventTypes(LoginController.LOGOUT);
 		registerEventTypes(LoginController.LOGGED_OUT);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#handleEvent(com.extjs.gxt.ui.client.mvc.AppEvent)
-	 */
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
@@ -40,9 +36,9 @@ public class LoginController extends Controller {
 	}
 
 	/**
-	/**
-	 * @param event
+	 * Handle logout event
 	 *
+	 * @param event Event to handle
 	 */
 	protected void onLogoutEvent(AppEvent event) {
 
@@ -59,6 +55,7 @@ public class LoginController extends Controller {
 				MessageDialog.showError("Chyba při odhlašování", message);
 			}
 		});
+
 	}
 
 }

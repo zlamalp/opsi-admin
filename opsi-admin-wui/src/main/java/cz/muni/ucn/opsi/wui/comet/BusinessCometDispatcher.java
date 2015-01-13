@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.comet;
 
 import java.io.ByteArrayOutputStream;
@@ -25,16 +22,15 @@ import de.novanic.eventservice.client.event.domain.DefaultDomain;
 import de.novanic.eventservice.service.registry.EventRegistryFactory;
 
 /**
- * @author Jan Dosoudil
+ * Application LifeCycle event listener class.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Component
-public class BusinessCometDispatcher implements ApplicationListener<LifecycleEvent>,
-		InitializingBean {
+public class BusinessCometDispatcher implements ApplicationListener<LifecycleEvent>, InitializingBean {
 
-	/**
-	 *
-	 */
+	// Set domain for events
 	private static final DefaultDomain DOMAIN = new DefaultDomain("lifecycleEvent");
 
 	private static final Logger logger = LoggerFactory.getLogger(BusinessCometDispatcher.class);
@@ -43,10 +39,16 @@ public class BusinessCometDispatcher implements ApplicationListener<LifecycleEve
 
 	private ObjectMapper objectMapper;
 
-
-	/* (non-Javadoc)
-	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	/**
+	 * Setter for object mapper
+	 *
+	 * @param objectMapper the objectMapper to set
 	 */
+	@Autowired
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+
 	@Override
 	public void onApplicationEvent(LifecycleEvent event) {
 		if (!(event instanceof RemoteEvent)) {
@@ -69,9 +71,6 @@ public class BusinessCometDispatcher implements ApplicationListener<LifecycleEve
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
@@ -80,11 +79,4 @@ public class BusinessCometDispatcher implements ApplicationListener<LifecycleEve
 
 	}
 
-	/**
-	 * @param objectMapper the objectMapper to set
-	 */
-	@Autowired
-	public void setObjectMapper(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
 }

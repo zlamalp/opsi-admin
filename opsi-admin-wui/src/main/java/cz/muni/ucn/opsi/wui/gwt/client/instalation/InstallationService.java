@@ -15,8 +15,12 @@ import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequest;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Client side API for calls related to the Installations.
  *
+ * @see cz.muni.ucn.opsi.wui.remote.instalation.InstallationController for server side of this API
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class InstallationService {
 
@@ -34,7 +38,9 @@ public class InstallationService {
 	}
 
 	/**
+	 * List available installations form OPSI admin.
 	 *
+	 * @param callback Callback to handle response
 	 */
 	public void listInstallations(RemoteRequestCallback<List<InstallationJSO>> callback) {
 		RemoteRequest<List<InstallationJSO>> request = new RemoteRequest<List<InstallationJSO>>(RequestBuilder.GET,
@@ -51,7 +57,9 @@ public class InstallationService {
 	}
 
 	/**
+	 * List all installations form OPSI server.
 	 *
+	 * @param callback Callback to handle response
 	 */
 	public void listInstallationsAll(RemoteRequestCallback<List<InstallationJSO>> callback) {
 		RemoteRequest<List<InstallationJSO>> request = new RemoteRequest<List<InstallationJSO>>(RequestBuilder.GET,
@@ -68,9 +76,12 @@ public class InstallationService {
 	}
 
 	/**
+	 * Save list of available installations to OPSI admin.
 	 *
+	 * @param installations Installations to save (allow for install)
+	 * @param callback Callback to handle response
 	 */
-	public void saveInstallations(List<InstallationJSO> instalations, RemoteRequestCallback<Object> callback) {
+	public void saveInstallations(List<InstallationJSO> installations, RemoteRequestCallback<Object> callback) {
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.POST,
 				URL.encode(GWT.getHostPageBaseURL() + INSTALLATION_SAVE_URL)) {
 
@@ -82,9 +93,9 @@ public class InstallationService {
 
 		request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
-		JSONArray instalaceJson = transform(instalations);
+		JSONArray installJson = transform(installations);
 
-		String data = instalaceJson.toString();
+		String data = installJson.toString();
 		request.setRequestData(data);
 		request.setHeader("Content-Type", "application/json");
 
@@ -93,8 +104,10 @@ public class InstallationService {
 	}
 
 	/**
-	 * @param installations
-	 * @return
+	 * Transform list of InstallationJSO to JSONArray
+	 *
+	 * @param installations Installations to convert
+	 * @return JSON array
 	 */
 	private JSONArray transform(List<InstallationJSO> installations) {
 		JSONArray jsonArray = new JSONArray();
@@ -105,27 +118,29 @@ public class InstallationService {
 	}
 
 	/**
-	 * @param i
-	 * @return
+	 * Transform InstallationJSO to JSON object
+	 *
+	 * @param installation installation to convert
+	 * @return JSON object
 	 */
-	private JSONValue transform(InstallationJSO i) {
-		JSONObject jsonObject = new JSONObject(i);
+	private JSONValue transform(InstallationJSO installation) {
+		JSONObject jsonObject = new JSONObject(installation);
 		jsonObject.put("$H", null);
 		return jsonObject;
 	}
 
 	/**
-	 * @param text
-	 * @return
+	 * Transform JSON to list of InstallationJSO
+	 *
+	 * @param json json to parse
+	 * @return List of GroupJSO
 	 */
-	protected List<InstallationJSO> transformInstallation(String text) {
-
-        JsArray<InstallationJSO> array = InstallationJSO.fromJSONArray(text);
+	protected List<InstallationJSO> transformInstallation(String json) {
+        JsArray<InstallationJSO> array = InstallationJSO.fromJSONArray(json);
         List<InstallationJSO> insts = new ArrayList<InstallationJSO>();
         for(int i = 0; i < array.length(); i++) {
                 insts.add(array.get(i));
         }
-
         return insts;
 	}
 

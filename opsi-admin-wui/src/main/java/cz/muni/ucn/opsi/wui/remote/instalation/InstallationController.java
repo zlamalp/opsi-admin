@@ -27,6 +27,8 @@ public class InstallationController {
 	private InstallationService installationService;
 
 	/**
+	 * Setter for installation service
+	 *
 	 * @param installationService the installationService to set
 	 */
 	@Autowired

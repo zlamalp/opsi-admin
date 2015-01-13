@@ -9,6 +9,7 @@ import com.google.gwt.i18n.client.Constants;
  * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public interface ClientConstants extends Constants {
+
 	@Key("client.name")
 	String getName();
 	@Key("client.description")
@@ -39,4 +40,5 @@ public interface ClientConstants extends Constants {
 	String getClientExport();
 	@Key("client.clientExportCSV")
 	String getClientExportCSV();
+
 }

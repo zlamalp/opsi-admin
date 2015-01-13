@@ -44,6 +44,7 @@ public class OpsiAdminApp implements EntryPoint {
 		dispatcher.dispatch(DesktopController.INIT);
 
 		GXT.hideLoadingPanel("loading");
+
 	}
 
 }

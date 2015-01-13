@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.group;
 
 import java.util.List;
@@ -33,8 +30,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window used to edit Group details. It's used also to create new groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class GroupEditWindow extends Window {
 
@@ -49,9 +48,13 @@ public class GroupEditWindow extends Window {
 	private GroupJSO group;
 
 	/**
-	 * @param newGroup
+	 * Create new instance of Window.
+	 * Group model is set by #setGroupModel()
+	 *
+	 * @param newGroup TRUE = create new group / FALSE = edit existing group
 	 */
 	public GroupEditWindow(boolean newGroup) {
+
 		this.newGroup = newGroup;
 
 		groupConstants = GWT.create(GroupConstants.class);
@@ -60,13 +63,8 @@ public class GroupEditWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(400, 150);
-//		setBodyStyle("padding: 0px; ");
 
-//		FormLayout layout = new FormLayout();
-//		layout.setLabelAlign(LabelAlign.LEFT);
-//		setLayout(layout);
 		setLayout(new FitLayout());
-
 
 		form = new FormPanel();
 		form.setHeaderVisible(false);
@@ -76,9 +74,7 @@ public class GroupEditWindow extends Window {
 		ContentPanel borderPanel = new ContentPanel();
 		borderPanel.setLayout(new RowLayout(Orientation.VERTICAL));
 		borderPanel.setHeaderVisible(false);
-//		rowPanel.setFrame(false);
 		borderPanel.setBodyBorder(false);
-//		rowPanel.setBorders(false);
 		borderPanel.setBodyStyle("background: transparent;");
 
 		form.add(borderPanel, new FormData("100% 100%"));
@@ -87,9 +83,7 @@ public class GroupEditWindow extends Window {
 		FormLayout formPanelLayout = new FormLayout();
 		formPanel.setLayout(formPanelLayout);
 		formPanel.setHeaderVisible(false);
-//		formPanel.setFrame(false);
 		formPanel.setBodyBorder(false);
-//		formPanel.setBorders(false);
 		formPanel.setBodyStyle("background: transparent;");
 
 		borderPanel.add(formPanel, new RowData(1, -1));
@@ -113,12 +107,14 @@ public class GroupEditWindow extends Window {
 		binding.setUpdateOriginalValue(true);
 
 		generateButtons();
+
 	}
 
 	/**
-	 *
+	 * Generate buttons for form.
 	 */
 	private void generateButtons() {
+
 		Button buttonCancel = new Button("Zrušit");
 		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -133,14 +129,11 @@ public class GroupEditWindow extends Window {
 		Button buttonOK = new Button("Uložit");
 		buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
-
 			@Override
 			public void componentSelected(final ButtonEvent ce) {
 
 				if (!validate()) {
-					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby",
-							new Listener<MessageBoxEvent>() {
-
+					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby", new Listener<MessageBoxEvent>() {
 						@Override
 						public void handleEvent(MessageBoxEvent be) {
 						}
@@ -174,18 +167,19 @@ public class GroupEditWindow extends Window {
 	}
 
 	/**
-	 * @param group
+	 * Set Group model associated with this editing form.
+	 *
+	 * @param group Group to edit or create
 	 */
 	public void setGroupModel(GroupJSO group) {
 		this.group = group;
 		BeanModel model = BeanModelLookup.get().getFactory(GroupJSO.CLASS_NAME).createModel(group);
 		binding.bind(model);
-
 		updateHeading();
 	}
 
 	/**
-	 *
+	 * Update heading based on state - creating or editing group.
 	 */
 	private void updateHeading() {
 		if (newGroup) {
@@ -202,7 +196,9 @@ public class GroupEditWindow extends Window {
 	}
 
 	/**
-	 * @return
+	 * Validate form fields.
+	 *
+	 * @return TRUE = valid / FALSE = not valid
 	 */
 	protected boolean validate() {
 		List<Field<?>> fields = form.getFields();

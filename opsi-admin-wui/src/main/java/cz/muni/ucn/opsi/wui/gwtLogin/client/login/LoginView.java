@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwtLogin.client.login;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -9,23 +6,24 @@ import com.extjs.gxt.ui.client.mvc.Controller;
 import com.extjs.gxt.ui.client.mvc.View;
 
 /**
- * @author Jan Dosoudil
+ * View for handling login event
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class LoginView extends View {
 
 	private LoginDialog dialog;
 
 	/**
+	 * Create new instance
+	 *
 	 * @param controller
 	 */
 	public LoginView(Controller controller) {
 		super(controller);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.View#handleEvent(com.extjs.gxt.ui.client.mvc.AppEvent)
-	 */
 	@Override
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
@@ -34,9 +32,6 @@ public class LoginView extends View {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.View#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();
