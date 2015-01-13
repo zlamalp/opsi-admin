@@ -34,10 +34,11 @@ When contributing please respect following:
 
 #### App structure
 
-This app consist of 2 main parts:
+This app consist of 3 parts:
 
-* Client GWT/GXT web app, which provides simplified UI for OPSI and apps own purpose.
-* Server part, which handles authorization of users to respective agendas, allow grouping of clients and communicate with the rest of systems.
+* *opsi-admin-api* is API layer for server side of the app related to persistence (DB).
+* *opsi-admin-core* is implementation layer for the server side of the app related to persistence (DB).
+* *opsi-admin-wui* which consist of two parts. It contain RPC of the server side and also client web-app (user interface). They are both using GWT/GXT and this module also contains spring configuration and whole app initialization.
 
 #### Local run (GWT - DevMode)
 
@@ -49,7 +50,7 @@ Now you can start the app by running command inside *opsi-admin-wui/* folder:
 mvn gwt:run -DskipTests -Pmysql
 ```
 
-Login on displayed webpage and then fix the URL by adding codeserver reference to load it in devel mode.
+Login on displayed webpage and then fix the URL by adding codeserver reference to load it in a devel mode.
 
 If you wish to use new super-dev-mode, start also codeserver the same way:
 
@@ -79,6 +80,7 @@ ssh -L 10636:localhost:636 login@server.domain
 
 * You must choose port above 10000 (e.g. 10636) for LDAP since privileged ports (below 10000) can't be redirected.
 * You must have a valid user entry in LDAP with password, because otherwise you won't pass apps login screen.
+* You must be _memberOf_ proper group in LDAP in order to gain expected user role in this app (user,admin). Names of groups can be configured by properties file.
 
 In order to skip server certificates validation (necessary when redirecting ports) uncomment following in bean definition of *contextSource* in *security.xml* file.
 Mentioned java class is already present in sources.
