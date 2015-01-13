@@ -1,12 +1,11 @@
 package cz.muni.ucn.opsi.wui.jackson;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
-
 import cz.u2.eis.api.events.data.LifecycleEvent;
 import cz.u2.eis.valueObjects.Stub;
 import cz.u2.eis.valueObjects.ValueObject;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper for objects applied to serializer and deserializer

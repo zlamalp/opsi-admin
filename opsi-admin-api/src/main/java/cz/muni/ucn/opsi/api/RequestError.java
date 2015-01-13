@@ -18,7 +18,7 @@ public class RequestError implements Serializable {
 	/**
 	 * Create new instance
 	 *
-	 * @param message  Message sent to the client web app
+	 * @param message Message sent to the client web app
 	 */
 	public RequestError(String message) {
 		this.message = message;

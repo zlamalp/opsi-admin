@@ -1,12 +1,12 @@
 package cz.muni.ucn.opsi.wui.jackson;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
+
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Override default JSON serializer to exclude unwanted object properties

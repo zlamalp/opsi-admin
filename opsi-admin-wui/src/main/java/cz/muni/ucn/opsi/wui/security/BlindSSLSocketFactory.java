@@ -15,7 +15,7 @@ import java.security.cert.X509Certificate;
 /**
  * SSLSocketFactory that does not check certificates.
  * Set up using java.naming.ldap.factory.socket=cz.muni.ucn.opsi.wui.security.BlindSSLSocketFactory for LDAP environment.
- *
+ * <p/>
  * Use it only when in devel environment.
  *
  * @author Martin Kuba makub@ics.muni.cz
@@ -53,6 +53,10 @@ public class BlindSSLSocketFactory extends SSLSocketFactory {
 		}
 
 
+	}
+
+	public static SocketFactory getDefault() {
+		return blindSSLSocketFactory;
 	}
 
 	@Override
@@ -93,10 +97,6 @@ public class BlindSSLSocketFactory extends SSLSocketFactory {
 	@Override
 	public Socket createSocket(InetAddress inetAddress, int i, InetAddress inetAddress1, int i1) throws IOException {
 		return socketFactory.createSocket(inetAddress, i, inetAddress1, i1);
-	}
-
-	public static SocketFactory getDefault() {
-		return blindSSLSocketFactory;
 	}
 
 }

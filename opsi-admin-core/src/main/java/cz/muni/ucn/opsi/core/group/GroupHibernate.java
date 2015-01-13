@@ -1,29 +1,22 @@
 package cz.muni.ucn.opsi.core.group;
 
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.validator.constraints.Length;
-
 import cz.muni.ucn.opsi.core.client.ClientHibernate;
 import cz.u2.eis.valueObjects.hibernate.HibernateValueObject;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Hibernate representation of Group object.
  *
- * @see cz.muni.ucn.opsi.api.group.Group
- *
  * @author Jan Dosoudil
  * @author Pavel Zlámal <zlamal@cesnet.cz>
+ * @see cz.muni.ucn.opsi.api.group.Group
  */
-@Entity(name="Group")
-@Table(name="GROUPS", uniqueConstraints={@UniqueConstraint(columnNames="name", name="u_name")})
+@Entity(name = "Group")
+@Table(name = "GROUPS", uniqueConstraints = {@UniqueConstraint(columnNames = "name", name = "u_name")})
 public class GroupHibernate extends HibernateValueObject {
 
 	private static final long serialVersionUID = 3151715438105784467L;
@@ -54,8 +47,8 @@ public class GroupHibernate extends HibernateValueObject {
 	 *
 	 * @return the Group name
 	 */
-	@Length(min=1, max=50)
-	@Column(length=50)
+	@Length(min = 1, max = 50)
+	@Column(length = 50)
 	public String getName() {
 		return name;
 	}
@@ -74,8 +67,8 @@ public class GroupHibernate extends HibernateValueObject {
 	 *
 	 * @return the role
 	 */
-	@Length(max=50)
-	@Column(length=50)
+	@Length(max = 50)
+	@Column(length = 50)
 	public String getRole() {
 		return role;
 	}
@@ -94,7 +87,7 @@ public class GroupHibernate extends HibernateValueObject {
 	 *
 	 * @return List of clients in Group
 	 */
-	@OneToMany(mappedBy="group")
+	@OneToMany(mappedBy = "group")
 	public List<ClientHibernate> getClients() {
 		return clients;
 	}

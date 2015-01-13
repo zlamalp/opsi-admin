@@ -1,6 +1,6 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:security="http://www.springframework.org/schema/security"
+<beans xmlns:security="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
@@ -17,20 +17,20 @@
 		<security:intercept-url pattern="/services/httpRemoteAuthenticationManager" filters="none" />
 		<security:intercept-url pattern="/remote/**" access="ROLE_USER" />
 		-->
-		<security:intercept-url pattern="/login.jsp" filters="none" />
-		<security:intercept-url pattern="/images/**" filters="none" />
-		<security:intercept-url pattern="/gxt/**" filters="none" />
-		<security:intercept-url pattern="/cz.muni.ucn.opsi.wui.gwtLogin.LoginApp/**" filters="none" />
-		<security:intercept-url pattern="/remote/loginStatus" filters="none" />
-		<security:intercept-url pattern="/**" access="ROLE_USER" />
+		<security:intercept-url pattern="/login.jsp" filters="none"/>
+		<security:intercept-url pattern="/images/**" filters="none"/>
+		<security:intercept-url pattern="/gxt/**" filters="none"/>
+		<security:intercept-url pattern="/cz.muni.ucn.opsi.wui.gwtLogin.LoginApp/**" filters="none"/>
+		<security:intercept-url pattern="/remote/loginStatus" filters="none"/>
+		<security:intercept-url pattern="/**" access="ROLE_USER"/>
 		<!--<security:intercept-url pattern="/**" access="ROLE_USER,ROLE_ANONYMOUS" /> -->
 		<!--<security:form-login login-page="/login.do" default-target-url="/" authentication-failure-url="/login.do?login_error"/>-->
 		<security:form-login login-page="/login.jsp"
 		                     authentication-failure-handler-ref="authenticationHandler"
 		                     authentication-success-handler-ref="authenticationHandler"/>
-		<security:anonymous  />
-		<security:http-basic />
-		<security:logout success-handler-ref="authenticationHandler" />
+		<security:anonymous/>
+		<security:http-basic/>
+		<security:logout success-handler-ref="authenticationHandler"/>
 		<!--<security:remember-me key="eshop-wui" user-service-ref="opsiUserService"/>-->
 	</security:http>
 
@@ -48,13 +48,13 @@
 	</security:authentication-manager>
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions" value="true" />
+		<property name="allowIfAllAbstainDecisions" value="true"/>
 		<property name="decisionVoters">
 			<list>
-				<ref bean="roleVoter" />
-				<ref bean="groupVoter" />
-				<ref bean="authenticatedVoter" />
-				<ref bean="jsr250Voter" />
+				<ref bean="roleVoter"/>
+				<ref bean="groupVoter"/>
+				<ref bean="authenticatedVoter"/>
+				<ref bean="jsr250Voter"/>
 			</list>
 		</property>
 	</bean>
@@ -94,9 +94,9 @@
 
 	<!-- Define security context -->
 	<bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-		<constructor-arg value="${ldap.server}" />
-		<property name="userDn" value="${ldap.bindDn}" />
-		<property name="password" value="${ldap.bindPassword}" />
+		<constructor-arg value="${ldap.server}"/>
+		<property name="userDn" value="${ldap.bindDn}"/>
+		<property name="password" value="${ldap.bindPassword}"/>
 		<!-- Skip cert verification for devel purpose
 		<property name="baseEnvironmentProperties">
 			<map>
@@ -115,7 +115,7 @@
 	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
 		<constructor-arg>
 			<bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
-				<constructor-arg ref="contextSource" />
+				<constructor-arg ref="contextSource"/>
 				<property name="userDnPatterns">
 					<list>
 						<!--<value>uid={0},ou=people</value>-->
@@ -141,9 +141,9 @@
 		<constructor-arg ref="ldapUserSearch"/>
 		<constructor-arg>
 			<bean class="cz.muni.ucn.opsi.wui.security.OpsiLdapAuthoritiesPopulator">
-				<constructor-arg ref="contextSource" />
-				<constructor-arg value="${ldap.group.searchBase}" />
-				<property name="groupRoleAttribute" value="cn" />
+				<constructor-arg ref="contextSource"/>
+				<constructor-arg value="${ldap.group.searchBase}"/>
+				<property name="groupRoleAttribute" value="cn"/>
 				<property name="convertToUpperCase" value="true"/>
 				<property name="groupSearchFilter" value="${ldap.group.searchFilter}"/>
 				<property name="rolePrefix" value="GROUP_"/>

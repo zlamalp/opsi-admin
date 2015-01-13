@@ -1,16 +1,15 @@
 package cz.muni.ucn.opsi.core.group;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import cz.muni.ucn.opsi.api.group.Group;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import cz.muni.ucn.opsi.api.group.Group;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Implementation class for storing and listing Groups to DB.
@@ -72,11 +71,10 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Transform Hibernate version to API version of Group
 	 *
-	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
-	 * @see cz.muni.ucn.opsi.api.group.Group
-	 *
 	 * @param hibernate Hibernate version of object
 	 * @return API version of Group object
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
 	 */
 	private Group transform(GroupHibernate hibernate) {
 		if (null == hibernate) {
@@ -92,11 +90,10 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Transform list of Hibernate version to API version of Groups
 	 *
-	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
-	 * @see cz.muni.ucn.opsi.api.group.Group
-	 *
 	 * @param hibernate list of Hibernate version of objects
 	 * @return list of API version of Group objects
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
 	 */
 	private List<Group> transform(List<GroupHibernate> hibernate) {
 		if (null == hibernate) {
@@ -113,12 +110,11 @@ public class GroupDaoImpl implements GroupDao {
 	 * Transform API version to Hibernate version of Group while using
 	 * current Hibernate version of object to update values.
 	 *
-	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
-	 * @see cz.muni.ucn.opsi.api.group.Group
-	 *
 	 * @param saved current Hibernate object from DB
 	 * @param group API version of Group object
 	 * @return Hibernate version of object
+	 * @see cz.muni.ucn.opsi.core.group.GroupHibernate
+	 * @see cz.muni.ucn.opsi.api.group.Group
 	 */
 	private GroupHibernate transform(final GroupHibernate saved, final Group group) {
 		GroupHibernate toSave = saved;

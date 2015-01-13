@@ -1,8 +1,8 @@
 package cz.muni.ucn.opsi.api.instalation;
 
-import java.util.List;
-
 import org.springframework.security.access.annotation.Secured;
+
+import java.util.List;
 
 /**
  * Service class used to manage Installations available to normal users.

@@ -1,11 +1,6 @@
 package cz.muni.ucn.opsi.wui.remote;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-
+import cz.muni.ucn.opsi.api.RequestError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,7 +8,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
-import cz.muni.ucn.opsi.api.RequestError;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+import java.util.Map;
 
 /**
  * Resolver for handling server exceptions sent to the client
@@ -30,7 +28,7 @@ public class JsonExceptionResolver extends AbstractHandlerExceptionResolver {
 	 */
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception ex) {
+	                                          HttpServletResponse response, Object handler, Exception ex) {
 
 		logger.info("submitting exception to client", ex);
 
@@ -40,7 +38,7 @@ public class JsonExceptionResolver extends AbstractHandlerExceptionResolver {
 		if (ex instanceof AccessDeniedException) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		} else if (ex instanceof ValidationException) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		} else {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

@@ -1,8 +1,8 @@
 package cz.muni.ucn.opsi.api.group;
 
-import java.util.UUID;
-
 import cz.u2.eis.valueObjects.ValueObject;
+
+import java.util.UUID;
 
 /**
  * Object representing Group. It's not supported by OPSI and is stored only locally in DB and AD (LDAP).

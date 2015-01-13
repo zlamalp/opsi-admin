@@ -1,13 +1,13 @@
 package cz.muni.ucn.opsi.wui.security;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.util.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * LDAP populator class is responsible for reading user roles from LDAP. It's by default based on
@@ -23,12 +23,12 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	private String adminGroup = null;
 	private String adminRole = "ROLE_ADMIN";
 	private boolean convertToUpperCase = true;
-    private String rolePrefix = "ROLE_";
+	private String rolePrefix = "ROLE_";
 
 	/**
 	 * Create new instance
 	 *
-	 * @param contextSource Context
+	 * @param contextSource   Context
 	 * @param groupSearchBase Search base
 	 */
 	public OpsiLdapAuthoritiesPopulator(ContextSource contextSource, String groupSearchBase) {
@@ -55,9 +55,9 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	 * Convert LDAP group name to user role name
 	 *
 	 * @param authorities authorities user have
-	 * @param roles roles user have
-	 * @param group group to add
-	 * @param role role to add
+	 * @param roles       roles user have
+	 * @param group       group to add
+	 * @param role        role to add
 	 */
 	private void addGroupRoles(Set<GrantedAuthority> authorities, Set<String> roles, String group, String role) {
 		if (StringUtils.hasText(group)) {
@@ -86,15 +86,6 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	}
 
 	/**
-	 * Set LDAP group name used to identify role ADMIN
-	 *
-	 * @param adminGroup the adminGroup to set
-	 */
-	public void setAdminGroup(String adminGroup) {
-		this.adminGroup = adminGroup;
-	}
-
-	/**
 	 * Get group name associated with role ADMIN
 	 *
 	 * @return the adminGroup
@@ -104,12 +95,12 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	}
 
 	/**
-	 * Set LDAP group name used to identify role USER
+	 * Set LDAP group name used to identify role ADMIN
 	 *
-	 * @param userGroup the userGroup to set
+	 * @param adminGroup the adminGroup to set
 	 */
-	public void setUserGroup(String userGroup) {
-		this.userGroup = userGroup;
+	public void setAdminGroup(String adminGroup) {
+		this.adminGroup = adminGroup;
 	}
 
 	/**
@@ -122,12 +113,12 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	}
 
 	/**
-	 * Set admin role name
+	 * Set LDAP group name used to identify role USER
 	 *
-	 * @param adminRole the adminRole to set
+	 * @param userGroup the userGroup to set
 	 */
-	public void setAdminRole(String adminRole) {
-		this.adminRole = adminRole;
+	public void setUserGroup(String userGroup) {
+		this.userGroup = userGroup;
 	}
 
 	/**
@@ -140,12 +131,12 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	}
 
 	/**
-	 * Set user role name
+	 * Set admin role name
 	 *
-	 * @param userRole the userRole to set
+	 * @param adminRole the adminRole to set
 	 */
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
+	public void setAdminRole(String adminRole) {
+		this.adminRole = adminRole;
 	}
 
 	/**
@@ -155,6 +146,15 @@ public class OpsiLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulato
 	 */
 	public String getUserRole() {
 		return userRole;
+	}
+
+	/**
+	 * Set user role name
+	 *
+	 * @param userRole the userRole to set
+	 */
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
 	}
 
 }

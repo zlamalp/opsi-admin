@@ -1,8 +1,10 @@
 package cz.muni.ucn.opsi.wui.comet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
+import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleCometEvent;
+import cz.u2.eis.api.events.RemoteEvent;
+import cz.u2.eis.api.events.data.LifecycleEvent;
+import de.novanic.eventservice.client.event.domain.DefaultDomain;
+import de.novanic.eventservice.service.registry.EventRegistryFactory;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
@@ -15,11 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleCometEvent;
-import cz.u2.eis.api.events.RemoteEvent;
-import cz.u2.eis.api.events.data.LifecycleEvent;
-import de.novanic.eventservice.client.event.domain.DefaultDomain;
-import de.novanic.eventservice.service.registry.EventRegistryFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Application LifeCycle event listener class.

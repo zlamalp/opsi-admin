@@ -9,10 +9,9 @@ import java.util.UUID;
  * Object representing Client (machine to install SW on) in OPSI. It's stored both locally and in OPSI.
  * Access rights of users to specific Clients are managed by Groups.
  *
- * @see cz.muni.ucn.opsi.api.group.Group for details about access rights
- *
  * @author Jan Dosoudil
  * @author Pavel Zlámal <zlamal@cesnet.cz>
+ * @see cz.muni.ucn.opsi.api.group.Group for details about access rights
  */
 public class Client extends ValueObject {
 

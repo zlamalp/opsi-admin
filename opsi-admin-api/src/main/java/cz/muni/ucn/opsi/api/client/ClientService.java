@@ -1,11 +1,10 @@
 package cz.muni.ucn.opsi.api.client;
 
-import java.util.List;
-import java.util.UUID;
-
+import cz.muni.ucn.opsi.api.instalation.Installation;
 import org.springframework.security.access.annotation.Secured;
 
-import cz.muni.ucn.opsi.api.instalation.Installation;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Service class used to handle Clients (create/edit/delete/install)
@@ -20,9 +19,8 @@ public interface ClientService {
 	 * Create new Client object in specified Group.
 	 * Client is not saved to OPSI until calling #saveClient().
 	 *
-	 * @see #saveClient
-	 *
 	 * @return create Client object
+	 * @see #saveClient
 	 */
 	@Secured("ROLE_USER")
 	Client createClient(UUID groupUuid);
@@ -31,10 +29,9 @@ public interface ClientService {
 	 * Retrieve information about Client for editing purpose.
 	 * In order to save changes made to client call #saveClient();
 	 *
-	 * @see #saveClient
-	 *
 	 * @param uuid UUID of Client to edit
 	 * @return Client retrieved by UUID
+	 * @see #saveClient
 	 */
 	@Secured("ROLE_USER")
 	Client editClient(UUID uuid);
@@ -42,9 +39,8 @@ public interface ClientService {
 	/**
 	 * Save Client object to OPSI. If new, Client must be created using #createClient();
 	 *
-	 * @see #createClient
-	 *
 	 * @param client Client to save
+	 * @see #createClient
 	 */
 	@Secured("ROLE_USER")
 	void saveClient(Client client);
@@ -69,7 +65,7 @@ public interface ClientService {
 	/**
 	 * Install specific NetBoot product (Installation) to Client.
 	 *
-	 * @param client Client to install onto
+	 * @param client       Client to install onto
 	 * @param installation NetBoot product (Installation) to install
 	 */
 	@Secured("ROLE_USER")

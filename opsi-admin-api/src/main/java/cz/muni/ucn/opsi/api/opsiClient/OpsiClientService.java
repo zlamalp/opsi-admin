@@ -1,9 +1,10 @@
 package cz.muni.ucn.opsi.api.opsiClient;
 
-import java.util.List;
 import cz.muni.ucn.opsi.api.client.Client;
 import cz.muni.ucn.opsi.api.client.Hardware;
 import cz.muni.ucn.opsi.api.instalation.Installation;
+
+import java.util.List;
 
 /**
  * Service class used to exchange data with OPSI server.
@@ -23,7 +24,7 @@ public interface OpsiClientService {
 	/**
 	 * Install specific NetBoot product on Client
 	 *
-	 * @param client Client to install
+	 * @param client  Client to install
 	 * @param install NetBoot product to install
 	 */
 	void clientInstall(Client client, Installation install);
@@ -85,7 +86,7 @@ public interface OpsiClientService {
 
 	/**
 	 * Set NetBoot (Installation) properties to OPSI.
-	 *
+	 * <p/>
 	 * Association of sent property/value to some Client and NetBoot product (Installation)
 	 * is part of the object itself.
 	 *

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author Jan Dosoudil
- * // TODO - this is probably prepared for listing client Hardware informations ??
+ *         // TODO - this is probably prepared for listing client Hardware informations ??
  */
 public class Hardware implements Serializable {
 

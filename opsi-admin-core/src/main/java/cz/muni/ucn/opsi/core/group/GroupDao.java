@@ -1,9 +1,9 @@
 package cz.muni.ucn.opsi.core.group;
 
+import cz.muni.ucn.opsi.api.group.Group;
+
 import java.util.List;
 import java.util.UUID;
-
-import cz.muni.ucn.opsi.api.group.Group;
 
 /**
  * Interface class for storing and listing Groups to DB.
