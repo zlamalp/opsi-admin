@@ -72,7 +72,7 @@ public class ClientImportWindow extends Window {
 		setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
-		setSize(640, 350);
+		setSize(700, 350);
 		setHeadingHtml("Import klientů do skupiny " + group.getName());
 //		setBodyStyle("padding: 0px; ");
 
@@ -105,8 +105,9 @@ public class ClientImportWindow extends Window {
 		});
 
 		ColumnConfig name = new ColumnConfig("name", clientConstants.getName(), 180);
-		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 180);
+		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
+		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
 		ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
 
 		final CheckBoxSelectionModel<BeanModel> sm = new CheckBoxSelectionModel<BeanModel>();
@@ -115,8 +116,9 @@ public class ClientImportWindow extends Window {
 
 		config.add(sm.getColumn());
 		config.add(name);
-		config.add(description);
 		config.add(macAddress);
+		config.add(description);
+		config.add(notes);
 		config.add(ipAddress);
 
 		final ColumnModel cm = new ColumnModel(config);
@@ -131,9 +133,10 @@ public class ClientImportWindow extends Window {
 		filters.setLocal(true);
 
 		filters.addFilter(new StringFilter("name"));
-		filters.addFilter(new StringFilter("description"));
-		filters.addFilter(new StringFilter("ipAddress"));
 		filters.addFilter(new StringFilter("macAddress"));
+		filters.addFilter(new StringFilter("description"));
+		filters.addFilter(new StringFilter("notes"));
+		filters.addFilter(new StringFilter("ipAddress"));
 
 		clientsGrid.addPlugin(filters);
 

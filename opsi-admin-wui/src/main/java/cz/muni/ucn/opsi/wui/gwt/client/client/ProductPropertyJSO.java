@@ -59,15 +59,6 @@ public class ProductPropertyJSO extends JavaScriptObject implements BeanModelTag
 	}-*/;
 
 	/**
-	 * Get object type
-	 *
-	 * @return "ProductPropertyState"
-	 */
-	public final native String getType() /*-{
-		return this.type;
-	}-*/;
-
-	/**
 	 * Set object ID which is mapped to "name" of client
 	 *
 	 * @param objectId name of client this property belongs to
@@ -104,13 +95,6 @@ public class ProductPropertyJSO extends JavaScriptObject implements BeanModelTag
 		if (typeof this.values === 'undefined') this.values = new Array();
 		if (this.values === null) this.values = new Array();
 		this.values.push(val);
-	}-*/;
-
-	/**
-	 * Setter used to set bean name (use it before sending object to server)
-	 */
-	public final native void setType() /*-{
-		this.type = "ProductPropertyState";
 	}-*/;
 
 	/**

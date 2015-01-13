@@ -278,26 +278,9 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	@Override
 	public void setProductProperties(List<ProductPropertyState> props) {
-
-		List<ProductPropertyState> newList = new ArrayList<ProductPropertyState>();
-
-		for (Object o : props) {
-
-			LinkedHashMap<String, Object> object = (LinkedHashMap<String, Object>)o;
-
-			ProductPropertyState pps = new ProductPropertyState();
-			pps.setPropertyId((String)object.get("propertyId"));
-			pps.setObjectId((String)object.get("objectId"));
-			pps.setProductId((String)object.get("productId"));
-			pps.setValues((ArrayList<String>)object.get("values"));
-			newList.add(pps);
-
-		}
-
-		for (ProductPropertyState pps : newList) {
+		for (ProductPropertyState pps : props) {
 			callOpsi("productPropertyState_updateObject", pps);
 		}
-
 	}
 
 	/**

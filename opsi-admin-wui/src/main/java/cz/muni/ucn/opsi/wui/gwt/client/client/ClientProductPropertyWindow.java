@@ -294,21 +294,18 @@ public class ClientProductPropertyWindow extends Window {
 		windows_partition_size.setProductId(instalace.getId());
 		windows_partition_size.setPropertyId("windows_partition_size");
 		windows_partition_size.addValue((simpleComboBox.getSelectedIndex() == 2) ? ((String)size.getSimpleValue()) : "100%");
-		windows_partition_size.setType();
 
 		ProductPropertyJSO data_partition_preserve = new JSONObject().getJavaScriptObject().cast();
 		data_partition_preserve.setObjectId(client.getName());
 		data_partition_preserve.setProductId(instalace.getId());
 		data_partition_preserve.setPropertyId("data_partition_preserve");
 		data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "always" : "never");
-		data_partition_preserve.setType();
 
 		ProductPropertyJSO data_partition_create = new JSONObject().getJavaScriptObject().cast();
 		data_partition_create.setObjectId(client.getName());
 		data_partition_create.setProductId(instalace.getId());
 		data_partition_create.setPropertyId("data_partition_create");
 		data_partition_create.addValue((simpleComboBox.getSelectedIndex() == 2) ? "true" : "false");
-		data_partition_create.setType();
 
 		properties.add(windows_partition_size);
 		properties.add(data_partition_preserve);

@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
@@ -191,7 +192,7 @@ public class ClientService {
 
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.PUT,
 				URL.encode(GWT.getHostPageBaseURL() + CLIENT_INSTALL_URL +
-						"?instalaceId=" + installation.getId())) {
+						"?installId=" + installation.getId())) {
 
 			@Override
 			protected Object transformResponse(String text) {
@@ -299,7 +300,7 @@ public class ClientService {
 
 		request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
-		String data = transform(properties);
+		String data = transform(properties).toString();
 		request.setRequestData(data);
 		request.setHeader("Content-Type", "application/json");
 
@@ -377,30 +378,15 @@ public class ClientService {
 	/**
 	 * Transform list of ProductPropertyJSO to JSON array of objects
 	 *
-	 * @param properties
+	 * @param properties list of ProductPropertyJSO
 	 * @return JSON array of objects
 	 */
-	private String transform(List<ProductPropertyJSO> properties) {
-
-		String data = "["; // "{\"properties\"=[";
-		for (int i=0; i<properties.size(); i++) {
-			data += transform(properties.get(i)).toString();
-			if (i+1 < properties.size()) data += ",";
+	private JSONArray transform(List<ProductPropertyJSO> properties) {
+		JSONArray jsonArray = new JSONArray();
+		for (ProductPropertyJSO i : properties) {
+			jsonArray.set(jsonArray.size(), transform(i));
 		}
-		data += "]";
-		//data += "]}";
-
-		return data;
-
-		/*
-		for (int index=0; index<properties.length(); index++) {
-			JSONObject object = new JSONObject(properties.get(index));
-			object.put("$H", null);
-			jsonArray.set(index, object);
-		}
-
 		return jsonArray;
-		*/
 	}
 
 	/**

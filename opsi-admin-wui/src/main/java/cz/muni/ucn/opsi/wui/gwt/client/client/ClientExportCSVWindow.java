@@ -49,7 +49,19 @@ public class ClientExportCSVWindow extends Window {
 			if (mac == null || mac.equals("null")) {
 				mac = "";
 			}
-			originalValue += client.getName() + ";" + mac + "\n";
+			String description = client.getDescription();
+			if (description == null || description.equals("null")) {
+				description = "";
+			}
+			String notes = client.getNotes();
+			if (notes == null || notes.equals("null")) {
+				notes = "";
+			}
+			String ip = client.getIpAddress();
+			if (ip == null || ip.equals("null")) {
+				ip = "";
+			}
+			originalValue += client.getName() + ";" + mac + ";" + description + ";" + notes + ";" + ip + "\n";
 		}
 		textform.setValue(originalValue);
 
