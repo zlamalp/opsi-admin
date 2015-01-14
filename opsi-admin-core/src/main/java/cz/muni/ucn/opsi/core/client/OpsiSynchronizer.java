@@ -18,16 +18,16 @@ import cz.u2.eis.api.events.data.LifecycleEvent;
 @Component
 public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 
-	private OpsiClientService clientService;
+	private OpsiClientService opsiClientService;
 
 	/**
 	 * Setter for clientService
 	 *
-	 * @param clientService the clientService to set
+	 * @param opsiClientService the clientService to set
 	 */
 	@Autowired
-	public void setClientService(OpsiClientService clientService) {
-		this.clientService = clientService;
+	public void setOpsiClientService(OpsiClientService opsiClientService) {
+		this.opsiClientService = opsiClientService;
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +56,7 @@ public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 	 * @param client Client to create
 	 */
 	protected void createClient(Client client) {
-		clientService.createClient(client);
+		opsiClientService.createClient(client);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 	 * @param client Client to delete
 	 */
 	private void deleteClient(Client client) {
-		clientService.deleteClient(client);
+		opsiClientService.deleteClient(client);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 	 * @param client Client to update
 	 */
 	private void updateClient(Client client) {
-		clientService.updateClient(client);
+		opsiClientService.updateClient(client);
 	}
 
 }

@@ -103,27 +103,27 @@ public class ClientView extends View {
 			}
 			clientsStr += c.getName();
 		}
-		MessageBox.confirm("Odstranit klienta?",
-				"Opravdu chcete klienty odstranit? <br />" + clientsStr,
-				new Listener<MessageBoxEvent>() {
 
+		String message = (clients.size()>1) ? "Odstranit klienty?" : "Odstranit klienta?";
+		String message2 = (clients.size()>1) ? "Opravdu chcete odstranit klienty "+clientsStr+" ?" : "Opravdu chcete odstranit klienta "+clientsStr+" ?";
+
+		MessageBox.confirm(message, "<p>"+message2, new Listener<MessageBoxEvent>() {
 			@Override
 			public void handleEvent(MessageBoxEvent be) {
 				if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
 					return;
 				}
-
 				for (BeanModel beanModel : clients) {
-					ClientJSO client = beanModel.getBean();
+					final ClientJSO client = beanModel.getBean();
 					ClientService.getInstance().deleteClient(client, new RemoteRequestCallback<Object>() {
 						@Override
 						public void onRequestSuccess(Object v) {
-							Info.display("Klient odstraněn", "");
+							Info.display("Klient odstraněn:", client.getName());
 						}
 
 						@Override
 						public void onRequestFailed(Throwable th) {
-							MessageDialog.showError("Chyba při ostraňování klienta", th.getMessage());
+							MessageDialog.showError("Chyba při odstraňování klienta "+client.getName(), th.getMessage());
 						}
 					});
 				}
@@ -142,15 +142,16 @@ public class ClientView extends View {
 	 */
 	private void installClients(List<BeanModel> clients, InstallationJSO installation) {
 		for (BeanModel beanModel : clients) {
-			ClientJSO client = beanModel.getBean();
+			final ClientJSO client = beanModel.getBean();
 			ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
+					Info.display("Instalace spuštěna:", client.getName());
 				}
 
 				@Override
 				public void onRequestFailed(Throwable th) {
-					MessageDialog.showError("Chyba při instalaci klienta", th.getMessage());
+					MessageDialog.showError("Chyba při spouštění instalace klienta "+client.getName(), th.getMessage());
 				}
 			});
 		}

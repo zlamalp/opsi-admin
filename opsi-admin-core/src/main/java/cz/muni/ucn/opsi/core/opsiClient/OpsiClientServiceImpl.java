@@ -278,9 +278,7 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	@Override
 	public void setProductProperties(List<ProductPropertyState> props) {
-		for (ProductPropertyState pps : props) {
-			callOpsi("productPropertyState_updateObject", pps);
-		}
+		callOpsi("productPropertyState_updateObjects", props);
 	}
 
 	/**

@@ -74,7 +74,7 @@ public class GroupEditView extends View {
 	 *
 	 * @param group Group to create/edit
 	 */
-	protected void editGroupAsync(GroupJSO group) {
+	protected void editGroupAsync(final GroupJSO group) {
 
 		GroupService groupService = GroupService.getInstance();
 		if (null == group) {
@@ -98,7 +98,7 @@ public class GroupEditView extends View {
 
 				@Override
 				public void onRequestFailed(Throwable th) {
-					MessageDialog.showError("Nelze upravit skupinu", th.getMessage());
+					MessageDialog.showError("Nelze upravit skupinu "+group.getName(), th.getMessage());
 				}
 			});
 		}

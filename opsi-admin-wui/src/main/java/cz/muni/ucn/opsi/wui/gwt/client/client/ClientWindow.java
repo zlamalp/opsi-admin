@@ -79,6 +79,7 @@ public class ClientWindow extends Window {
 	private Grid<BeanModel> groupGrid;
 	private BeanModel selectedGroupItem;
 	private Button buttonInstall;
+	private ClientWindow window = this;
 
 	/**
 	 * Create new instance of this window.
@@ -208,7 +209,12 @@ public class ClientWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu skupin: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu skupin", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 		});
 
@@ -309,7 +315,6 @@ public class ClientWindow extends Window {
 
 		// enable double click event
 		clientsGrid.addListener(Events.RowDoubleClick, new Listener<GridEvent<BeanModel>>() {
-
 			@Override
 			public void handleEvent(GridEvent<BeanModel> be) {
 
@@ -321,7 +326,6 @@ public class ClientWindow extends Window {
 				event.setData("group", getSelectedGroupItem().getBean());
 				Dispatcher.forwardEvent(event);
 			}
-
 		});
 
 		// enable context menu (right-click event)
@@ -358,7 +362,7 @@ public class ClientWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu skupin: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu klientů", th.getMessage());
 				clientsGrid.unmask();
 			}
 		});

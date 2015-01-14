@@ -95,11 +95,11 @@ public class GroupsView extends View {
 				GroupService.getInstance().deleteGroup(group, new RemoteRequestCallback<Object>() {
 					@Override
 					public void onRequestSuccess(Object v) {
-						Info.display("Skupina odstraněna", "");
+						Info.display("Skupina odstraněna", group.getName());
 					}
 					@Override
 					public void onRequestFailed(Throwable th) {
-						MessageDialog.showError("Chyba při ostraňování skupiny", th.getMessage());
+						MessageDialog.showError("Chyba při ostraňování skupiny "+group.getName(), th.getMessage());
 					}
 				});
 			}

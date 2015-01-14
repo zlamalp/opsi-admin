@@ -8,7 +8,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.layout.FitData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.google.gwt.core.client.GWT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,42 +76,10 @@ public class ClientExportCSVWindow extends Window {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		loadData();
 	}
 
 	/**
-	 * Retrieve data from OPSI for import
-	 */
-	protected void loadData() {
-
-		/*
-
-		ClientService clientService = ClientService.getInstance();
-
-		clientService.listClientsForExport(clients, new RemoteRequestCallback<List<ClientJSO>>() {
-			@Override
-			public void onRequestSuccess(List<ClientJSO> clients) {
-				List<BeanModel> clientModels = clientFactory.createModel(clients);
-				clientStore.removeAll();
-				clientStore.add(clientModels);
-				clientsGrid.unmask();
-
-			}
-
-			@Override
-			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu klientů pro import: ", th.getMessage());
-				clientsGrid.unmask();
-			}
-
-		});
-
-		*/
-
-	}
-
-	/**
-	 * Generate Import (save) and cancel buttons
+	 * Generate cancel button
 	 */
 	private void generateButtons() {
 
@@ -126,12 +93,6 @@ public class ClientExportCSVWindow extends Window {
 		});
 		addButton(buttonCancel);
 
-	}
-
-	/**
-	 *
-	 */
-	protected void synchronizeState() {
 	}
 
 }

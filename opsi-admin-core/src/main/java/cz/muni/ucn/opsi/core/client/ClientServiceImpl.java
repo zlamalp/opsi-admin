@@ -166,7 +166,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 
 		checkGroupRights(group);
 
-
 		return clientDao.list(group);
 	}
 

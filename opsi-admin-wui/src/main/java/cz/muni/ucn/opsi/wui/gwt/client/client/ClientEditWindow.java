@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.IconHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -245,18 +246,19 @@ public class ClientEditWindow extends Window {
 
 				synchronizeState();
 
-				ClientService groupService = ClientService.getInstance();
-				groupService.saveClient(client, new RemoteRequestCallback<Object>() {
+				ClientService clientService = ClientService.getInstance();
+				clientService.saveClient(client, new RemoteRequestCallback<Object>() {
 					@Override
 					public void onRequestSuccess(Object v) {
 						ClientEditWindow.this.enable();
 						ClientEditWindow.this.hide(ce.getButton());
+						Info.display("Klient uložen", client.getName());
 					}
 
 					@Override
 					public void onRequestFailed(Throwable th) {
 						ClientEditWindow.this.enable();
-						MessageDialog.showError("Nelze uložit klienta", th.getMessage());
+						MessageDialog.showError("Nelze uložit klienta "+client.getName(), th.getMessage());
 					}
 				});
 

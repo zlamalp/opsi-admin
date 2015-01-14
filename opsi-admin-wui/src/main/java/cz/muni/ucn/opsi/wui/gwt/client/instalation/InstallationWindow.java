@@ -65,7 +65,6 @@ public class InstallationWindow extends Window {
 
 		// set model provider
 		ModelKeyProvider<BeanModel> keyProvider = new ModelKeyProvider<BeanModel>() {
-
 			@Override
 			public String getKey(BeanModel model) {
 				return model.get("id");

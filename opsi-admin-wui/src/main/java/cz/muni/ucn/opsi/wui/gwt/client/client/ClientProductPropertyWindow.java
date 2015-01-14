@@ -2,6 +2,7 @@ package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.binding.FormBinding;
+import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.event.*;
 import com.extjs.gxt.ui.client.mvc.AppEvent;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
@@ -32,6 +33,7 @@ public class ClientProductPropertyWindow extends Window {
 	private FormBinding binding;
 	protected BeanModelFactory propertyFactory;
 	SimpleComboBox size;
+	private int installCounter = 0;
 
 	final SimpleComboBox simpleComboBox = new SimpleComboBox();
 
@@ -181,7 +183,7 @@ public class ClientProductPropertyWindow extends Window {
 		buttonInstall.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				if (simpleComboBox.getSelectedIndex() != 0) storeData();
+
 				ClientProductPropertyWindow.this.hide(ce.getButton());
 
 				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + installation.getName() + " na "
@@ -194,10 +196,8 @@ public class ClientProductPropertyWindow extends Window {
 						if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
 							return;
 						}
-						AppEvent event = new AppEvent(ClientController.CLIENT_INSTALL);
-						event.setData("clients", clients);
-						event.setData("instalace", installation);
-						Dispatcher.forwardEvent(event);
+
+						installClientsWithProperties(clients, installation);
 
 					}
 
@@ -217,6 +217,86 @@ public class ClientProductPropertyWindow extends Window {
 		});
 		addButton(buttonCancel);
 
+	}
+
+	/**
+	 * Perform client installation.
+	 *
+	 * This will update OPSI and start installing selected product (OS) to all passed Clients.
+	 *
+	 * @param clients Clients to start installation for
+	 * @param installation Product (OS) to install.
+	 */
+	private void installClientsWithProperties(List<ClientJSO> clients, final InstallationJSO installation) {
+
+		ClientService clientService = ClientService.getInstance();
+		form.mask();
+
+		for (final ClientJSO client : clients) {
+
+			// CUSTOMIZED INSTALLATIONS
+			if (simpleComboBox.getSelectedIndex() != 0) {
+
+				List<ProductPropertyJSO> properties = constructProperties(client, installation);
+
+				clientService.updateClientProductProperties(properties, new RemoteRequestCallback<Object>() {
+					@Override
+					public void onRequestSuccess(Object productProperties) {
+
+						ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
+							@Override
+							public void onRequestSuccess(Object v) {
+								Info.display("Instalace spuštěna:", client.getName());
+								unmaskForm();
+							}
+
+							@Override
+							public void onRequestFailed(Throwable th) {
+								MessageDialog.showError("Chyba při spouštění instalace klienta "+client.getName(), th.getMessage());
+								unmaskForm();
+							}
+						});
+
+					}
+
+					@Override
+					public void onRequestFailed(Throwable th) {
+						MessageDialog.showError("Chyba při ukládání nastavení instalace "+client.getName()+". Instalace nebyla spuštěna!", th.getMessage());
+						unmaskForm();
+					}
+				});
+
+			} else {
+
+				// DEFAULT INSTALLATION
+				ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
+					@Override
+					public void onRequestSuccess(Object v) {
+						Info.display("Instalace spuštěna:", client.getName());
+						unmaskForm();
+					}
+
+					@Override
+					public void onRequestFailed(Throwable th) {
+						MessageDialog.showError("Chyba při spouštění instalace klienta "+client.getName(), th.getMessage());
+						unmaskForm();
+					}
+				});
+
+			}
+
+			installCounter++;
+
+		}
+
+	}
+
+	/**
+	 * Try to unmask the form but only once all requests are finished.
+	 */
+	private void unmaskForm() {
+		if (installCounter > 0) installCounter--;
+		form.unmask();
 	}
 
 	@Override
@@ -241,36 +321,6 @@ public class ClientProductPropertyWindow extends Window {
 			@Override
 			public void onRequestFailed(Throwable th) {
 				MessageDialog.showError("Chyba při získávání nastavení instalace", th.getMessage());
-				form.unmask();
-			}
-		});
-
-	}
-
-	/**
-	 * Method to store installation property data
-	 */
-	protected void storeData() {
-
-		ClientService clientService = ClientService.getInstance();
-
-		form.mask();
-
-		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
-
-		for (final ClientJSO client : this.clients) {
-			properties.addAll(constructProperties(client, installation));
-		}
-
-		clientService.updateClientProductProperties(properties, new RemoteRequestCallback<Object>() {
-			@Override
-			public void onRequestSuccess(Object productProperties) {
-				form.unmask();
-			}
-
-			@Override
-			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při ukládání nastavení instalace: ", th.getMessage());
 				form.unmask();
 			}
 		});

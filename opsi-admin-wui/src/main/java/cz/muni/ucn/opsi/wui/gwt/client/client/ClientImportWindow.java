@@ -8,12 +8,10 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.data.ModelComparer;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedListener;
-import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.event.*;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
@@ -53,6 +51,7 @@ public class ClientImportWindow extends Window {
 	// import counter
 	private int importCount = 0;
 	private Button buttonOK;
+	private ClientImportWindow window = this;
 
 	/**
 	 * Create window for importing clients
@@ -185,13 +184,16 @@ public class ClientImportWindow extends Window {
 				clientStore.removeAll();
 				clientStore.add(clientModels);
 				clientsGrid.unmask();
-
 			}
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu klientů pro import: ", th.getMessage());
-				clientsGrid.unmask();
+				MessageDialog.showError("Chyba při získávání seznamu klientů pro import", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 
 		});
@@ -234,7 +236,7 @@ public class ClientImportWindow extends Window {
 				importCount = selectedItems.size();
 
 				for (final BeanModel beanModel : selectedItems) {
-					ClientJSO client = beanModel.getBean();
+					final ClientJSO client = beanModel.getBean();
 					clientService.saveClient(client, new RemoteRequestCallback<Object>() {
 
 						@Override
@@ -242,10 +244,10 @@ public class ClientImportWindow extends Window {
 							if (--importCount <= 0) {
 								ClientImportWindow.this.enable();
 								clientsGrid.unmask();
-
 							}
 //							ClientImportWindow.this.hide(ce.getButton());
 							ClientImportWindow.this.clientStore.remove(beanModel);
+							Info.display("Klient importován", client.getName());
 						}
 
 						@Override
@@ -254,7 +256,7 @@ public class ClientImportWindow extends Window {
 								ClientImportWindow.this.enable();
 								clientsGrid.unmask();
 							}
-							MessageDialog.showError("Nelze uložit klienta", th.getMessage());
+							MessageDialog.showError("Nelze uložit klienta "+client.getName(), th.getMessage());
 						}
 					});
 				}
