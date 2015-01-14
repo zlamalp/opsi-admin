@@ -38,7 +38,7 @@ public class MessageDialog {
 	public static void showError(String title, String message, Listener<MessageBoxEvent> listener) {
 
 		if ("Access is denied".equals(message)) message = "Přístup zamítnut. Potřebujete práva administátora.";
-		MessageBox.alert(title, "<p>"+message, listener);
+		MessageBox.alert(title, message, listener);
 
 	}
 
@@ -49,7 +49,7 @@ public class MessageDialog {
 	 * @param message Dialog message
 	 */
 	public static void showMessage(String title, String message) {
-		MessageBox.info(title, "<p>"+message, new Listener<MessageBoxEvent>(){
+		MessageBox.info(title, "<br/>"+message, new Listener<MessageBoxEvent>(){
 			@Override
 			public void handleEvent(MessageBoxEvent be) {
 			}

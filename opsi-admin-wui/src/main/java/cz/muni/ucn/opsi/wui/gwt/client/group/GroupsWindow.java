@@ -175,7 +175,7 @@ public class GroupsWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu skupin: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu skupin", th.getMessage());
 			}
 		});
 

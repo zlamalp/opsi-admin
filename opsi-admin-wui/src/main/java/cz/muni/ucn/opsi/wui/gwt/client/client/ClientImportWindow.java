@@ -256,7 +256,7 @@ public class ClientImportWindow extends Window {
 								ClientImportWindow.this.enable();
 								clientsGrid.unmask();
 							}
-							MessageDialog.showError("Nelze uložit klienta "+client.getName(), th.getMessage());
+							MessageDialog.showError("Nelze importovat klienta "+client.getName(), th.getMessage());
 						}
 					});
 				}

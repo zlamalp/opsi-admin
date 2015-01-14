@@ -246,7 +246,7 @@ public class ClientProductPropertyWindow extends Window {
 						ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
 							@Override
 							public void onRequestSuccess(Object v) {
-								Info.display("Instalace spuštěna:", client.getName());
+								Info.display("Instalace spuštěna", client.getName());
 								unmaskForm();
 							}
 
@@ -272,7 +272,7 @@ public class ClientProductPropertyWindow extends Window {
 				ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
 					@Override
 					public void onRequestSuccess(Object v) {
-						Info.display("Instalace spuštěna:", client.getName());
+						Info.display("Instalace spuštěna", client.getName());
 						unmaskForm();
 					}
 

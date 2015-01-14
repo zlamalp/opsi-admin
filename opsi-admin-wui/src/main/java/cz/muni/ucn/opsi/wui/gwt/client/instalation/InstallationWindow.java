@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.DualListField;
@@ -121,7 +122,7 @@ public class InstallationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu všech instalací: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu všech instalací", th.getMessage());
 			}
 		});
 
@@ -138,7 +139,7 @@ public class InstallationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu instalací: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu instalací", th.getMessage());
 			}
 		});
 
@@ -216,7 +217,7 @@ public class InstallationWindow extends Window {
 			installationService.saveInstallations(install, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
-					MessageDialog.showMessage("Uloženo", "Seznam instalací byl úspěšně uložen.");
+					Info.display("Seznam instalací byl uložen", "");
 				}
 				@Override
 				public void onRequestFailed(Throwable th) {

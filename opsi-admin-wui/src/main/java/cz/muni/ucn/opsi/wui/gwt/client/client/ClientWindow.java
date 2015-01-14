@@ -653,7 +653,7 @@ public class ClientWindow extends Window {
 			if (type.equals(ClientController.CLIENT_INSTALL)) {
 
 				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + instalace.getName() + " na "
-						+ clients.size() + " počítačů?" , new Listener<MessageBoxEvent>() {
+						+ clients.size() + " klientů?" , new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
 						if (be.getButtonClicked() == null) {

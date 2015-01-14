@@ -107,7 +107,7 @@ public class ClientView extends View {
 		String message = (clients.size()>1) ? "Odstranit klienty?" : "Odstranit klienta?";
 		String message2 = (clients.size()>1) ? "Opravdu chcete odstranit klienty "+clientsStr+" ?" : "Opravdu chcete odstranit klienta "+clientsStr+" ?";
 
-		MessageBox.confirm(message, "<p>"+message2, new Listener<MessageBoxEvent>() {
+		MessageBox.confirm(message, message2, new Listener<MessageBoxEvent>() {
 			@Override
 			public void handleEvent(MessageBoxEvent be) {
 				if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
@@ -118,7 +118,7 @@ public class ClientView extends View {
 					ClientService.getInstance().deleteClient(client, new RemoteRequestCallback<Object>() {
 						@Override
 						public void onRequestSuccess(Object v) {
-							Info.display("Klient odstraněn:", client.getName());
+							Info.display("Klient odstraněn", client.getName());
 						}
 
 						@Override
@@ -146,7 +146,7 @@ public class ClientView extends View {
 			ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
-					Info.display("Instalace spuštěna:", client.getName());
+					Info.display("Instalace spuštěna", client.getName());
 				}
 
 				@Override

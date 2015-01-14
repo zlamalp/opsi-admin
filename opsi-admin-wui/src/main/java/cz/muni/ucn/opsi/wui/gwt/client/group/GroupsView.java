@@ -86,7 +86,7 @@ public class GroupsView extends View {
 	 * @param group Group to delete
 	 */
 	private void groupDelete(final GroupJSO group) {
-		MessageBox.confirm("Odstranit skupinu?", "Opravdu chcete skupinu " + group.getName() + " odstranit? ", new Listener<MessageBoxEvent>() {
+		MessageBox.confirm("Odstranit skupinu?", "Opravdu chcete odstranit skupinu " + group.getName() + " ?", new Listener<MessageBoxEvent>() {
 			@Override
 			public void handleEvent(MessageBoxEvent be) {
 				if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
