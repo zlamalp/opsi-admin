@@ -55,8 +55,8 @@ public class ClientView extends View {
 			deleteClients(clients);
 		} else if (ClientController.CLIENT_INSTALL == type) {
 			List<BeanModel> clients = event.getData("clients");
-			InstallationJSO instalace = event.getData("instalace");
-			installClients(clients, instalace);
+			InstallationJSO install = event.getData("install");
+			installClients(clients, install);
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
 			LifecycleEventJSO lifecycleEventJSO = (LifecycleEventJSO)event.getData();
 			onLifecycleEvent(lifecycleEventJSO);

@@ -60,7 +60,7 @@ public class ClientExportCSVWindow extends Window {
 			if (ip == null || ip.equals("null")) {
 				ip = "";
 			}
-			originalValue += client.getName() + ";" + mac + ";" + description + ";" + notes + ";" + ip + "\n";
+			originalValue += client.getName() + ";" + mac + ";" + description + ";" + notes + "\n"; // ";" + ip +
 		}
 		textform.setValue(originalValue);
 

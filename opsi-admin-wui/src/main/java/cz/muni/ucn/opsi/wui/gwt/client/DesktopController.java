@@ -84,6 +84,11 @@ public class DesktopController extends Controller {
 			if (!desktop.getWindows().contains(w)) {
 				desktop.addWindow(w);
 			}
+		} else if (DesktopController.WINDOW_DESTROYED == type) {
+			Window w = event.getData();
+			if (desktop.getWindows().contains(w)) {
+				desktop.removeWindow(w);
+			}
 		}
 	}
 
@@ -156,8 +161,8 @@ public class DesktopController extends Controller {
 
 		Shortcut s5 = new Shortcut();
 		s5.setText("Nastavení instalací");
-		s5.setId("intalace-shortcut");
-		s5.setData("event", InstallationController.INSTALATIONS);
+		s5.setId("intall-shortcut");
+		s5.setData("event", InstallationController.INSTALLATIONS);
 		s5.addSelectionListener(shortcutListener);
 		desktop.addShortcut(s5);
 
@@ -173,7 +178,7 @@ public class DesktopController extends Controller {
 		TaskBar taskBar = desktop.getTaskBar();
 
 		StartMenu menu = taskBar.getStartMenu();
-		menu.setHeading("Test");
+		menu.setHeading("OPSI Admin");
 		menu.setIconStyle("user");
 
 		MenuItem menuItem = new MenuItem("Skupiny");
@@ -189,9 +194,9 @@ public class DesktopController extends Controller {
 		menu.add(menuItem);
 
 		menuItem = new MenuItem("Nastavení instalací");
-		menuItem.setIcon(IconHelper.createStyle("instalace"));
+		menuItem.setIcon(IconHelper.createStyle("install"));
 		menuItem.addSelectionListener(menuListener);
-		menuItem.setData("event", InstallationController.INSTALATIONS);
+		menuItem.setData("event", InstallationController.INSTALLATIONS);
 		menu.add(menuItem);
 
 		/*

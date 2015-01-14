@@ -9,6 +9,8 @@ import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.data.ModelComparer;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
@@ -44,6 +46,7 @@ public class InstallationWindow extends Window {
 	private boolean loadedFrom = false;
 	private boolean loadedTo = false;
 	private DualListField<BeanModel> lists;
+	private InstallationWindow window = this;
 
 	/**
 	 * Create new instance of installation Window
@@ -112,8 +115,8 @@ public class InstallationWindow extends Window {
 		// load all installations
 		groupService.listInstallationsAll(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstallationJSO> instalations) {
-				List<BeanModel> groupModels = factory.createModel(instalations);
+			public void onRequestSuccess(List<InstallationJSO> instajlations) {
+				List<BeanModel> groupModels = factory.createModel(instajlations);
 				fromStore.removeAll();
 				fromStore.add(groupModels);
 				loadedFrom = true;
@@ -122,15 +125,20 @@ public class InstallationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu všech instalací", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu všech instalací", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 		});
 
 		// load available installations
 		groupService.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstallationJSO> instalations) {
-				List<BeanModel> groupModels = factory.createModel(instalations);
+			public void onRequestSuccess(List<InstallationJSO> installations) {
+				List<BeanModel> groupModels = factory.createModel(installations);
 				toStore.removeAll();
 				toStore.add(groupModels);
 				loadedTo = true;
@@ -139,7 +147,12 @@ public class InstallationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu instalací", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu instalací", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 		});
 
@@ -172,7 +185,7 @@ public class InstallationWindow extends Window {
 
 		buttonSave = new Button(installationConstants.getInstallationsSave());
 		buttonSave.setIcon(IconHelper.createStyle("save"));
-		buttonSave.setData("event", InstallationController.INSTALATIONS_SAVE);
+		buttonSave.setData("event", InstallationController.INSTALLATIONS_SAVE);
 		buttonSave.addSelectionListener(new SaveButtonListener());
 		toolbar.add(buttonSave);
 

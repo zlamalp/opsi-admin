@@ -107,7 +107,7 @@ public class ClientImportWindow extends Window {
 		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
 		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
-		ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
+		//ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
 
 		final CheckBoxSelectionModel<BeanModel> sm = new CheckBoxSelectionModel<BeanModel>();
 
@@ -118,7 +118,7 @@ public class ClientImportWindow extends Window {
 		config.add(macAddress);
 		config.add(description);
 		config.add(notes);
-		config.add(ipAddress);
+		//config.add(ipAddress);
 
 		final ColumnModel cm = new ColumnModel(config);
 
@@ -135,7 +135,7 @@ public class ClientImportWindow extends Window {
 		filters.addFilter(new StringFilter("macAddress"));
 		filters.addFilter(new StringFilter("description"));
 		filters.addFilter(new StringFilter("notes"));
-		filters.addFilter(new StringFilter("ipAddress"));
+		//filters.addFilter(new StringFilter("ipAddress"));
 
 		clientsGrid.addPlugin(filters);
 

@@ -254,7 +254,7 @@ public class ClientWindow extends Window {
 		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
 		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
-		ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
+		//ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
 
 		final CheckBoxSelectionModel<BeanModel> sm = new CheckBoxSelectionModel<BeanModel>();
 
@@ -262,10 +262,10 @@ public class ClientWindow extends Window {
 
 		config.add(sm.getColumn());
 		config.add(name);
-		config.add(macAddress);
 		config.add(description);
+		config.add(macAddress);
 		config.add(notes);
-		config.add(ipAddress);
+		//config.add(ipAddress);
 
 		final ColumnModel cm = new ColumnModel(config);
 
@@ -309,15 +309,15 @@ public class ClientWindow extends Window {
 		filters.setLocal(true);
 		filters.addFilter(new StringFilter("name"));
 		filters.addFilter(new StringFilter("description"));
-		filters.addFilter(new StringFilter("ipAddress"));
 		filters.addFilter(new StringFilter("macAddress"));
+		filters.addFilter(new StringFilter("notes"));
+		//filters.addFilter(new StringFilter("ipAddress"));
 		clientsGrid.addPlugin(filters);
 
 		// enable double click event
 		clientsGrid.addListener(Events.RowDoubleClick, new Listener<GridEvent<BeanModel>>() {
 			@Override
 			public void handleEvent(GridEvent<BeanModel> be) {
-
 				EventType type = ClientController.CLIENT_EDIT;
 				List<BeanModel> l = new ArrayList<BeanModel>();
 				l.add(be.getModel());
@@ -470,7 +470,7 @@ public class ClientWindow extends Window {
 	private Menu createInstallMenu() {
 
 		final Menu installMenu = new Menu();
-		final SelectionListener<? extends MenuEvent> installListener = new InstalaceMenuListener();
+		final SelectionListener<? extends MenuEvent> installListener = new InstallMenuListener();
 
 		InstallationService service = InstallationService.getInstance();
 		service.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
@@ -481,7 +481,7 @@ public class ClientWindow extends Window {
 					// TODO & FIXME - support only win7-64 to configure netboot now.
 					MenuItem mi = new MenuItem((in.getId().equals("win7-x64")) ? in.getName() + "..." : in.getName());
 					mi.addSelectionListener(installListener);
-					mi.setData("instalace", in);
+					mi.setData("install", in);
 					if (in.getId().equals("win7-x64")) {
 						// TODO & FIXME - support only win7-64 to configure netboot now.
 						mi.setData("event", ClientController.CLIENT_PRODUCT_PROPERTY);
@@ -639,20 +639,20 @@ public class ClientWindow extends Window {
 
 
 	/**
-	 * InstalaceMenuListener handles click/selection events in menu for Product (OS) installations.
+	 * InstallMenuListener handles click/selection events in menu for Product (OS) installations.
 	 *
 	 * @author Jan Dosoudil
 	 */
-	private final class InstalaceMenuListener extends SelectionListener<MenuEvent> {
+	private final class InstallMenuListener extends SelectionListener<MenuEvent> {
 		@Override
 		public void componentSelected(MenuEvent ce) {
 			final EventType type = ce.getItem().getData("event");
-			final InstallationJSO instalace = ce.getItem().getData("instalace");
+			final InstallationJSO install = ce.getItem().getData("install");
 			final List<BeanModel> clients = clientsGrid.getSelectionModel().getSelectedItems();
 
 			if (type.equals(ClientController.CLIENT_INSTALL)) {
 
-				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + instalace.getName() + " na "
+				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + install.getName() + " na "
 						+ clients.size() + " klientů?" , new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
@@ -664,7 +664,7 @@ public class ClientWindow extends Window {
 						}
 						AppEvent event = new AppEvent(type);
 						event.setData("clients", clients);
-						event.setData("instalace", instalace);
+						event.setData("install", install);
 						Dispatcher.forwardEvent(event);
 					}
 
@@ -675,7 +675,7 @@ public class ClientWindow extends Window {
 				// CONFIGURE INSTALL-CLIENT EVENT
 				AppEvent event = new AppEvent(type);
 				event.setData("clients", clients);
-				event.setData("instalace", instalace);
+				event.setData("install", install);
 				Dispatcher.forwardEvent(event);
 
 			}

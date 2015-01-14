@@ -154,7 +154,7 @@ public class ClientController {
 		CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()), ';');
 		String[] record;
 		while((record  = reader.readNext()) != null ) {
-			if (record.length != 5) {
+			if (record.length != 4) {
 				continue;
 			}
 			Client c = clientService.createClient(group);
@@ -162,7 +162,7 @@ public class ClientController {
 			if (StringUtils.isNotBlank(record[1])) c.setMacAddress(record[1]);
 			if (StringUtils.isNotBlank(record[2])) c.setDescription(record[2]);
 			if (StringUtils.isNotBlank(record[3])) c.setNotes(record[3]);
-			if (StringUtils.isNotBlank(record[4])) c.setIpAddress(record[4]);
+			//if (StringUtils.isNotBlank(record[4])) c.setIpAddress(record[4]);
 			clients.add(c);
 		}
 		response.setContentType("text/html");

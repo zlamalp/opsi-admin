@@ -75,8 +75,17 @@ public class LoginService {
 	 * @author Jan Dosoudil
 	 */
 	public interface LogoutCallback {
+
+		/**
+		 * Called when logout is successful
+		 */
 		void onLogoutOk();
+
+		/**
+		 * Called when logout fails
+		 */
 		void onLogoutFailed(String message);
+
 	}
 
 }

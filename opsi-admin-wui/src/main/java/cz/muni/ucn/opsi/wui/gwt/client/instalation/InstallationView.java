@@ -38,7 +38,7 @@ public class InstallationView extends View {
 	@Override
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (InstallationController.INSTALATIONS == type) {
+		if (InstallationController.INSTALLATIONS == type) {
 			showInstallations();
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
 			LifecycleEventJSO lifecycleEventJSO = event.getData();

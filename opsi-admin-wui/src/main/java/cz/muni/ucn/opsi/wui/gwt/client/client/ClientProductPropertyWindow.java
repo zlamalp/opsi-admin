@@ -124,8 +124,8 @@ public class ClientProductPropertyWindow extends Window {
 		size.setVisible(false);
 
 		final Text info = new Text();
-		final String instalaceNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + installation.getName() + ".";
-		info.setText(instalaceNoChange);
+		final String installNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + installation.getName() + ".";
+		info.setText(installNoChange);
 		info.setAutoHeight(true);
 
 		formPanel.add(simpleComboBox);
@@ -139,7 +139,7 @@ public class ClientProductPropertyWindow extends Window {
 			public void selectionChanged(SelectionChangedEvent selectionChangedEvent) {
 
 				if (simpleComboBox.getSelectedIndex() == 0) {
-					info.setText(instalaceNoChange);
+					info.setText(installNoChange);
 				} else if (simpleComboBox.getSelectedIndex() == 1) {
 					info.setText("Všichni vybraní klienti budou přeinstalováni s nastavením: 1 disk / 1 partition (C:/ = 100%)");
 				} else if (simpleComboBox.getSelectedIndex() == 2) {
@@ -332,7 +332,7 @@ public class ClientProductPropertyWindow extends Window {
 	 *
 	 * @return list of properties
 	 */
-	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstallationJSO instalace) {
+	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstallationJSO installation) {
 
 		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
 
@@ -341,19 +341,19 @@ public class ClientProductPropertyWindow extends Window {
 
 		ProductPropertyJSO windows_partition_size = new JSONObject().getJavaScriptObject().cast();
 		windows_partition_size.setObjectId(client.getName());
-		windows_partition_size.setProductId(instalace.getId());
+		windows_partition_size.setProductId(installation.getId());
 		windows_partition_size.setPropertyId("windows_partition_size");
 		windows_partition_size.addValue((simpleComboBox.getSelectedIndex() == 2) ? ((String)size.getSimpleValue()) : "100%");
 
 		ProductPropertyJSO data_partition_preserve = new JSONObject().getJavaScriptObject().cast();
 		data_partition_preserve.setObjectId(client.getName());
-		data_partition_preserve.setProductId(instalace.getId());
+		data_partition_preserve.setProductId(installation.getId());
 		data_partition_preserve.setPropertyId("data_partition_preserve");
 		data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "always" : "never");
 
 		ProductPropertyJSO data_partition_create = new JSONObject().getJavaScriptObject().cast();
 		data_partition_create.setObjectId(client.getName());
-		data_partition_create.setProductId(instalace.getId());
+		data_partition_create.setProductId(installation.getId());
 		data_partition_create.setPropertyId("data_partition_create");
 		data_partition_create.addValue((simpleComboBox.getSelectedIndex() == 2) ? "true" : "false");
 

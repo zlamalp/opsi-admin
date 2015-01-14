@@ -78,7 +78,6 @@ public class ClientEditWindow extends Window {
 //		setLayout(layout);
 		setLayout(new FitLayout());
 
-
 		form = new FormPanel();
 		form.setHeaderVisible(false);
 		form.setLabelWidth(100);
@@ -133,6 +132,7 @@ public class ClientEditWindow extends Window {
 		description.setFieldLabel(clientConstants.getDescription());
 		formPanel.add(description, new FormData(FIELD_SPEC));
 
+		/*
 		TextField<String> ipAddress = new TextField<String>();
 		ipAddress.setName("ipAddress");
 		ipAddress.setFieldLabel(clientConstants.getIpAddress());
@@ -161,15 +161,14 @@ public class ClientEditWindow extends Window {
 			}
 		});
 		formPanel.add(ipAddress, new FormData(FIELD_SPEC));
+		*/
 
 		TextField<String> macAddress = new TextField<String>();
 		macAddress.setName("macAddress");
 		macAddress.setFieldLabel(clientConstants.getMacAddress());
 		macAddress.addListener(Events.Change, new Listener<FieldEvent>() {
-
 			@Override
 			public void handleEvent(FieldEvent fe) {
-
 				@SuppressWarnings("unchecked")
 				TextField<String> field = (TextField<String>) fe.getField();
 				String value = field.getValue();
@@ -232,9 +231,7 @@ public class ClientEditWindow extends Window {
 			public void componentSelected(final ButtonEvent ce) {
 
 				if (!validate()) {
-					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby",
-							new Listener<MessageBoxEvent>() {
-
+					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby", new Listener<MessageBoxEvent>() {
 						@Override
 						public void handleEvent(MessageBoxEvent be) {
 						}

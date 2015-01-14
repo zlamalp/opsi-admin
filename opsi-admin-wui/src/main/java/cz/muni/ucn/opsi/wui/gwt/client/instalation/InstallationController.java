@@ -15,8 +15,8 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
  */
 public class InstallationController extends Controller {
 
-	public static final EventType INSTALATIONS = new EventType();
-	public static final EventType INSTALATIONS_SAVE = new EventType();
+	public static final EventType INSTALLATIONS = new EventType();
+	public static final EventType INSTALLATIONS_SAVE = new EventType();
 
 	private InstallationView installationView;
 
@@ -24,8 +24,8 @@ public class InstallationController extends Controller {
 	 * Create new instance of Controller
 	 */
 	public InstallationController() {
-		registerEventTypes(InstallationController.INSTALATIONS);
-		registerEventTypes(InstallationController.INSTALATIONS_SAVE);
+		registerEventTypes(InstallationController.INSTALLATIONS);
+		registerEventTypes(InstallationController.INSTALLATIONS_SAVE);
 		registerEventTypes(CometController.LIFECYCLE_EVENT_TYPE);
 	}
 
@@ -35,9 +35,9 @@ public class InstallationController extends Controller {
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (InstallationController.INSTALATIONS == type) {
+		if (InstallationController.INSTALLATIONS == type) {
 			showInstallations(event);
-		} else if (InstallationController.INSTALATIONS_SAVE == type) {
+		} else if (InstallationController.INSTALLATIONS_SAVE == type) {
 				saveInstallations(event);
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
 			onLifecycleEvent(event);
@@ -75,7 +75,7 @@ public class InstallationController extends Controller {
 	 */
 	private void onLifecycleEvent(AppEvent event) {
         LifecycleEventJSO le = (LifecycleEventJSO) event.getData();
-        if (!"cz.muni.ucn.opsi.api.instalation.Instalation".equals(le.getBeanClass())) {
+        if (!"cz.muni.ucn.opsi.api.instalation.Installation".equals(le.getBeanClass())) {
                 return;
         }
 		forwardToView(installationView, event);
