@@ -33,6 +33,7 @@ import com.google.gwt.core.client.GWT;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Window for editing client details like name, ip, mac address etc.
@@ -165,6 +166,8 @@ public class ClientEditWindow extends Window {
 
 		TextField<String> macAddress = new TextField<String>();
 		macAddress.setName("macAddress");
+		macAddress.setAllowBlank(false);
+		macAddress.setAutoValidate(true);
 		macAddress.setFieldLabel(clientConstants.getMacAddress());
 		macAddress.addListener(Events.Change, new Listener<FieldEvent>() {
 			@Override
@@ -172,23 +175,28 @@ public class ClientEditWindow extends Window {
 				@SuppressWarnings("unchecked")
 				TextField<String> field = (TextField<String>) fe.getField();
 				String value = field.getValue();
-				value = value.replaceAll("[.\\- \\,]", ":");
-				if (value.matches("^([0-9a-fA-F]{2}){6}$")) {
-					value = value.replaceFirst("^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$",
-							"$1:$2:$3:$4:$5:$6");
+				if (value != null && !value.isEmpty()) {
+					value = value.replaceAll("[.\\- \\,]", ":");
+					if (value.matches("^([0-9a-fA-F]{2}){6}$")) {
+						value = value.replaceFirst("^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$",
+								"$1:$2:$3:$4:$5:$6");
+					}
+					field.setValue(value);
+					fe.cancelBubble();
 				}
-				field.setValue(value);
-				fe.cancelBubble();
 			}
 		});
 		macAddress.setValidator(new Validator() {
-
 			@Override
 			public String validate(Field<?> field, String value) {
+				if (value == null || value.isEmpty()) {
+					return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
+				}
 				if (value.matches("^([0-9a-fA-F]{1,2}:){5}([0-9a-fA-F]{1,2})$")) {
 					return null;
+				} else {
+					return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
 				}
-				return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
 			}
 		});
 		formPanel.add(macAddress, new FormData(FIELD_SPEC));
