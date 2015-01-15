@@ -424,6 +424,7 @@ public class ClientWindow extends Window {
 
 		final Menu importMenu = new Menu();
 
+		/*
 		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi());
 		//importOpsi.setIcon(IconHelper.createStyle("import"));
 		importOpsi.setData("event", ClientController.CLIENT_IMPORT);
@@ -435,6 +436,7 @@ public class ClientWindow extends Window {
 		importOpsi2.setData("event", ClientController.CLIENT_IMPORT2);
 		importOpsi2.addSelectionListener(menuListener);
 		importMenu.add(importOpsi2);
+		*/
 
 		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV());
 		//importCSV.setIcon(IconHelper.createStyle("import"));
@@ -481,12 +483,7 @@ public class ClientWindow extends Window {
 					MenuItem mi = new MenuItem(in.getName());
 					mi.addSelectionListener(installListener);
 					mi.setData("install", in);
-					if (in.getId().startsWith("win7")) {
-						// TODO support only win7-64 to configure netboot now.
-						mi.setData("event", ClientController.CLIENT_PRODUCT_PROPERTY);
-					} else {
-						mi.setData("event", ClientController.CLIENT_INSTALL);
-					}
+					mi.setData("event", ClientController.CLIENT_INSTALL);
 					installMenu.add(mi);
 				}
 			}
