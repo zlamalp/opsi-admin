@@ -20,6 +20,8 @@ mvn clean install -Pmysql
 
 This app require connection to the working OPSI server, own DB (MySQL) for storing client and group information and LDAP server to provide authorization for users. App is expected to run in Apache Tomcat 6 container. If you have war packaged, simply deploy it to the Tomcat.
 
+Application settings located in sources can be overridden without rebuild. Just put them in ``${eis.home}/settings-{deployPath}``. E.g. set Tomcat ENV property _eis.home_ and then put file _settings-opsi-admin-wui_ in that location.
+
 ### Development
 
 #### Source code
