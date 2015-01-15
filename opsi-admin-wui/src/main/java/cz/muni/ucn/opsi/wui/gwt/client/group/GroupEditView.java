@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.group;
 
 import java.util.HashMap;
@@ -19,14 +16,19 @@ import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events on creating and editing Groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class GroupEditView extends View {
 
+	// multiple editing windows
 	private Map<GroupJSO, GroupEditWindow> windows = new HashMap<GroupJSO, GroupEditWindow>();
 
 	/**
+	 * Create instance of the View
+	 *
 	 * @param controller
 	 */
 	public GroupEditView(Controller controller) {
@@ -40,18 +42,19 @@ public class GroupEditView extends View {
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
 		if (GroupController.GROUP_NEW == type) {
-			userEdit(null);
+			editGroup(null);
 		} else if (GroupController.GROUP_EDIT == type) {
-			userEdit((GroupJSO) event.getData());
+			editGroup((GroupJSO) event.getData());
 		}
 	}
 
 	/**
-	 * @param data
+	 * Method ensuring async loading of UI
+	 *
+	 * @param group Group to create / edit
 	 */
-	private void userEdit(final GroupJSO group) {
+	private void editGroup(final GroupJSO group) {
 		GWT.runAsync(new RunAsyncCallback() {
-
 			@Override
 			public void onSuccess() {
 				editGroupAsync(group);
@@ -66,15 +69,19 @@ public class GroupEditView extends View {
 	}
 
 	/**
-	 * @param group
+	 * Call to retrieve data from OPSI. THIS ENSURE THAT DATA IN FORM ARE UP-TO-DATE !!
+	 * For new groups, server side creates UUID.
+	 *
+	 * @param group Group to create/edit
 	 */
-	protected void editGroupAsync(GroupJSO group) {
+	protected void editGroupAsync(final GroupJSO group) {
+
 		GroupService groupService = GroupService.getInstance();
 		if (null == group) {
 			groupService.createGroup(new RemoteRequestCallback<GroupJSO>() {
 				@Override
-				public void onRequestSuccess(GroupJSO client) {
-					editGroupWindow(client, true);
+				public void onRequestSuccess(GroupJSO group) {
+					editGroupWindow(group, true);
 				}
 
 				@Override
@@ -85,23 +92,25 @@ public class GroupEditView extends View {
 		} else {
 			groupService.editGroup(group, new RemoteRequestCallback<GroupJSO>() {
 				@Override
-				public void onRequestSuccess(GroupJSO client) {
-					editGroupWindow(client, false);
+				public void onRequestSuccess(GroupJSO group) {
+					editGroupWindow(group, false);
 				}
 
 				@Override
 				public void onRequestFailed(Throwable th) {
-					MessageDialog.showError("Nelze upravit skupinu", th.getMessage());
+					MessageDialog.showError("Nelze upravit skupinu "+group.getName(), th.getMessage());
 				}
 			});
-
 		}
 
 	}
 
 	/**
-	 * @param group
-	 * @param b
+	 * Create and attach Group editing window to the desktop.
+	 * It should be called fro async method.
+	 *
+	 * @param group Group to create/edit
+	 * @param newGroup TRUE = creation of new group / FALSE = editing of existing
 	 */
 	protected void editGroupWindow(GroupJSO group, boolean newGroup) {
 		GroupEditWindow w;
@@ -109,7 +118,7 @@ public class GroupEditView extends View {
 			w = windows.get(group);
 			w.setGroupModel(group);
 		} else {
-			w = createWindow(group, newGroup);
+			w = createWindow(newGroup);
 			windows.put(group, w);
 			Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, w);
 		}
@@ -119,15 +128,15 @@ public class GroupEditView extends View {
 		} else {
 			w.show();
 		}
-
 	}
 
 	/**
-	 * @param group
-	 * @param newGroup
-	 * @return
+	 * Create new instance of Window for editing Group
+	 *
+	 * @param newGroup TRUE = creation of new group / FALSE = editing of existing
+	 * @return new instance of window
 	 */
-	private GroupEditWindow createWindow(GroupJSO group, boolean newGroup) {
+	private GroupEditWindow createWindow(boolean newGroup) {
 		return new GroupEditWindow(newGroup);
 	}
 

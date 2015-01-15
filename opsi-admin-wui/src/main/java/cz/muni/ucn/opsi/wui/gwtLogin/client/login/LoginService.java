@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwtLogin.client.login;
 
 import com.google.gwt.core.client.GWT;
@@ -15,8 +12,12 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 
 /**
- * @author Jan Dosoudil
+ * Client side API for calls related to the logging-in for "LoginApp"
  *
+ * @see cz.muni.ucn.opsi.wui.remote.authentication.LoginStatusController for server side of this API
+ *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class LoginService {
 
@@ -25,29 +26,23 @@ public class LoginService {
 
 	private static final LoginService INSTANCE = new LoginService();
 
-	/**
-	 *
-	 */
 	private LoginService() {
 	}
 
-	/**
-	 * @return
-	 */
 	public static LoginService getInstance() {
 		return LoginService.INSTANCE;
 	}
 
 	/**
+	 * Log-in user to the application - authenticated against LDAP
 	 *
-	 * @param username
-	 * @param password
-	 * @param callback
+	 * @param username UCO from MU (ActiveDirectory)
+	 * @param password secondary password
+	 * @param callback Callback handling response
 	 */
 	public void login(String username, String password, final LoginCallback callback) {
 
-		RequestBuilder rb = new RequestBuilder(RequestBuilder.POST,
-				GWT.getHostPageBaseURL() + LOGIN_URL);
+		RequestBuilder rb = new RequestBuilder(RequestBuilder.POST, GWT.getHostPageBaseURL() + LOGIN_URL);
 		rb.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		rb.setRequestData("j_username=" + URL.encode(username)
 				+ "&j_password=" + URL.encode(password)
@@ -79,7 +74,6 @@ public class LoginService {
 				callback.onLoginFailed(exception.getMessage());
 			}
 
-
 		});
 
 		try {
@@ -90,18 +84,13 @@ public class LoginService {
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * Perform check if user is authenticated
 	 *
+	 * @param callback Callback handling response
 	 */
-	public interface LoginCallback {
-		void onLoginOk(JSONObject loginStatus);
-		void onLoginFailed(String message);
-	}
-
 	public void getLoginStatus(final LoginStatusCallback callback) {
 
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-				URL.encode(GWT.getHostPageBaseURL() + LOGIN_STATUS_URL));
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(GWT.getHostPageBaseURL() + LOGIN_STATUS_URL));
 
 		builder.setCallback(new RequestCallback() {
 
@@ -130,17 +119,52 @@ public class LoginService {
 			callback.onStatusFailed(e.getMessage());
 		}
 
+	}
+
+	/**
+	 * Interface for login callback class
+	 *
+	 * @author Jan Dosoudil
+	 */
+	public interface LoginCallback {
+
+		/**
+		 * Called when login is OK
+		 *
+		 * @param loginStatus logging-in status
+		 */
+		void onLoginOk(JSONObject loginStatus);
+
+		/**
+		 * Called when login fails
+		 *
+		 * @param message error message
+		 */
+		void onLoginFailed(String message);
 
 	}
 
-
 	/**
-	 * @author Jan Dosoudil
+	 * Interface for login-status callback class
 	 *
+	 * @author Jan Dosoudil
 	 */
 	public interface LoginStatusCallback {
+
+		/**
+		 * Called when user is logged in OK
+		 *
+		 * @param status status
+		 */
 		void onStatusOk(JSONObject status);
+
+		/**
+		 * Called when user is not logged in or error
+		 *
+		 * @param message error message
+		 */
 		void onStatusFailed(String message);
+
 	}
 
 }

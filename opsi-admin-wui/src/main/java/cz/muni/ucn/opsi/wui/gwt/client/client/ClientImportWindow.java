@@ -8,12 +8,10 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.data.ModelComparer;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedListener;
-import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.event.*;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
@@ -53,6 +51,7 @@ public class ClientImportWindow extends Window {
 	// import counter
 	private int importCount = 0;
 	private Button buttonOK;
+	private ClientImportWindow window = this;
 
 	/**
 	 * Create window for importing clients
@@ -69,11 +68,11 @@ public class ClientImportWindow extends Window {
 
 		clientFactory = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
-		setSize(640, 350);
-		setHeading("Import klientů do skupiny " + group.getName());
+		setSize(660, 350);
+		setHeadingHtml("Import klientů do skupiny " + group.getName());
 //		setBodyStyle("padding: 0px; ");
 
 //		FormLayout layout = new FormLayout();
@@ -105,9 +104,10 @@ public class ClientImportWindow extends Window {
 		});
 
 		ColumnConfig name = new ColumnConfig("name", clientConstants.getName(), 180);
-		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 180);
+		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 100);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
-		ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
+		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
+		//ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
 
 		final CheckBoxSelectionModel<BeanModel> sm = new CheckBoxSelectionModel<BeanModel>();
 
@@ -115,9 +115,10 @@ public class ClientImportWindow extends Window {
 
 		config.add(sm.getColumn());
 		config.add(name);
-		config.add(description);
 		config.add(macAddress);
-		config.add(ipAddress);
+		config.add(description);
+		config.add(notes);
+		//config.add(ipAddress);
 
 		final ColumnModel cm = new ColumnModel(config);
 
@@ -131,9 +132,10 @@ public class ClientImportWindow extends Window {
 		filters.setLocal(true);
 
 		filters.addFilter(new StringFilter("name"));
-		filters.addFilter(new StringFilter("description"));
-		filters.addFilter(new StringFilter("ipAddress"));
 		filters.addFilter(new StringFilter("macAddress"));
+		filters.addFilter(new StringFilter("description"));
+		filters.addFilter(new StringFilter("notes"));
+		//filters.addFilter(new StringFilter("ipAddress"));
 
 		clientsGrid.addPlugin(filters);
 
@@ -182,13 +184,16 @@ public class ClientImportWindow extends Window {
 				clientStore.removeAll();
 				clientStore.add(clientModels);
 				clientsGrid.unmask();
-
 			}
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu klientů pro import: ", th.getMessage());
-				clientsGrid.unmask();
+				MessageDialog.showError("Chyba při získávání seznamu klientů pro import", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 
 		});
@@ -201,7 +206,7 @@ public class ClientImportWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zavřít");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -209,10 +214,9 @@ public class ClientImportWindow extends Window {
 				ClientImportWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
 
 		buttonOK = new Button("Importovat vybrané položky");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.disable();
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
@@ -231,7 +235,7 @@ public class ClientImportWindow extends Window {
 				importCount = selectedItems.size();
 
 				for (final BeanModel beanModel : selectedItems) {
-					ClientJSO client = beanModel.getBean();
+					final ClientJSO client = beanModel.getBean();
 					clientService.saveClient(client, new RemoteRequestCallback<Object>() {
 
 						@Override
@@ -239,10 +243,10 @@ public class ClientImportWindow extends Window {
 							if (--importCount <= 0) {
 								ClientImportWindow.this.enable();
 								clientsGrid.unmask();
-
 							}
 //							ClientImportWindow.this.hide(ce.getButton());
 							ClientImportWindow.this.clientStore.remove(beanModel);
+							Info.display("Klient importován", client.getName());
 						}
 
 						@Override
@@ -251,14 +255,16 @@ public class ClientImportWindow extends Window {
 								ClientImportWindow.this.enable();
 								clientsGrid.unmask();
 							}
-							MessageDialog.showError("Nelze uložit klienta", th.getMessage());
+							MessageDialog.showError("Nelze importovat klienta "+client.getName(), th.getMessage());
 						}
 					});
 				}
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 

@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-        ">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:component-scan base-package="cz.muni.ucn.opsi.core" />
+	<context:component-scan base-package="cz.muni.ucn.opsi.core"/>
 
 	<bean id="opsiClientService" class="cz.muni.ucn.opsi.core.opsiClient.OpsiClientServiceImpl" primary="true">
 		<property name="opsiUrl" value="${opsi.rpc.url}"/>
@@ -19,35 +14,34 @@
 	</bean>
 
 	<bean id="opsiClientService2" class="cz.muni.ucn.opsi.core.opsiClient.OpsiClientServiceImpl">
-        <qualifier value="opsi2"/>
+		<qualifier value="opsi2"/>
 		<property name="opsiUrl" value="${opsi2.rpc.url}"/>
 		<property name="userName" value="${opsi2.user}"/>
 		<property name="password" value="${opsi2.password}"/>
 	</bean>
 
-<!--
-	<bean id="businessMapper" class="org.dozer.spring.DozerBeanMapperFactoryBean">
-		<qualifier value="business" />
-		<property name="mappingFiles">
-			<list>
-				<value>classpath:/cz/u2/eis/business/core/dozer/User-mapping.xml</value>
-				<value>classpath:/cz/u2/eis/business/core/dozer/Task-mapping.xml</value>
-			</list>
-		</property>
-		<property name="customConvertersWithId">
-			<map>
-				<entry key="stubConverter" value-ref="hibernateStubDozerConverter" />
-			</map>
-		</property>
-	</bean>
+	<!--
+		<bean id="businessMapper" class="org.dozer.spring.DozerBeanMapperFactoryBean">
+			<qualifier value="business" />
+			<property name="mappingFiles">
+				<list>
+					<value>classpath:/cz/u2/eis/business/core/dozer/User-mapping.xml</value>
+					<value>classpath:/cz/u2/eis/business/core/dozer/Task-mapping.xml</value>
+				</list>
+			</property>
+			<property name="customConvertersWithId">
+				<map>
+					<entry key="stubConverter" value-ref="hibernateStubDozerConverter" />
+				</map>
+			</property>
+		</bean>
 
-	<bean id="hibernateStubDozerConverter" class="cz.u2.eis.valueObjects.HibernateStubDozerConverter">
-		<property name="sessionFactory" ref="businessSessionFactory" />
-		<property name="mapperRefId">
-			<idref bean="businessMapper" />
-		</property>
-	</bean>
- -->
-
+		<bean id="hibernateStubDozerConverter" class="cz.u2.eis.valueObjects.HibernateStubDozerConverter">
+			<property name="sessionFactory" ref="businessSessionFactory" />
+			<property name="mapperRefId">
+				<idref bean="businessMapper" />
+			</property>
+		</bean>
+	 -->
 
 </beans>

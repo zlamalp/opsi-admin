@@ -8,7 +8,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.layout.FitData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.google.gwt.core.client.GWT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +31,11 @@ public class ClientExportCSVWindow extends Window {
 
 		this.clients = clients;
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(540, 350);
-		setHeading("Export klientů do CSV");
+		setHeadingHtml("Export klientů do CSV");
 
 		setLayout(new FitLayout());
 
@@ -49,7 +48,19 @@ public class ClientExportCSVWindow extends Window {
 			if (mac == null || mac.equals("null")) {
 				mac = "";
 			}
-			originalValue += client.getName() + ";" + mac + "\n";
+			String description = client.getDescription();
+			if (description == null || description.equals("null")) {
+				description = "";
+			}
+			String notes = client.getNotes();
+			if (notes == null || notes.equals("null")) {
+				notes = "";
+			}
+			String ip = client.getIpAddress();
+			if (ip == null || ip.equals("null")) {
+				ip = "";
+			}
+			originalValue += client.getName() + ";" + mac + ";" + description + ";" + notes + "\n"; // ";" + ip +
 		}
 		textform.setValue(originalValue);
 
@@ -65,47 +76,15 @@ public class ClientExportCSVWindow extends Window {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		loadData();
 	}
 
 	/**
-	 * Retrieve data from OPSI for import
-	 */
-	protected void loadData() {
-
-		/*
-
-		ClientService clientService = ClientService.getInstance();
-
-		clientService.listClientsForExport(clients, new RemoteRequestCallback<List<ClientJSO>>() {
-			@Override
-			public void onRequestSuccess(List<ClientJSO> clients) {
-				List<BeanModel> clientModels = clientFactory.createModel(clients);
-				clientStore.removeAll();
-				clientStore.add(clientModels);
-				clientsGrid.unmask();
-
-			}
-
-			@Override
-			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu klientů pro import: ", th.getMessage());
-				clientsGrid.unmask();
-			}
-
-		});
-
-		*/
-
-	}
-
-	/**
-	 * Generate Import (save) and cancel buttons
+	 * Generate cancel button
 	 */
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zavřít");
-		buttonCancel.setIcon(IconHelper.createStyle("cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -114,12 +93,6 @@ public class ClientExportCSVWindow extends Window {
 		});
 		addButton(buttonCancel);
 
-	}
-
-	/**
-	 *
-	 */
-	protected void synchronizeState() {
 	}
 
 }

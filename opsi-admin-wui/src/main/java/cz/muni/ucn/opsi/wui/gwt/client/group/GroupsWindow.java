@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.group;
 
 import java.util.ArrayList;
@@ -43,8 +40,10 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window with list of Groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class GroupsWindow extends Window {
 
@@ -60,24 +59,25 @@ public class GroupsWindow extends Window {
 	private MenuItem contextMenuRemove;
 
 	/**
-	 *
+	 * Create new instance of Window
 	 */
 	public GroupsWindow() {
-		factory = BeanModelLookup.get().getFactory(GroupJSO.CLASS_NAME);
 
+		factory = BeanModelLookup.get().getFactory(GroupJSO.CLASS_NAME);
 		groupConstants = GWT.create(GroupConstants.class);
 
-
+		// set window properties
 		setMinimizable(true);
 		setMaximizable(true);
-		setHeading("Správa skupin");
+		setHeadingHtml("Správa skupin");
 		setSize(400, 400);
 		setLayout(new FitLayout());
 
+		// create toolbar
 		ToolBar toolbar = createToolbar();
-
 		setTopComponent(toolbar);
 
+		// create groups store
 		store = new ListStore<BeanModel>();
 		store.sort("name", SortDir.ASC);
 		store.setKeyProvider(new ModelKeyProvider<BeanModel>() {
@@ -101,20 +101,20 @@ public class GroupsWindow extends Window {
 			}
 		});
 
-		ColumnConfig nazev = new ColumnConfig("name", groupConstants.getName(), 180);
+		// define table columns
+		ColumnConfig name = new ColumnConfig("name", groupConstants.getName(), 180);
 		ColumnConfig role = new ColumnConfig("role", groupConstants.getRole(), 180);
-
 		List<ColumnConfig> config = new ArrayList<ColumnConfig>();
-
-		config.add(nazev);
+		config.add(name);
 		config.add(role);
-
 		final ColumnModel cm = new ColumnModel(config);
 
+		// create grid table
 		grid = new Grid<BeanModel>(store, cm);
 		grid.setBorders(true);
 		grid.setColumnReordering(true);
 
+		// set selection model
 		SelectionChangedListener<BeanModel> selectionListener = new SelectionChangedListener<BeanModel>() {
 
 			@Override
@@ -134,14 +134,14 @@ public class GroupsWindow extends Window {
 		};
 		grid.getSelectionModel().addSelectionChangedListener(selectionListener);
 
+		// setup filters
 		GridFilters filters = new GridFilters();
 		filters.setLocal(true);
-
 		filters.addFilter(new StringFilter("group"));
 		filters.addFilter(new StringFilter("role"));
-
 		grid.addPlugin(filters);
 
+		// enable double-click
 		grid.addListener(Events.RowDoubleClick, new Listener<GridEvent<BeanModel>>() {
 
 			@Override
@@ -154,16 +154,16 @@ public class GroupsWindow extends Window {
 
 		});
 
+		// enable context menu
 		grid.setContextMenu(createGridContextMenu());
 
+		// add grid to window
 		add(grid);
 
-
-
 		GroupService groupService = GroupService.getInstance();
-
 		grid.mask(GXT.MESSAGES.loadMask_msg());
 
+		// load groups to grid
 		groupService.listGroups(new RemoteRequestCallback<List<GroupJSO>>() {
 			@Override
 			public void onRequestSuccess(List<GroupJSO> groups) {
@@ -175,73 +175,83 @@ public class GroupsWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu skupin: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu skupin", th.getMessage());
 			}
 		});
 
 	}
 
 	/**
-	 * @return
+	 * Create Toolbar for Groups window.
+	 *
+	 * @return new ToolBar instance
 	 */
 	private ToolBar createToolbar() {
+
 		SelectionListener<ButtonEvent> buttonListener = new ToolbarButtonListener();
 
 		ToolBar toolbar = new ToolBar();
 
 		buttonNew = new Button(groupConstants.getGroupNew());
-		buttonNew.setIcon(IconHelper.createStyle("add"));
+		//buttonNew.setIcon(IconHelper.createStyle("add"));
 		buttonNew.setData("event", GroupController.GROUP_NEW);
 		buttonNew.addSelectionListener(buttonListener);
 		toolbar.add(buttonNew);
 
 		buttonEdit = new Button(groupConstants.getGroupEdit());
-		buttonEdit.setIcon(IconHelper.createStyle("edit"));
+		//buttonEdit.setIcon(IconHelper.createStyle("edit"));
 		buttonEdit.setData("event", GroupController.GROUP_EDIT);
 		buttonEdit.addSelectionListener(buttonListener);
 		buttonEdit.disable();
 		toolbar.add(buttonEdit);
 
 		buttonRemove = new Button(groupConstants.getGroupDelete());
-		buttonRemove.setIcon(IconHelper.createStyle("remove"));
+		//buttonRemove.setIcon(IconHelper.createStyle("remove"));
 		buttonRemove.setData("event", GroupController.GROUP_DELETE);
 		buttonRemove.addSelectionListener(buttonListener);
 		buttonRemove.disable();
 		toolbar.add(buttonRemove);
 		return toolbar;
+
 	}
 
 	/**
-	 * @return
+	 * Create context menu for groups grid
+	 *
+	 * @return new Context Menu instance
 	 */
 	private Menu createGridContextMenu() {
+
 		SelectionListener<? extends MenuEvent> buttonListener = new GridContextMenuListener();
 
 		Menu menu = new Menu();
 
 		contextMenuNew = new MenuItem(groupConstants.getGroupNew());
-		contextMenuNew.setIcon(IconHelper.createStyle("add"));
+		//contextMenuNew.setIcon(IconHelper.createStyle("add"));
 		contextMenuNew.setData("event", GroupController.GROUP_NEW);
 		contextMenuNew.addSelectionListener(buttonListener);
 		menu.add(contextMenuNew);
 
 		contextMenuEdit = new MenuItem(groupConstants.getGroupEdit());
-		contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
+		//contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
 		contextMenuEdit.setData("event", GroupController.GROUP_EDIT);
 		contextMenuEdit.addSelectionListener(buttonListener);
 		menu.add(contextMenuEdit);
 
 		contextMenuRemove = new MenuItem(groupConstants.getGroupDelete());
-		contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
+		//contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
 		contextMenuRemove.setData("event", GroupController.GROUP_DELETE);
 		contextMenuRemove.addSelectionListener(buttonListener);
 		menu.add(contextMenuRemove);
 
 		return menu;
+
 	}
 
 	/**
-	 * @param le
+	 * Handle app-wide life-cycle events. This method ensures that data about groups are up-to-date.
+	 *
+	 * @param le life-cycle events
 	 */
 	public void onLifecycleEvent(LifecycleEventJSO le) {
 		BeanModel model = factory.createModel(le.getBean());
@@ -256,8 +266,9 @@ public class GroupsWindow extends Window {
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * ToolbarButtonListener handles click/selection events in menu
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class ToolbarButtonListener extends SelectionListener<ButtonEvent> {
 		@Override
@@ -275,8 +286,9 @@ public class GroupsWindow extends Window {
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * GridContextMenuListener handles click/selection events in grid/table
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class GridContextMenuListener extends	SelectionListener<MenuEvent> {
 		@Override

@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.instalation;
 
 import java.util.ArrayList;
@@ -12,9 +9,12 @@ import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.data.ModelComparer;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.IconHelper;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.DualListField;
@@ -31,42 +31,44 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 /**
- * @author Jan Dosoudil
+ * Window for managing Installation
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-public class InstalationWindow extends Window {
+public class InstallationWindow extends Window {
 
 	private BeanModelFactory factory;
-	private InstalationConstants instalationConstants;
+	private InstallationConstants installationConstants;
 	private Button buttonSave;
 	private ListStore<BeanModel> fromStore;
 	private ListStore<BeanModel> toStore;
 	private boolean loadedFrom = false;
 	private boolean loadedTo = false;
 	private DualListField<BeanModel> lists;
+	private InstallationWindow window = this;
 
 	/**
-	 *
+	 * Create new instance of installation Window
 	 */
-	public InstalationWindow() {
-		factory = BeanModelLookup.get().getFactory(InstalaceJSO.CLASS_NAME);
+	public InstallationWindow() {
 
-		instalationConstants = GWT.create(InstalationConstants.class);
+		factory = BeanModelLookup.get().getFactory(InstallationJSO.CLASS_NAME);
+		installationConstants = GWT.create(InstallationConstants.class);
 
-
+		// set window properties
 		setMinimizable(true);
 		setMaximizable(true);
-		setHeading("Správa instalací");
+		setHeadingHtml("Správa instalací");
 		setSize(840, 400);
 		setLayout(new FitLayout());
 
+		// create new toolbar
 		ToolBar toolbar = createToolbar();
-
 		setTopComponent(toolbar);
 
-
+		// set model provider
 		ModelKeyProvider<BeanModel> keyProvider = new ModelKeyProvider<BeanModel>() {
-
 			@Override
 			public String getKey(BeanModel model) {
 				return model.get("id");
@@ -86,6 +88,7 @@ public class InstalationWindow extends Window {
 			}
 		};
 
+		// lists of installations
 	    lists = new DualListField<BeanModel>();
 	    lists.setMode(Mode.APPEND);
 	    lists.setFieldLabel("instalace");
@@ -106,16 +109,14 @@ public class InstalationWindow extends Window {
 	    toStore.setModelComparer(comparer);
 	    to.setStore(toStore);
 
-
 		lists.mask(GXT.MESSAGES.loadMask_msg());
+	    InstallationService groupService = InstallationService.getInstance();
 
-
-	    InstalationService groupService = InstalationService.getInstance();
-
-		groupService.listInstalationsAll(new RemoteRequestCallback<List<InstalaceJSO>>() {
+		// load all installations
+		groupService.listInstallationsAll(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstalaceJSO> instalations) {
-				List<BeanModel> groupModels = factory.createModel(instalations);
+			public void onRequestSuccess(List<InstallationJSO> instajlations) {
+				List<BeanModel> groupModels = factory.createModel(instajlations);
 				fromStore.removeAll();
 				fromStore.add(groupModels);
 				loadedFrom = true;
@@ -124,14 +125,20 @@ public class InstalationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu všech instalací: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu všech instalací", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 		});
 
-		groupService.listInstalations(new RemoteRequestCallback<List<InstalaceJSO>>() {
+		// load available installations
+		groupService.listInstallations(new RemoteRequestCallback<List<InstallationJSO>>() {
 			@Override
-			public void onRequestSuccess(List<InstalaceJSO> instalations) {
-				List<BeanModel> groupModels = factory.createModel(instalations);
+			public void onRequestSuccess(List<InstallationJSO> installations) {
+				List<BeanModel> groupModels = factory.createModel(installations);
 				toStore.removeAll();
 				toStore.add(groupModels);
 				loadedTo = true;
@@ -140,18 +147,21 @@ public class InstalationWindow extends Window {
 
 			@Override
 			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při získávání seznamu instalací: ", th.getMessage());
+				MessageDialog.showError("Chyba při získávání seznamu instalací", th.getMessage(), new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						window.hide();
+					}
+				});
 			}
 		});
 
 		add(lists);
 
-
-
 	}
 
 	/**
-	 *
+	 * Move installations between stores (allowed / not allowed)
 	 */
 	protected void updateState() {
 		if (!loadedFrom || !loadedTo) {
@@ -162,66 +172,71 @@ public class InstalationWindow extends Window {
 			fromStore.remove(m);
 		}
 		lists.unmask();
-
 	}
 
 	/**
-	 * @return
+	 * Create Toolbar buttons
+	 *
+	 * @return Instance of ToolBar
 	 */
 	private ToolBar createToolbar() {
+
 		ToolBar toolbar = new ToolBar();
 
-		buttonSave = new Button(instalationConstants.getInstalationsSave());
-		buttonSave.setIcon(IconHelper.createStyle("save"));
-		buttonSave.setData("event", InstalationController.INSTALATIONS_SAVE);
+		buttonSave = new Button(installationConstants.getInstallationsSave());
+		//buttonSave.setIcon(IconHelper.createStyle("save"));
+		buttonSave.setData("event", InstallationController.INSTALLATIONS_SAVE);
 		buttonSave.addSelectionListener(new SaveButtonListener());
 		toolbar.add(buttonSave);
 
 		return toolbar;
+
 	}
 
 	/**
-	 * @param le
+	 * Handle app-wide life-cycle events. This method ensures that data about clients are up-to-date.
+	 *
+	 * @param le life-cycle events
 	 */
 	public void onLifecycleEvent(LifecycleEventJSO le) {
+
+		// LIFE-CYCLE EVENTS ARE NOT SUPPORTED ON INSTALLATIONS
 		BeanModel model = factory.createModel(le.getBean());
 		if (LifecycleEventJSO.CREATED == le.getEventType()) {
-//			store.add(model);
+			//store.add(model);
 		} else if (LifecycleEventJSO.MODIFIED == le.getEventType()) {
-//			store.update(model);
+			//store.update(model);
 		} else if (LifecycleEventJSO.DELETED == le.getEventType()) {
-//			store.remove(model);
+			//store.remove(model);
 		}
 
 	}
 
 	/**
-	 * @author Jan Dosoudil
+	 * Save button listener
 	 *
+	 * @author Jan Dosoudil
 	 */
 	private final class SaveButtonListener extends SelectionListener<ButtonEvent> {
 		@Override
 		public void componentSelected(ButtonEvent ce) {
-			List<BeanModel> instalations = toStore.getModels();
+			List<BeanModel> installations = toStore.getModels();
 
-			InstalationService instalationService = InstalationService.getInstance();
-			List<InstalaceJSO> instalace = new ArrayList<InstalaceJSO>();
-			for (BeanModel beanModel : instalations) {
-				instalace.add((InstalaceJSO) beanModel.getBean());
+			InstallationService installationService = InstallationService.getInstance();
+			List<InstallationJSO> install = new ArrayList<InstallationJSO>();
+			for (BeanModel beanModel : installations) {
+				install.add((InstallationJSO) beanModel.getBean());
 			}
-			instalationService.saveInstalations(instalace, new RemoteRequestCallback<Object>() {
-
+			installationService.saveInstallations(install, new RemoteRequestCallback<Object>() {
 				@Override
 				public void onRequestSuccess(Object v) {
-					MessageDialog.showMessage("Uloženo", "Seznam instalací byl úspěšně uložen.");
+					Info.display("Seznam instalací byl uložen", "");
 				}
-
 				@Override
 				public void onRequestFailed(Throwable th) {
 					MessageDialog.showError("Nelze uložit seznam instalací", th.getMessage());
 				}
 			});
-
 		}
 	}
 

@@ -13,29 +13,49 @@ import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelTag;
  */
 public class ProductPropertyJSO extends JavaScriptObject implements BeanModelTag {
 
-	public static final String CLASS_NAME = "cz.muni.ucn.opsi.api.opsiClient.ProductPropertyState";
+	public static final String CLASS_NAME = "cz.muni.ucn.opsi.wui.gwt.client.client.ProductPropertyState";
 
 	protected ProductPropertyJSO() {
 	}
 
+	/**
+	 * Get Clients name associated with this ProductProperty (usually hostname)
+	 *
+	 * @see cz.muni.ucn.opsi.api.client.Client
+	 *
+	 * @return Name of Client associated with this ProductProperty
+	 */
 	public final native String getObjectId() /*-{
 		return this.objectId;
 	}-*/;
 
+	/**
+	 * Get ID property of Installation object associated with this ProductProperty
+	 *
+	 * @see cz.muni.ucn.opsi.api.instalation.Installation
+	 *
+	 * @return ID property of Installation associated with this ProductProperty
+	 */
 	public final native String getProductId() /*-{
 		return this.productId;
 	}-*/;
 
+	/**
+	 * Get ID (name) of this ProductProperty
+	 *
+	 * @return ID (name) of this ProductProperty
+	 */
 	public final native String getPropertyId() /*-{
 		return this.propertyId;
 	}-*/;
 
+	/**
+	 * Get values set for this ProductProperty
+	 *
+	 * @return List of values set for this ProductProperty
+	 */
 	public final native JsArrayString getValues() /*-{
 		return this.values;
-	}-*/;
-
-	public final native String getType() /*-{
-		return this.type;
 	}-*/;
 
 	/**
@@ -77,25 +97,25 @@ public class ProductPropertyJSO extends JavaScriptObject implements BeanModelTag
 		this.values.push(val);
 	}-*/;
 
-	public final native void setType() /*-{
-		this.type = "ProductPropertyState";
-	}-*/;
-
 	/**
-	 * @param u
-	 * @return
+	 * Get instance of this object from JSON string
+	 *
+	 * @param source JSON source
+	 * @return Object parsed from JSON
 	 */
-	public static final native ProductPropertyJSO fromJSON(String u) /*-{
-		var json = @com.google.gwt.json.client.JSONParser::parseStrict(Ljava/lang/String;)(u);
+	public static final native ProductPropertyJSO fromJSON(String source) /*-{
+		var json = @com.google.gwt.json.client.JSONParser::parseStrict(Ljava/lang/String;)(source);
 		return json.@com.google.gwt.json.client.JSONObject::getJavaScriptObject()();
 	}-*/;
 
 	/**
-	 * @param u
-	 * @return
+	 * Get instance of JsArray this objects from JSON string
+	 *
+	 * @param source JSON source
+	 * @return List of objects parsed from JSON
 	 */
-	public static final native JsArray<ProductPropertyJSO> fromJSONArray(String u) /*-{
-		var json = @com.google.gwt.json.client.JSONParser::parseStrict(Ljava/lang/String;)(u);
+	public static final native JsArray<ProductPropertyJSO> fromJSONArray(String source) /*-{
+		var json = @com.google.gwt.json.client.JSONParser::parseStrict(Ljava/lang/String;)(source);
 		return json.@com.google.gwt.json.client.JSONArray::getJavaScriptObject()();
 	}-*/;
 

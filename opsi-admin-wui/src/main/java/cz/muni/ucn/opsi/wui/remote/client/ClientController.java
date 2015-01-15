@@ -15,6 +15,7 @@ import javax.validation.Validator;
 
 import cz.muni.ucn.opsi.api.opsiClient.OpsiClientService;
 import cz.muni.ucn.opsi.api.opsiClient.ProductPropertyState;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,8 +30,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import cz.muni.ucn.opsi.api.client.Client;
 import cz.muni.ucn.opsi.api.client.ClientService;
 import cz.muni.ucn.opsi.api.client.Hardware;
-import cz.muni.ucn.opsi.api.instalation.Instalation;
-import cz.muni.ucn.opsi.api.instalation.InstalationService;
+import cz.muni.ucn.opsi.api.instalation.Installation;
+import cz.muni.ucn.opsi.api.instalation.InstallationService;
 
 /**
  * Server side API (controller) for handling requests on Clients.
@@ -44,12 +45,14 @@ import cz.muni.ucn.opsi.api.instalation.InstalationService;
 public class ClientController {
 
 	private ClientService clientService;
-	private InstalationService instalationService;
+	private InstallationService installationService;
 	private OpsiClientService opsiService;
 	private Validator validator;
 	private ObjectMapper mapper;
 
 	/**
+	 * Setter for ClientService
+	 *
 	 * @param clientService the clientService to set
 	 */
 	@Autowired
@@ -58,28 +61,37 @@ public class ClientController {
 	}
 
 	/**
-	 * @param instalationService the instalationService to set
+	 * Setter for InstallationService
+	 *
+	 * @param installationService the installationService to set
 	 */
 	@Autowired
-	public void setInstalationService(InstalationService instalationService) {
-		this.instalationService = instalationService;
+	public void setInstallationService(InstallationService installationService) {
+		this.installationService = installationService;
 	}
 	/**
+	 * Setter for OpsiService
+	 *
 	 * @param opsiService the opsiService to set
 	 */
 	@Autowired
-	public void setClientService(OpsiClientService opsiService) {
+	public void setOpsiService(OpsiClientService opsiService) {
 		this.opsiService = opsiService;
 	}
 
 	/**
+	 * Setter for validator
+	 *
 	 * @param validator the validator to set
 	 */
 	@Autowired
 	public void setValidator(Validator validator) {
 		this.validator = validator;
 	}
+
 	/**
+	 * Setter for mapper
+	 *
 	 * @param mapper the mapper to set
 	 */
 	@Autowired
@@ -112,11 +124,8 @@ public class ClientController {
 	}
 
 	@RequestMapping(value = "/clients/install", method = RequestMethod.PUT)
-	public @ResponseBody void installClient(@RequestBody Client client,
-	                                        @RequestParam String instalaceId) {
-
-		Instalation i = instalationService.getInstalationById(instalaceId);
-
+	public @ResponseBody void installClient(@RequestBody Client client, @RequestParam String installId) {
+		Installation i = installationService.getInstallationById(installId);
 		clientService.installClient(client, i);
 	}
 
@@ -126,39 +135,47 @@ public class ClientController {
 	}
 
 	@RequestMapping(value = "/clients/import/list", method = RequestMethod.GET)
-	public @ResponseBody List<Client> listClientsForImport(@RequestParam String groupUuid,
-	                                                       @RequestParam String opsi) {
+	public @ResponseBody List<Client> listClientsForImport(@RequestParam String groupUuid, @RequestParam String opsi) {
 		return clientService.listClientsForImport(UUID.fromString(groupUuid), opsi);
 	}
 
 	@RequestMapping(value = "/clients/hardware/list", method = RequestMethod.GET)
 	public @ResponseBody List<Hardware> listHardware(@RequestParam String uuid) {
-		return clientService.listHardare(UUID.fromString(uuid));
+		return clientService.listHardware(UUID.fromString(uuid));
 	}
 
 	@RequestMapping(value = "/clients/importCsv", method = RequestMethod.POST)
-	public void importCSV(@RequestParam String groupUuid,
-	                      @RequestParam("importFile") MultipartFile file,
-	                      HttpServletResponse response, OutputStream os) throws IOException {
+	public void importCSV(@RequestParam String groupUuid, @RequestParam("importFile") MultipartFile file, HttpServletResponse response, OutputStream os) throws IOException {
 
 		UUID group = UUID.fromString(groupUuid);
 
 		List<Client> clients = new ArrayList<Client>();
-		//FIXME obsluha zavirani streamu
+
 		CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()), ';');
 		String[] record;
 		while((record  = reader.readNext()) != null ) {
-			if (record.length != 2) {
+			if (record.length != 4) {
 				continue;
 			}
 			Client c = clientService.createClient(group);
 			c.setName(record[0]);
-			c.setMacAddress(record[1]);
+			if (StringUtils.isNotBlank(record[1])) c.setMacAddress(record[1]);
+			if (StringUtils.isNotBlank(record[2])) c.setDescription(record[2]);
+			if (StringUtils.isNotBlank(record[3])) c.setNotes(record[3]);
+			//if (StringUtils.isNotBlank(record[4])) c.setIpAddress(record[4]);
 			clients.add(c);
 		}
-
 		response.setContentType("text/html");
-		mapper.writeValue(os, clients);
+
+		try {
+			mapper.writeValue(os, clients);
+			reader.close();
+		} catch (Exception ex) {
+			mapper.writeValue(os, ex);
+			reader.close();
+		} finally {
+			reader.close();
+		}
 
 	}
 
@@ -168,8 +185,12 @@ public class ClientController {
 	}
 
 	@RequestMapping(value = "/clients/productProperty/update", method = RequestMethod.POST)
-	public void updateProductProperties(@RequestBody List<ProductPropertyState> properties) {
+	public @ResponseBody boolean updateProductProperties(@RequestBody ProductPropertyList properties) {
 		opsiService.setProductProperties(properties);
+		return true;
 	}
+
+	@SuppressWarnings("serial")
+	public static class ProductPropertyList extends ArrayList<ProductPropertyState> { }
 
 }

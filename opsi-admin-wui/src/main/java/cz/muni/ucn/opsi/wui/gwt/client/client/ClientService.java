@@ -7,10 +7,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
 import cz.muni.ucn.opsi.wui.gwt.client.group.GroupJSO;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequest;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
@@ -152,7 +153,7 @@ public class ClientService {
 	}
 
 	/**
-	 * Delete client form OPSI server.
+	 * Delete client from OPSI server.
 	 *
 	 * @param client Client to be deleted
 	 * @param callback Callback to handle response
@@ -184,14 +185,14 @@ public class ClientService {
 	 * Trigger installation of some product (OS) to Client in OPSI.
 	 *
 	 * @param client Client to install to.
-	 * @param instalace Product (OS) to install.
+	 * @param installation Product (OS) to install.
 	 * @param callback Callback to handle response
 	 */
-	public void installClient(ClientJSO client, InstalaceJSO instalace, RemoteRequestCallback<Object> callback) {
+	public void installClient(ClientJSO client, InstallationJSO installation, RemoteRequestCallback<Object> callback) {
 
 		RemoteRequest<Object> request = new RemoteRequest<Object>(RequestBuilder.PUT,
 				URL.encode(GWT.getHostPageBaseURL() + CLIENT_INSTALL_URL +
-						"?instalaceId=" + instalace.getId())) {
+						"?installId=" + installation.getId())) {
 
 			@Override
 			protected Object transformResponse(String text) {
@@ -299,7 +300,7 @@ public class ClientService {
 
 		request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
-		String data = transform(properties);
+		String data = transform(properties).toString();
 		request.setRequestData(data);
 		request.setHeader("Content-Type", "application/json");
 
@@ -377,30 +378,15 @@ public class ClientService {
 	/**
 	 * Transform list of ProductPropertyJSO to JSON array of objects
 	 *
-	 * @param properties
+	 * @param properties list of ProductPropertyJSO
 	 * @return JSON array of objects
 	 */
-	private String transform(List<ProductPropertyJSO> properties) {
-
-		String data = "["; // "{\"properties\"=[";
-		for (int i=0; i<properties.size(); i++) {
-			data += transform(properties.get(i)).toString();
-			if (i+1 < properties.size()) data += ",";
+	private JSONArray transform(List<ProductPropertyJSO> properties) {
+		JSONArray jsonArray = new JSONArray();
+		for (ProductPropertyJSO i : properties) {
+			jsonArray.set(jsonArray.size(), transform(i));
 		}
-		data += "]";
-		//data += "]}";
-
-		return data;
-
-		/*
-		for (int index=0; index<properties.length(); index++) {
-			JSONObject object = new JSONObject(properties.get(index));
-			object.put("$H", null);
-			jsonArray.set(index, object);
-		}
-
 		return jsonArray;
-		*/
 	}
 
 	/**

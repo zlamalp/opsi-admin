@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.instalation;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -17,17 +14,21 @@ import cz.muni.ucn.opsi.wui.gwt.client.event.CometController;
 import cz.muni.ucn.opsi.wui.gwt.client.event.LifecycleEventJSO;
 
 /**
- * @author Jan Dosoudil
+ * View for handling events on listing Installations.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-public class InstalationView extends View {
+public class InstallationView extends View {
 
-	private InstalationWindow window;
+	private InstallationWindow window;
 
 	/**
+	 * Create new instance of view
+	 *
 	 * @param controller
 	 */
-	public InstalationView(Controller controller) {
+	public InstallationView(Controller controller) {
 		super(controller);
 	}
 
@@ -37,26 +38,25 @@ public class InstalationView extends View {
 	@Override
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (InstalationController.INSTALATIONS == type) {
-			showInstalations();
+		if (InstallationController.INSTALLATIONS == type) {
+			showInstallations();
 		} else if (CometController.LIFECYCLE_EVENT_TYPE == type) {
-			LifecycleEventJSO lifecycleEventJSO = (LifecycleEventJSO)event.getData();
+			LifecycleEventJSO lifecycleEventJSO = event.getData();
 			onLifecycleEvent(lifecycleEventJSO);
 		}
 	}
 
 	/**
-	 *
+	 * Method ensuring async loading of UI
 	 */
-	private void showInstalations() {
+	private void showInstallations() {
 		GWT.runAsync(new RunAsyncCallback() {
 
 			@Override
 			public void onSuccess() {
 				if (null == window) {
-					window = new InstalationWindow();
+					window = new InstallationWindow();
 				}
-
 				Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, window);
 				if (window.isVisible()) {
 					window.toFront();
@@ -74,14 +74,15 @@ public class InstalationView extends View {
 	}
 
 	/**
-	 * @param lifecycleEventJSO
+	 * Handle app wide life-cycle events. Pass them to windows.
+	 *
+	 * @param lifecycleEventJSO Event to pass
 	 */
 	private void onLifecycleEvent(LifecycleEventJSO lifecycleEventJSO) {
 		if (null == window) {
 			return;
 		}
 		window.onLifecycleEvent(lifecycleEventJSO);
-
 	}
 
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.remote;
 
 import com.google.gwt.core.client.GWT;
@@ -14,16 +11,20 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 
 /**
- * @author Jan Dosoudil
+ * Abstract class for remote requests
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public abstract class RemoteRequest<T> {
 
 	private RequestBuilder builder;
 
 	/**
-	 * @param url
-	 * @param method
+	 * Create new instance of request
+	 *
+	 * @param method method to call
+	 * @param url URL to call
 	 */
 	public RemoteRequest(Method method, String url) {
 		super();
@@ -31,23 +32,27 @@ public abstract class RemoteRequest<T> {
 	}
 
 	/**
+	 * Set Request payload
 	 *
-	 * @param requestData
+	 * @param requestData payload
 	 */
 	public void setRequestData(String requestData) {
 		builder.setRequestData(requestData);
 	}
 
 	/**
+	 * Set header to request
 	 *
-	 * @param header
-	 * @param value
+	 * @param header Header name to set
+	 * @param value Value to set to header
 	 */
 	public void setHeader(String header, String value) {
 		builder.setHeader(header, value);
 	}
 
 	/**
+	 * Get request builder
+	 *
 	 * @return the builder
 	 */
 	public RequestBuilder getBuilder() {
@@ -55,10 +60,12 @@ public abstract class RemoteRequest<T> {
 	}
 
 	/**
+	 * Execute callback (send request to server).
 	 *
-	 * @param callback
+	 * @param callback Class handling this callback
 	 */
 	public void execute(final RemoteRequestCallback<T> callback) {
+
 		builder.setCallback(new RequestCallback() {
 
 			@Override
@@ -89,15 +96,18 @@ public abstract class RemoteRequest<T> {
 	}
 
 	/**
-	 * @param request
-	 * @param response
-	 * @return
+	 * Process server response
+	 *
+	 * @param request original request
+	 * @param response server response
+	 * @return expected response object
 	 */
 	protected T processResponse(Request request, Response response) {
+
 		int statusCode = response.getStatusCode();
 		if (200 != statusCode) {
 			GWT.log("Server odpovedel chybou pri odeslani pozadavku: " + response.getStatusText());
-			pocessError(request, response);
+			processError(request, response);
 		}
 
 		String text = response.getText();
@@ -105,13 +115,17 @@ public abstract class RemoteRequest<T> {
 			return null;
 		}
 		return transformResponse(text);
+
 	}
 
 	/**
-	 * @param request
-	 * @param response
+	 * Process error sent by server
+	 *
+	 * @param request original request
+	 * @param response server response
 	 */
-	protected void pocessError(Request request, Response response) {
+	protected void processError(Request request, Response response) {
+
 		String contentType = response.getHeader("Content-Type");
 		String statusText = response.getStatusText();
 
@@ -120,11 +134,15 @@ public abstract class RemoteRequest<T> {
 			statusText = error.get("message").isString().stringValue();
 		}
 		throw new RemoteRequestException(statusText);
+
 	}
 
 	/**
-	 * @param text
-	 * @return
+	 * Transform string response to expected Object
+	 *
+	 * @param text server response
+	 * @return expected object
 	 */
 	protected abstract T transformResponse(String text);
+
 }

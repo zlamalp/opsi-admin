@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.opsiClient;
 
 import java.io.IOException;
@@ -38,14 +35,16 @@ import org.springframework.web.client.RestTemplate;
 
 import cz.muni.ucn.opsi.api.client.Client;
 import cz.muni.ucn.opsi.api.client.Hardware;
-import cz.muni.ucn.opsi.api.instalation.Instalation;
+import cz.muni.ucn.opsi.api.instalation.Installation;
 import cz.muni.ucn.opsi.api.opsiClient.OpsiClientService;
 
 /**
- * @author Jan Dosoudil
+ * Implementation class which handles communication with OPSI server.
  *
+ * @author Jan Dosoudil
+ * @author Martin Kuba makub@ics.muni.cz
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
-//@Service
 public class OpsiClientServiceImpl implements OpsiClientService, InitializingBean {
 
 	private RestTemplate template;
@@ -56,7 +55,8 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	private AtomicInteger sequence = new AtomicInteger();
 
-	public void init() {
+	@Override
+	public void afterPropertiesSet() throws Exception {
 
 		try {
 			new URL("https://0.0.0.0/").getContent();
@@ -65,7 +65,9 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 			// default SSL provider to the URL class.
 		}
 
-		try{
+		// set SSL context
+		try {
+
 			SSLContext sslc;
 
 			sslc = SSLContext.getInstance("TLS");
@@ -102,10 +104,11 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 			e.printStackTrace();
 		}
 
-		Protocol easyhttps = new Protocol("https",
-				(ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
+		// register SSL context to HTTPS connection
+		Protocol easyhttps = new Protocol("https",(ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
 		Protocol.registerProtocol("https", easyhttps);
 
+		// create HTTP client and set credentials
 		HttpClient httpClient = new HttpClient();
 		Credentials credentials = new UsernamePasswordCredentials(userName, password);
 		int port = opsiUrl.getPort();
@@ -114,8 +117,8 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		}
 		httpClient.getState().setCredentials(new AuthScope(opsiUrl.getHost(), port), credentials);
 
+		// create request template used to exchange data
 		CommonsClientHttpRequestFactory requestFactory = new CommonsClientHttpRequestFactory(httpClient);
-
 		template = new RestTemplate(requestFactory);
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 		messageConverters.add(new MappingJacksonHttpMessageConverter());
@@ -123,11 +126,6 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#createClient(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public void createClient(Client client) {
 
@@ -141,28 +139,20 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		String ipaddress = client.getIpAddress();
 		String macaddress = client.getMacAddress();
 
-		OpsiResponse response = callOpsi("createClient", hostname, domainname,
-				description, notes, ipaddress, macaddress);
-
-		response.toString();
+		callOpsi("createClient", hostname, domainname, description, notes, ipaddress, macaddress);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#deleteClient(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public void deleteClient(Client client) {
 		callOpsi("deleteClient", client.getName());
-
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#updateClient(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public void updateClient(Client client) {
+
 		callOpsi("setMacAddress", client.getName(), client.getMacAddress());
+
 		String description = client.getDescription();
 		if (null == description) {
 			description = "";
@@ -171,15 +161,15 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		if (null == notes) {
 			notes = "";
 		}
+
 		callOpsi("setHostDescription", client.getName(), description);
+
 		callOpsi("setHostNotes", client.getName(), notes);
+
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#listInstalations()
-	 */
 	@Override
-	public List<Instalation> listInstalations() {
+	public List<Installation> listInstallations() {
 
 		OpsiResponse responseProds = callOpsi("getProducts_hash");
 
@@ -192,9 +182,9 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 		@SuppressWarnings("unchecked")
 		List<Object> res = (List<Object>) response.getResult();
-		List<Instalation> ret = new ArrayList<Instalation>();
+		List<Installation> ret = new ArrayList<Installation>();
 		for (Object o : res) {
-			Instalation inst = new Instalation();
+			Installation inst = new Installation();
 			String id = (String) o;
 			inst.setId(id);
 			Map<String, String> prod = prodMap.get(id);
@@ -208,17 +198,14 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#getIntalationById(java.lang.String)
-	 */
 	@Override
-	public Instalation getIntalationById(String instalationId) {
+	public Installation getInstallationById(String instalationId) {
 		OpsiResponse responseProds = callOpsi("getProduct_hash", instalationId);
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> produktMap = (Map<String, String>) responseProds.getResult();
 
-		Instalation inst = new Instalation();
+		Installation inst = new Installation();
 		String id = produktMap.get("productId");
 		inst.setId(id);
 		inst.setName(produktMap.get("name"));
@@ -226,18 +213,12 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		return inst;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#clientInstall(cz.muni.ucn.opsi.api.client.Client, cz.muni.ucn.opsi.api.instalation.Instalation)
-	 */
 	@Override
-	public void clientInstall(Client client, Instalation i) {
+	public void clientInstall(Client client, Installation i) {
 		callOpsi("setProductActionRequest", i.getId(), client.getName(), "setup");
 
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#listClientsForImport()
-	 */
 	@Override
 	public List<Client> listClientsForImport() {
 		OpsiResponse response = callOpsi("getClients_listOfHashes");
@@ -268,9 +249,6 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.opsiClient.OpsiClientService#listHardware(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	public List<Hardware> listHardware(Client client) {
 		OpsiResponse response = callOpsi("getHardwareInformation_listOfHashes");
@@ -279,11 +257,6 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		return hw;
 	}
 
-	/**
-	 * Gets property values.
-	 * @param objectId hostname
-	 * @return list of properties
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProductPropertyState> getProductProperties(final String objectId) {
@@ -305,42 +278,29 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	@Override
 	public void setProductProperties(List<ProductPropertyState> props) {
-
-		List<ProductPropertyState> newList = new ArrayList<ProductPropertyState>();
-
-		for (Object o : props) {
-
-			LinkedHashMap<String, Object> object = (LinkedHashMap<String, Object>)o;
-
-			ProductPropertyState pps = new ProductPropertyState();
-			pps.setPropertyId((String)object.get("propertyId"));
-			pps.setObjectId((String)object.get("objectId"));
-			pps.setProductId((String)object.get("productId"));
-			pps.setValues((ArrayList<String>)object.get("values"));
-			newList.add(pps);
-
-		}
-
-		for (ProductPropertyState pps : newList) {
-			callOpsi("productPropertyState_updateObject", pps);
-		}
-
+		callOpsi("productPropertyState_updateObjects", props);
 	}
 
 	/**
-	 * @return
+	 * Get thread save unique ID for requests.
+	 *
+	 * @return unique request ID.
 	 */
 	protected int getRequestId() {
 		return sequence.incrementAndGet();
 	}
 
 	/**
+	 * Call method from API on OPSI server.
 	 *
-	 * @param method
-	 * @param args
-	 * @return
+	 * @param method method from OPSI API to call
+	 * @param args method callback payload
+	 *
+	 * @return OPSI server response
 	 */
 	protected OpsiResponse callOpsi(String method, Object... args) {
+
+		// if passed param is string, replace new-lines
 		for (int i = 0; i < args.length; i++) {
 			if (!(args[i] instanceof String)) {
 				continue;
@@ -348,48 +308,47 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 			args[i] = sanityString((String) args[i]);
 		}
 
+		// create OPSI request
 		OpsiRequest requestProds = new OpsiRequest();
 		requestProds.setParams(Arrays.asList(args));
 		requestProds.setId(getRequestId());
 		requestProds.setMethod(method);
 
+		// Call to OPSI must be thread save
 		synchronized (this) {
 
+			// exchange data with OPSI
 			HttpEntity<OpsiRequest> requestEntity = new HttpEntity<OpsiRequest>(requestProds);
-			ResponseEntity<OpsiResponse> responseProdsEntity = template.exchange(
-					opsiUrl.toString(), HttpMethod.POST, requestEntity, OpsiResponse.class);
+			ResponseEntity<OpsiResponse> responseProdsEntity = template.exchange(opsiUrl.toString(), HttpMethod.POST, requestEntity, OpsiResponse.class);
 
+			// read response
 			OpsiResponse response = responseProdsEntity.getBody();
 
+			// if response was exception, get text and throw it
 			Map<String, Object> error = response.getError();
 			if (null != error && error.containsKey("message")) {
 				throw new OpsiException(error.get("message").toString());
 			}
 
 			return response;
+
 		}
+
 	}
 
 	/**
-	 * removes CR characters
-	 * @param s string
-	 * @return stirng with removed CR characters
+	 * Remove CR characters from values
+	 *
+	 * @param string String with CR characters
+	 * @return String without CR characters
 	 */
-	private String sanityString(String s) {
-		return StringUtils.replace(s, "\r", "");
-	}
-
-
-
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		init();
+	private String sanityString(String string) {
+		return StringUtils.replace(string, "\r", "");
 	}
 
 	/**
+	 * Set URL of OSPI server to contact
+	 *
 	 * @param opsiUrl the opsiUrl to set
 	 */
 	@Required
@@ -398,6 +357,8 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 	}
 
 	/**
+	 * Set username used to login to OSPI server
+	 *
 	 * @param userName the userName to set
 	 */
 	@Required
@@ -406,6 +367,8 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 	}
 
 	/**
+	 * Set password used to login to OSPI server
+	 *
 	 * @param password the password to set
 	 */
 	@Required
@@ -413,85 +376,132 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		this.password = password;
 	}
 
+	/**
+	 * Class representing request sent to OPSI server.
+	 *
+	 * @author Jan Dosoudil
+	 */
 	public static class OpsiRequest {
+
 		private int id;
 		private String method;
 		private List<Object> params;
+
 		/**
+		 * Get ID of request
+		 *
 		 * @return the id
 		 */
 		public int getId() {
 			return id;
 		}
+
 		/**
+		 * Set ID of request
+		 *
 		 * @param id the id to set
 		 */
 		public void setId(int id) {
 			this.id = id;
 		}
+
 		/**
+		 * Get name of method from OPSI server API
+		 *
 		 * @return the method
 		 */
 		public String getMethod() {
 			return method;
 		}
+
 		/**
+		 * Set name of method from OPSI server API
+		 *
 		 * @param method the method to set
 		 */
 		public void setMethod(String method) {
 			this.method = method;
 		}
+
 		/**
+		 * Get list of parameters sent with request
+		 *
 		 * @return the params
 		 */
 		public List<Object> getParams() {
 			return params;
 		}
+
 		/**
+		 * Set list of parameters sent with request
+		 *
 		 * @param params the params to set
 		 */
 		public void setParams(List<Object> params) {
 			this.params = params;
 		}
 
-
 	}
 
+	/**
+	 * Class representing response from OPSI server.
+	 *
+	 * @author Jan Dosoudil
+	 */
 	public static class OpsiResponse {
+
 		private int id;
 		private Object result;
 		private Map<String, Object> error;
+
 		/**
+		 * Get ID of original request
+		 *
 		 * @return the id
 		 */
 		public int getId() {
 			return id;
 		}
+
 		/**
+		 * Set ID of original request
+		 *
 		 * @param id the id to set
 		 */
 		public void setId(int id) {
 			this.id = id;
 		}
+
 		/**
+		 * Get resulting object (OPSI server response)
+		 *
 		 * @return the result
 		 */
 		public Object getResult() {
 			return result;
 		}
+
 		/**
+		 * Set resulting object (OPSI server response)
+		 *
 		 * @param result the result to set
 		 */
 		public void setResult(Object result) {
 			this.result = result;
 		}
+
 		/**
+		 * Get resulting object if was an error (OPSI server response)
+		 *
 		 * @return the error
 		 */
 		public Map<String, Object> getError() {
 			return error;
 		}
+
 		/**
+		 * Set resulting object if was an error (OPSI server response)
+		 *
 		 * @param error the error to set
 		 */
 		public void setError(Map<String, Object> error) {
@@ -500,21 +510,30 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 
 	}
 
+	/**
+	 * Class representing Error object returned from OPSI server.
+	 *
+	 * @author Jan Dosoudil
+	 */
 	public static class OpsiError {
+
 		private String message;
 		private String messageClass;
+
 		/**
 		 * @return the message
 		 */
 		public String getMessage() {
 			return message;
 		}
+
 		/**
 		 * @param message the message to set
 		 */
 		public void setMessage(String message) {
 			this.message = message;
 		}
+
 		/**
 		 * @return the messageClass
 		 */
@@ -522,12 +541,14 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		public String getMessageClass() {
 			return messageClass;
 		}
+
 		/**
 		 * @param messageClass the messageClass to set
 		 */
 		public void setMessageClass(String messageClass) {
 			this.messageClass = messageClass;
 		}
+
 	}
 
 }

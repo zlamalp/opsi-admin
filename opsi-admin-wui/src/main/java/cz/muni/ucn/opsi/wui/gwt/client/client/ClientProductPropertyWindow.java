@@ -2,21 +2,20 @@ package cz.muni.ucn.opsi.wui.gwt.client.client;
 
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.binding.FormBinding;
+import com.extjs.gxt.ui.client.data.BeanModel;
 import com.extjs.gxt.ui.client.event.*;
+import com.extjs.gxt.ui.client.mvc.AppEvent;
+import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.util.IconHelper;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.Label;
-import com.extjs.gxt.ui.client.widget.Text;
-import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.*;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.*;
 import com.extjs.gxt.ui.client.widget.layout.*;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelFactory;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
 
 import java.util.*;
@@ -29,28 +28,29 @@ import java.util.*;
 public class ClientProductPropertyWindow extends Window {
 
 	private List<ClientJSO> clients;
-	private InstalaceJSO instalace;
+	private InstallationJSO installation;
 	private FormPanel form;
 	private FormBinding binding;
 	protected BeanModelFactory propertyFactory;
 	SimpleComboBox size;
+	private int installCounter = 0;
 
 	final SimpleComboBox simpleComboBox = new SimpleComboBox();
 
 	private static final String FIELD_SPEC = "-18";
 
-	public ClientProductPropertyWindow(List<ClientJSO> clients, InstalaceJSO instalace) {
+	public ClientProductPropertyWindow(final List<ClientJSO> clients, final InstallationJSO installation) {
 
 		this.clients = clients;
-		this.instalace = instalace;
+		this.installation = installation;
 
 		this.propertyFactory = BeanModelLookup.get().getFactory(ProductPropertyJSO.CLASS_NAME);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(340, 180);
-		setHeading("Instalace: " + instalace.getName());
+		setHeadingHtml("Instalace: " + installation.getName());
 
 		setLayout(new FitLayout());
 
@@ -124,8 +124,8 @@ public class ClientProductPropertyWindow extends Window {
 		size.setVisible(false);
 
 		final Text info = new Text();
-		final String instalaceNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + instalace.getName() + ".";
-		info.setText(instalaceNoChange);
+		final String installNoChange = "Instalace klientů bude provedena podle jejich posledního (nebo výchozího) nastavení pro " + installation.getName() + ".";
+		info.setText(installNoChange);
 		info.setAutoHeight(true);
 
 		formPanel.add(simpleComboBox);
@@ -139,7 +139,7 @@ public class ClientProductPropertyWindow extends Window {
 			public void selectionChanged(SelectionChangedEvent selectionChangedEvent) {
 
 				if (simpleComboBox.getSelectedIndex() == 0) {
-					info.setText(instalaceNoChange);
+					info.setText(installNoChange);
 				} else if (simpleComboBox.getSelectedIndex() == 1) {
 					info.setText("Všichni vybraní klienti budou přeinstalováni s nastavením: 1 disk / 1 partition (C:/ = 100%)");
 				} else if (simpleComboBox.getSelectedIndex() == 2) {
@@ -183,15 +183,32 @@ public class ClientProductPropertyWindow extends Window {
 		buttonInstall.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				// TODO - start install instead of cancel
-				if (simpleComboBox.getSelectedIndex() != 0) storeData();
+
 				ClientProductPropertyWindow.this.hide(ce.getButton());
+
+				MessageBox.confirm("Provést instalaci?", "Opravdu provést instalaci " + installation.getName() + " na "
+						+ clients.size() + " počítačů?", new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						if (be.getButtonClicked() == null) {
+							return;
+						}
+						if (!Dialog.YES.equals(be.getButtonClicked().getItemId())) {
+							return;
+						}
+
+						installClientsWithProperties(clients, installation);
+
+					}
+
+				});
+
 			}
 		});
 		addButton(buttonInstall);
 
 		Button buttonCancel = new Button("Storno");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -200,6 +217,86 @@ public class ClientProductPropertyWindow extends Window {
 		});
 		addButton(buttonCancel);
 
+	}
+
+	/**
+	 * Perform client installation.
+	 *
+	 * This will update OPSI and start installing selected product (OS) to all passed Clients.
+	 *
+	 * @param clients Clients to start installation for
+	 * @param installation Product (OS) to install.
+	 */
+	private void installClientsWithProperties(List<ClientJSO> clients, final InstallationJSO installation) {
+
+		ClientService clientService = ClientService.getInstance();
+		form.mask();
+
+		for (final ClientJSO client : clients) {
+
+			// CUSTOMIZED INSTALLATIONS
+			if (simpleComboBox.getSelectedIndex() != 0) {
+
+				List<ProductPropertyJSO> properties = constructProperties(client, installation);
+
+				clientService.updateClientProductProperties(properties, new RemoteRequestCallback<Object>() {
+					@Override
+					public void onRequestSuccess(Object productProperties) {
+
+						ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
+							@Override
+							public void onRequestSuccess(Object v) {
+								Info.display("Instalace spuštěna", client.getName());
+								unmaskForm();
+							}
+
+							@Override
+							public void onRequestFailed(Throwable th) {
+								MessageDialog.showError("Chyba při spouštění instalace klienta "+client.getName(), th.getMessage());
+								unmaskForm();
+							}
+						});
+
+					}
+
+					@Override
+					public void onRequestFailed(Throwable th) {
+						MessageDialog.showError("Chyba při ukládání nastavení instalace "+client.getName()+". Instalace nebyla spuštěna!", th.getMessage());
+						unmaskForm();
+					}
+				});
+
+			} else {
+
+				// DEFAULT INSTALLATION
+				ClientService.getInstance().installClient(client, installation, new RemoteRequestCallback<Object>() {
+					@Override
+					public void onRequestSuccess(Object v) {
+						Info.display("Instalace spuštěna", client.getName());
+						unmaskForm();
+					}
+
+					@Override
+					public void onRequestFailed(Throwable th) {
+						MessageDialog.showError("Chyba při spouštění instalace klienta "+client.getName(), th.getMessage());
+						unmaskForm();
+					}
+				});
+
+			}
+
+			installCounter++;
+
+		}
+
+	}
+
+	/**
+	 * Try to unmask the form but only once all requests are finished.
+	 */
+	private void unmaskForm() {
+		if (installCounter > 0) installCounter--;
+		form.unmask();
 	}
 
 	@Override
@@ -218,12 +315,6 @@ public class ClientProductPropertyWindow extends Window {
 		clientService.listClientProductProperties(this.clients.get(0), new RemoteRequestCallback<List<ProductPropertyJSO>>() {
 			@Override
 			public void onRequestSuccess(List<ProductPropertyJSO> productProperties) {
-
-				for (ProductPropertyJSO jso : productProperties) {
-					GWT.log(jso.getObjectId()+";"+jso.getProductId()+";"+jso.getPropertyId());
-				}
-				//List<BeanModel> properties = propertyFactory.createModel(productProperties);
-				// TODO fill
 				form.unmask();
 			}
 
@@ -237,43 +328,11 @@ public class ClientProductPropertyWindow extends Window {
 	}
 
 	/**
-	 * Method to store installation property data
-	 */
-	protected void storeData() {
-
-		ClientService clientService = ClientService.getInstance();
-
-		form.mask();
-
-		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
-
-		for (final ClientJSO client : this.clients) {
-			properties.addAll(constructProperties(client, instalace));
-		}
-
-		clientService.updateClientProductProperties(properties, new RemoteRequestCallback<Object>() {
-			@Override
-			public void onRequestSuccess(Object productProperties) {
-				form.unmask();
-			}
-
-			@Override
-			public void onRequestFailed(Throwable th) {
-				MessageDialog.showError("Chyba při ukládání nastavení instalace pro klienta: ", th.getMessage());
-				form.unmask();
-			}
-		});
-
-		// TODO start install - show warning
-
-	}
-
-	/**
 	 * This method creates list of properties based on selection in form
 	 *
 	 * @return list of properties
 	 */
-	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstalaceJSO instalace) {
+	protected List<ProductPropertyJSO> constructProperties(ClientJSO client, InstallationJSO installation) {
 
 		List<ProductPropertyJSO> properties = new ArrayList<ProductPropertyJSO>();
 
@@ -282,24 +341,21 @@ public class ClientProductPropertyWindow extends Window {
 
 		ProductPropertyJSO windows_partition_size = new JSONObject().getJavaScriptObject().cast();
 		windows_partition_size.setObjectId(client.getName());
-		windows_partition_size.setProductId(instalace.getId());
+		windows_partition_size.setProductId(installation.getId());
 		windows_partition_size.setPropertyId("windows_partition_size");
 		windows_partition_size.addValue((simpleComboBox.getSelectedIndex() == 2) ? ((String)size.getSimpleValue()) : "100%");
-		windows_partition_size.setType();
 
 		ProductPropertyJSO data_partition_preserve = new JSONObject().getJavaScriptObject().cast();
 		data_partition_preserve.setObjectId(client.getName());
-		data_partition_preserve.setProductId(instalace.getId());
+		data_partition_preserve.setProductId(installation.getId());
 		data_partition_preserve.setPropertyId("data_partition_preserve");
 		data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "always" : "never");
-		data_partition_preserve.setType();
 
 		ProductPropertyJSO data_partition_create = new JSONObject().getJavaScriptObject().cast();
 		data_partition_create.setObjectId(client.getName());
-		data_partition_create.setProductId(instalace.getId());
+		data_partition_create.setProductId(installation.getId());
 		data_partition_create.setPropertyId("data_partition_create");
 		data_partition_create.addValue((simpleComboBox.getSelectedIndex() == 2) ? "true" : "false");
-		data_partition_create.setType();
 
 		properties.add(windows_partition_size);
 		properties.add(data_partition_preserve);

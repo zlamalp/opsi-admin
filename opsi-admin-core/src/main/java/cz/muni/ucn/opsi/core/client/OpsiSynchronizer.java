@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +9,26 @@ import cz.muni.ucn.opsi.api.opsiClient.OpsiClientService;
 import cz.u2.eis.api.events.data.LifecycleEvent;
 
 /**
- * @author Jan Dosoudil
+ * Application listener which checks for changes on Client objects in order to provide
+ * up-to-date data to web interface.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 @Component
 public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 
-	private OpsiClientService clientService;
+	private OpsiClientService opsiClientService;
+
+	/**
+	 * Setter for clientService
+	 *
+	 * @param opsiClientService the clientService to set
+	 */
+	@Autowired
+	public void setOpsiClientService(OpsiClientService opsiClientService) {
+		this.opsiClientService = opsiClientService;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
@@ -41,33 +51,30 @@ public class OpsiSynchronizer implements ApplicationListener<LifecycleEvent> {
 	}
 
 	/**
-	 * @param client
+	 * Create Client
+	 *
+	 * @param client Client to create
 	 */
 	protected void createClient(Client client) {
-		clientService.createClient(client);
+		opsiClientService.createClient(client);
 	}
 
 	/**
-	 * @param client
+	 * Delete Client
+	 *
+	 * @param client Client to delete
 	 */
 	private void deleteClient(Client client) {
-		clientService.deleteClient(client);
+		opsiClientService.deleteClient(client);
 	}
 
 	/**
-	 * @param client
+	 * Update Client
+	 *
+	 * @param client Client to update
 	 */
 	private void updateClient(Client client) {
-		clientService.updateClient(client);
+		opsiClientService.updateClient(client);
 	}
 
-
-
-	/**
-	 * @param clientService the clientService to set
-	 */
-	@Autowired
-	public void setClientService(OpsiClientService clientService) {
-		this.clientService = clientService;
-	}
 }

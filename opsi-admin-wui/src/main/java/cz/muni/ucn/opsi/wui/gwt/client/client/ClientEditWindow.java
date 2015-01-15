@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.IconHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -32,6 +33,7 @@ import com.google.gwt.core.client.GWT;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
 import cz.muni.ucn.opsi.wui.gwt.client.beanModel.BeanModelLookup;
 import cz.muni.ucn.opsi.wui.gwt.client.remote.RemoteRequestCallback;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Window for editing client details like name, ip, mac address etc.
@@ -66,7 +68,7 @@ public class ClientEditWindow extends Window {
 
 		clientConstants = GWT.create(ClientConstants.class);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(400, 260);
@@ -76,7 +78,6 @@ public class ClientEditWindow extends Window {
 //		layout.setLabelAlign(LabelAlign.LEFT);
 //		setLayout(layout);
 		setLayout(new FitLayout());
-
 
 		form = new FormPanel();
 		form.setHeaderVisible(false);
@@ -132,6 +133,7 @@ public class ClientEditWindow extends Window {
 		description.setFieldLabel(clientConstants.getDescription());
 		formPanel.add(description, new FormData(FIELD_SPEC));
 
+		/*
 		TextField<String> ipAddress = new TextField<String>();
 		ipAddress.setName("ipAddress");
 		ipAddress.setFieldLabel(clientConstants.getIpAddress());
@@ -160,35 +162,41 @@ public class ClientEditWindow extends Window {
 			}
 		});
 		formPanel.add(ipAddress, new FormData(FIELD_SPEC));
+		*/
 
 		TextField<String> macAddress = new TextField<String>();
 		macAddress.setName("macAddress");
+		macAddress.setAllowBlank(false);
+		macAddress.setAutoValidate(true);
 		macAddress.setFieldLabel(clientConstants.getMacAddress());
 		macAddress.addListener(Events.Change, new Listener<FieldEvent>() {
-
 			@Override
 			public void handleEvent(FieldEvent fe) {
-
 				@SuppressWarnings("unchecked")
 				TextField<String> field = (TextField<String>) fe.getField();
 				String value = field.getValue();
-				value = value.replaceAll("[.\\- \\,]", ":");
-				if (value.matches("^([0-9a-fA-F]{2}){6}$")) {
-					value = value.replaceFirst("^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$",
-							"$1:$2:$3:$4:$5:$6");
+				if (value != null && !value.isEmpty()) {
+					value = value.replaceAll("[.\\- \\,]", ":");
+					if (value.matches("^([0-9a-fA-F]{2}){6}$")) {
+						value = value.replaceFirst("^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$",
+								"$1:$2:$3:$4:$5:$6");
+					}
+					field.setValue(value);
+					fe.cancelBubble();
 				}
-				field.setValue(value);
-				fe.cancelBubble();
 			}
 		});
 		macAddress.setValidator(new Validator() {
-
 			@Override
 			public String validate(Field<?> field, String value) {
+				if (value == null || value.isEmpty()) {
+					return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
+				}
 				if (value.matches("^([0-9a-fA-F]{1,2}:){5}([0-9a-fA-F]{1,2})$")) {
 					return null;
+				} else {
+					return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
 				}
-				return "Zadejte platnou MAC adresu ve tvaru 01:23:45:67:89:ab";
 			}
 		});
 		formPanel.add(macAddress, new FormData(FIELD_SPEC));
@@ -213,7 +221,7 @@ public class ClientEditWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zrušit");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -221,19 +229,16 @@ public class ClientEditWindow extends Window {
 				ClientEditWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
 
 		Button buttonOK = new Button("Uložit");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
 			public void componentSelected(final ButtonEvent ce) {
 
 				if (!validate()) {
-					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby",
-							new Listener<MessageBoxEvent>() {
-
+					MessageBox.alert("Nelze uložit", "Formulář obsahuje chyby", new Listener<MessageBoxEvent>() {
 						@Override
 						public void handleEvent(MessageBoxEvent be) {
 						}
@@ -245,24 +250,27 @@ public class ClientEditWindow extends Window {
 
 				synchronizeState();
 
-				ClientService groupService = ClientService.getInstance();
-				groupService.saveClient(client, new RemoteRequestCallback<Object>() {
+				ClientService clientService = ClientService.getInstance();
+				clientService.saveClient(client, new RemoteRequestCallback<Object>() {
 					@Override
 					public void onRequestSuccess(Object v) {
 						ClientEditWindow.this.enable();
 						ClientEditWindow.this.hide(ce.getButton());
+						Info.display("Klient uložen", client.getName());
 					}
 
 					@Override
 					public void onRequestFailed(Throwable th) {
 						ClientEditWindow.this.enable();
-						MessageDialog.showError("Nelze uložit klienta", th.getMessage());
+						MessageDialog.showError("Nelze uložit klienta "+client.getName(), th.getMessage());
 					}
 				});
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 
@@ -283,9 +291,9 @@ public class ClientEditWindow extends Window {
 	 */
 	private void updateHeading() {
 		if (newClient) {
-			setHeading("Nový klient");
+			setHeadingHtml("Nový klient");
 		} else {
-			setHeading("Úprava klienta: " + client.getName());
+			setHeadingHtml("Úprava klienta: " + client.getName());
 		}
 	}
 

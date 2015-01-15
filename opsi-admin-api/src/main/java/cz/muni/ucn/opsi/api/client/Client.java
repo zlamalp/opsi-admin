@@ -1,18 +1,20 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.api.client;
-
-import java.util.UUID;
 
 import cz.muni.ucn.opsi.api.group.Group;
 import cz.u2.eis.valueObjects.ValueObject;
 
+import java.util.UUID;
+
 /**
- * @author Jan Dosoudil
+ * Object representing Client (machine to install SW on) in OPSI. It's stored both locally and in OPSI.
+ * Access rights of users to specific Clients are managed by Groups.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
+ * @see cz.muni.ucn.opsi.api.group.Group for details about access rights
  */
 public class Client extends ValueObject {
+
 	private static final long serialVersionUID = -6575924560081692249L;
 
 	private String name;
@@ -23,27 +25,33 @@ public class Client extends ValueObject {
 	private Group group;
 
 	/**
-	 *
+	 * Create new instance
 	 */
 	public Client() {
 		super();
 	}
 
 	/**
-	 * @param uuid
+	 * Create new instance
+	 *
+	 * @param uuid UUID associated with Client
 	 */
 	public Client(UUID uuid) {
 		super(uuid);
 	}
 
 	/**
-	 * @return the name
+	 * Get Client name (usually hostname)
+	 *
+	 * @return the name (usually hostname)
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
+	 * Set Client name (usually hostname)
+	 *
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
@@ -51,6 +59,8 @@ public class Client extends ValueObject {
 	}
 
 	/**
+	 * Get Client description
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -58,6 +68,8 @@ public class Client extends ValueObject {
 	}
 
 	/**
+	 * Set Client description
+	 *
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
@@ -65,48 +77,62 @@ public class Client extends ValueObject {
 	}
 
 	/**
-	 * @return the ipAddress
+	 * Get Client IP address
+	 *
+	 * @return the IP address
 	 */
 	public String getIpAddress() {
 		return ipAddress;
 	}
 
 	/**
-	 * @param ipAddress the ipAddress to set
+	 * Set Client IP address
+	 *
+	 * @param ipAddress the IP address to set
 	 */
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
 
 	/**
-	 * @return the macAddress
+	 * Get Client MAC address
+	 *
+	 * @return the MAC address
 	 */
 	public String getMacAddress() {
 		return macAddress;
 	}
 
 	/**
-	 * @param macAddress the macAddress to set
+	 * Set Client MAC address
+	 *
+	 * @param macAddress the MAC address to set
 	 */
 	public void setMacAddress(String macAddress) {
 		this.macAddress = macAddress;
 	}
 
 	/**
-	 * @return the group
+	 * Get Group this Client belongs to.
+	 *
+	 * @return the Group
 	 */
 	public Group getGroup() {
 		return group;
 	}
 
 	/**
-	 * @param group the group to set
+	 * Set Group this Client belongs to.
+	 *
+	 * @param group the Group to set
 	 */
 	public void setGroup(Group group) {
 		this.group = group;
 	}
 
 	/**
+	 * Get Client notes
+	 *
 	 * @return the notes
 	 */
 	public String getNotes() {
@@ -114,11 +140,12 @@ public class Client extends ValueObject {
 	}
 
 	/**
+	 * Set Client notes
+	 *
 	 * @param notes the notes to set
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-
 
 }

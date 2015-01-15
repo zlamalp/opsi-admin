@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.core.client;
 
 import java.util.ArrayList;
@@ -28,14 +25,16 @@ import cz.muni.ucn.opsi.api.client.ClientService;
 import cz.muni.ucn.opsi.api.client.Hardware;
 import cz.muni.ucn.opsi.api.group.Group;
 import cz.muni.ucn.opsi.api.group.GroupService;
-import cz.muni.ucn.opsi.api.instalation.Instalation;
+import cz.muni.ucn.opsi.api.instalation.Installation;
 import cz.muni.ucn.opsi.api.opsiClient.OpsiClientService;
 import cz.u2.eis.api.events.data.LifecycleEvent;
 import cz.u2.eis.api.events.data.SecuredLifecycleEvent;
 
 /**
- * @author Jan Dosoudil
+ * Implementing service class used to manage Clients.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@censet.cz>
  */
 @Service
 @Transactional(readOnly=true)
@@ -48,9 +47,62 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 	private OpsiClientService opsiClientService;
 	private OpsiClientService opsiClientService2;
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#createClient(java.util.UUID)
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		this.eventPublisher = applicationEventPublisher;
+	}
+
+	/**
+	 * Setter for clientDao
+	 *
+	 * @param clientDao the clientDao to set
 	 */
+	@Autowired
+	public void setClientDao(ClientDao clientDao) {
+		this.clientDao = clientDao;
+	}
+
+	/**
+	 * Setter for groupService
+	 *
+	 * @param groupService the groupService to set
+	 */
+	@Autowired
+	public void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	/**
+	 * Set accessDecisionManager
+	 *
+	 * @param accessDecisionManager the accessDecisionManager to set
+	 */
+	@Autowired
+	public void setAccessDecisionManager(AccessDecisionManager accessDecisionManager) {
+		this.accessDecisionManager = accessDecisionManager;
+	}
+
+	/**
+	 * Set local / primary opsiClientService
+	 *
+	 * @param opsiClientService the opsiClientService to set
+	 */
+	@Autowired
+	public void setOpsiClientService(OpsiClientService opsiClientService) {
+		this.opsiClientService = opsiClientService;
+	}
+
+	/**
+	 * Set remote / secondary opsiClientService2
+	 *
+	 * @param opsiClientService2 the opsiClientService to set
+	 */
+	@Autowired
+	@Qualifier("opsi2")
+	public void setOpsiClientService2(OpsiClientService opsiClientService2) {
+		this.opsiClientService2 = opsiClientService2;
+	}
+
 	@Override
 	@Transactional
 	public Client createClient(UUID groupUuid) {
@@ -63,9 +115,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		return client;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#editClient(java.util.UUID)
-	 */
 	@Override
 	@Transactional
 	public Client editClient(UUID uuid) {
@@ -73,9 +122,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		return client;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#saveClient(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	@Transactional(readOnly=false)
 	public void saveClient(Client client) {
@@ -99,9 +145,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
         eventPublisher.publishEvent(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#deleteClient(cz.muni.ucn.opsi.api.client.Client)
-	 */
 	@Override
 	@Transactional(readOnly=false)
 	public void deleteClient(Client client) {
@@ -113,9 +156,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		eventPublisher.publishEvent(new SecuredLifecycleEvent(LifecycleEvent.DELETED, client, "ROLE_USER"));
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#listClients(java.util.UUID)
-	 */
 	@Override
 	@Transactional
 	public List<Client> listClients(UUID groupUuid) {
@@ -126,15 +166,11 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 
 		checkGroupRights(group);
 
-
 		return clientDao.list(group);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#installClient(cz.muni.ucn.opsi.api.client.Client, cz.muni.ucn.opsi.api.instalation.Instalation)
-	 */
 	@Override
-	public void installClient(Client client, Instalation i) {
+	public void installClient(Client client, Installation i) {
 		Client c = clientDao.get(client.getUuid());
 		Group group = c.getGroup();
 
@@ -143,9 +179,6 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		opsiClientService.clientInstall(client, i);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#listClientsForImport(java.util.UUID, java.lang.String)
-	 */
 	@Override
 	public List<Client> listClientsForImport(UUID groupUuid, String opsi) {
 		Group group = groupService.getGroup(groupUuid);
@@ -175,14 +208,12 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.muni.ucn.opsi.api.client.ClientService#listHardare(java.util.UUID)
-	 */
 	@Override
-	public List<Hardware> listHardare(UUID uuid) {
+	public List<Hardware> listHardware(UUID uuid) {
 		Client client = clientDao.get(uuid);
 		return opsiClientService.listHardware(client);
 	}
+
 
 	protected void checkGroupRights(Group group) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -195,51 +226,4 @@ public class ClientServiceImpl implements ClientService, ApplicationEventPublish
 		}
 	}
 
-	/**
-	 * @param clientDao the clientDao to set
-	 */
-	@Autowired
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-	/**
-	 * @param groupService the groupService to set
-	 */
-	@Autowired
-	public void setGroupService(GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)
-	 */
-	@Override
-	public void setApplicationEventPublisher(
-			ApplicationEventPublisher applicationEventPublisher) {
-		this.eventPublisher = applicationEventPublisher;
-	}
-	/**
-	 * @param accessDecisionManager the accessDecisionManager to set
-	 */
-	@Autowired
-	public void setAccessDecisionManager(
-			AccessDecisionManager accessDecisionManager) {
-		this.accessDecisionManager = accessDecisionManager;
-	}
-	/**
-	 * @param opsiClientService the opsiClientService to set
-	 */
-	@Autowired
-	public void setOpsiClientService(OpsiClientService opsiClientService) {
-		this.opsiClientService = opsiClientService;
-	}
-	
-	/**
-	 * @param opsiClientService2 the opsiClientService2 to set
-	 */
-	@Autowired
-	@Qualifier("opsi2")
-	public void setOpsiClientService2(OpsiClientService opsiClientService2) {
-		this.opsiClientService2 = opsiClientService2;
-	}
 }

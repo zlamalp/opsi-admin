@@ -14,14 +14,18 @@ import com.google.gwt.core.client.RunAsyncCallback;
 
 import cz.muni.ucn.opsi.wui.gwt.client.DesktopController;
 import cz.muni.ucn.opsi.wui.gwt.client.MessageDialog;
-import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstalaceJSO;
+import cz.muni.ucn.opsi.wui.gwt.client.instalation.InstallationJSO;
 
 /**
+ * View class for handling ProductProperty setting and installation
+ *
  * @author Pavel Zlámal
  */
 public class ClientProductPropertyView extends View {
 
 	/**
+	 * Create ProductProperty view
+	 *
 	 * @param controller
 	 */
 	public ClientProductPropertyView(Controller controller) {
@@ -35,28 +39,30 @@ public class ClientProductPropertyView extends View {
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
 		List<ClientJSO> clients = new ArrayList<ClientJSO>();
-		InstalaceJSO instalace = null;
+		InstallationJSO installation = null;
 		if (ClientController.CLIENT_PRODUCT_PROPERTY == type) {
 			List<BeanModel> cls = event.getData("clients");
 
 			for (BeanModel beanModel : cls) {
 				clients.add((ClientJSO) beanModel.getBean());
 			}
-			instalace = event.getData("instalace");
+			installation = event.getData("install");
 		}
-		getClientProductProperty(clients, instalace);
+		getClientProductProperty(clients, installation);
 	}
 
 	/**
-	 * @param clients
-	 * @param instalace
+	 * Method ensuring async loading of UI
+	 *
+	 * @param clients clients to install
+	 * @param installation installation to install
 	 */
-	private void getClientProductProperty(final List<ClientJSO> clients, final InstalaceJSO instalace) {
+	private void getClientProductProperty(final List<ClientJSO> clients, final InstallationJSO installation) {
 		GWT.runAsync(new RunAsyncCallback() {
 
 			@Override
 			public void onSuccess() {
-				getClientProductPropertyAsync(clients, instalace);
+				getClientProductPropertyAsync(clients, installation);
 			}
 
 			@Override
@@ -68,30 +74,39 @@ public class ClientProductPropertyView extends View {
 	}
 
 	/**
-	 * @param clients
-	 * @param instalace
+	 * Create new instance of Window for installing and attach it to the desktop.
+	 * Must be called from async method.
+	 *
+	 * @param clients Clients to install on
+	 * @param installation Installation to perform
+	 * @return new instance of window
 	 */
-	protected void getClientProductPropertyAsync(List<ClientJSO> clients, InstalaceJSO instalace) {
-		clientProductProperty(clients, instalace);
+	protected void getClientProductPropertyAsync(List<ClientJSO> clients, InstallationJSO installation) {
+		clientProductProperty(clients, installation);
 	}
 
 	/**
-	 * @param clients
-	 * @param instalace
+	 * Create new instance of Window for installing and attach it to the desktop.
+	 *
+	 * @param clients Clients to install on
+	 * @param installation Installation to perform
+	 * @return new instance of window
 	 */
-	protected void clientProductProperty(List<ClientJSO> clients, InstalaceJSO instalace) {
-		ClientProductPropertyWindow w = createWindow(clients, instalace);
+	protected void clientProductProperty(List<ClientJSO> clients, InstallationJSO installation) {
+		ClientProductPropertyWindow w = createWindow(clients, installation);
 		Dispatcher.forwardEvent(DesktopController.WINDOW_CREATED, w);
 		w.show();
 	}
 
 	/**
-	 * @param clients
-	 * @param instalace
-	 * @return
+	 * Create new instance of Window for installing.
+	 *
+	 * @param clients Clients to install on
+	 * @param installation Installation to perform
+	 * @return new instance of window
 	 */
-	private ClientProductPropertyWindow createWindow(List<ClientJSO> clients, InstalaceJSO instalace) {
-		return new ClientProductPropertyWindow(clients, instalace);
+	private ClientProductPropertyWindow createWindow(List<ClientJSO> clients, InstallationJSO installation) {
+		return new ClientProductPropertyWindow(clients, installation);
 	}
 
 }

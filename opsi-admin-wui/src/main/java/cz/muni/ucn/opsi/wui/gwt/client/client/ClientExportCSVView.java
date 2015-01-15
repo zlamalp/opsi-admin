@@ -22,6 +22,8 @@ import java.util.List;
 public class ClientExportCSVView extends View {
 
 	/**
+	 * Create new instance of view
+	 *
 	 * @param controller
 	 */
 	public ClientExportCSVView(Controller controller) {

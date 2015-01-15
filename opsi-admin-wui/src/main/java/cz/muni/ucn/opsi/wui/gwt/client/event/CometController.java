@@ -1,6 +1,3 @@
-/**
- *
- */
 package cz.muni.ucn.opsi.wui.gwt.client.event;
 
 import com.extjs.gxt.ui.client.event.EventType;
@@ -18,8 +15,10 @@ import de.novanic.eventservice.client.event.domain.Domain;
 import de.novanic.eventservice.client.event.listener.RemoteEventListener;
 
 /**
- * @author Jan Dosoudil
+ * Controller for handling app events associated with Comet service.
  *
+ * @author Jan Dosoudil
+ * @author Pavel Zlámal <zlamal@cesnet.cz>
  */
 public class CometController extends Controller implements RemoteEventListener {
 
@@ -28,30 +27,24 @@ public class CometController extends Controller implements RemoteEventListener {
 	private Domain lifecycleDomain = new DefaultDomain("lifecycleEvent");
 
 	/**
-	 *
+	 * Create new instance
 	 */
 	public CometController() {
 		registerEventTypes(DesktopController.INIT);
-//		registerEventTypes(LoginController.LOGGED_OUT);
+		//registerEventTypes(LoginController.LOGGED_OUT);
 		registerEventTypes(CometController.LIFECYCLE_EVENT_TYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#handleEvent(com.extjs.gxt.ui.client.mvc.AppEvent)
-	 */
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
 		if (DesktopController.INIT == type) {
-			startCommet();
-//		} else if (LoginController.LOGGED_OUT == type) {
-//			stopCommet();
+			startComet();
+		//} else if (LoginController.LOGGED_OUT == type) {
+			//stopCommet();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.extjs.gxt.ui.client.mvc.Controller#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();
@@ -61,24 +54,21 @@ public class CometController extends Controller implements RemoteEventListener {
 	}
 
 	/**
-	 *
+	 * Start comet service for listening server events
 	 */
-	protected void startCommet() {
-		GWT.log("startCommet");
+	protected void startComet() {
+		GWT.log("startComet");
 		eventService.addListener(lifecycleDomain, this);
 	}
 
 	/**
-	 *
+	 * Stop comet service for listening server events
 	 */
-	protected void stopCommet() {
-		GWT.log("stopCommet");
+	protected void stopComet() {
+		GWT.log("stopComet");
 		eventService.removeListeners();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.novanic.eventservice.client.event.listener.RemoteEventListener#apply(de.novanic.eventservice.client.event.Event)
-	 */
 	@Override
 	public void apply(Event anEvent) {
 		LifecycleCometEvent lce = (LifecycleCometEvent) anEvent;
@@ -86,8 +76,6 @@ public class CometController extends Controller implements RemoteEventListener {
 
 		LifecycleEventJSO event = LifecycleEventJSO.fromJSON(lce.getJsonObject());
 		Dispatcher.forwardEvent(CometController.LIFECYCLE_EVENT_TYPE, event);
-
-
 	}
 
 }

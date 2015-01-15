@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
      ">
 
-  <bean id="opsiDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-    <property name="driverClassName" value="${jdbc.driver}"/>
-    <property name="url" value="${jdbc.url}"/>
-    <property name="username" value="${jdbc.username}"/>
-    <property name="password" value="${jdbc.password}"/>
-    <property name="validationQuery" value="${jdbc.validationQuery}"/>
-  </bean>
+	<!-- DEFINE DATA-SOURCE ACCESS -->
+	<bean id="opsiDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="validationQuery" value="${jdbc.validationQuery}"/>
+	</bean>
 
 </beans>
