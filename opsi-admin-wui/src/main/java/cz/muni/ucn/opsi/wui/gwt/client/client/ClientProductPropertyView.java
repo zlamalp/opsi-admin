@@ -46,7 +46,7 @@ public class ClientProductPropertyView extends View {
 			for (BeanModel beanModel : cls) {
 				clients.add((ClientJSO) beanModel.getBean());
 			}
-			installation = event.getData("instalace");
+			installation = event.getData("install");
 		}
 		getClientProductProperty(clients, installation);
 	}
