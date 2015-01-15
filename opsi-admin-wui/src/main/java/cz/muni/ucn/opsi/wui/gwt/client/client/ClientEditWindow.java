@@ -67,7 +67,7 @@ public class ClientEditWindow extends Window {
 
 		clientConstants = GWT.create(ClientConstants.class);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(400, 260);
@@ -213,7 +213,7 @@ public class ClientEditWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zrušit");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -221,10 +221,9 @@ public class ClientEditWindow extends Window {
 				ClientEditWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
 
 		Button buttonOK = new Button("Uložit");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -261,7 +260,9 @@ public class ClientEditWindow extends Window {
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 

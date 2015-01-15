@@ -179,22 +179,22 @@ public class DesktopController extends Controller {
 
 		StartMenu menu = taskBar.getStartMenu();
 		menu.setHeading("OPSI Admin");
-		menu.setIconStyle("user");
+		//menu.setIconStyle("user");
 
 		MenuItem menuItem = new MenuItem("Skupiny");
-		menuItem.setIcon(IconHelper.createStyle("groups"));
+		//menuItem.setIcon(IconHelper.createStyle("groups"));
 		menuItem.addSelectionListener(menuListener);
 		menuItem.setData("event", GroupController.GROUPS);
 		menu.add(menuItem);
 
 		menuItem = new MenuItem("Klienti");
-		menuItem.setIcon(IconHelper.createStyle("clients"));
+		//menuItem.setIcon(IconHelper.createStyle("clients"));
 		menuItem.addSelectionListener(menuListener);
 		menuItem.setData("event", ClientController.CLIENTS);
 		menu.add(menuItem);
 
 		menuItem = new MenuItem("Nastavení instalací");
-		menuItem.setIcon(IconHelper.createStyle("install"));
+		//menuItem.setIcon(IconHelper.createStyle("install"));
 		menuItem.addSelectionListener(menuListener);
 		menuItem.setData("event", InstallationController.INSTALLATIONS);
 		menu.add(menuItem);

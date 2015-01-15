@@ -48,7 +48,7 @@ public class LoginDialog extends Dialog {
 
 		setButtonAlign(HorizontalAlignment.LEFT);
 		setButtons("");
-		setIcon(IconHelper.createStyle("user"));
+		//setIcon(IconHelper.createStyle("user"));
 		setHeadingHtml("OPSI Admin");
 		setModal(true);
 		setBodyBorder(true);

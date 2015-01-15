@@ -184,7 +184,7 @@ public class InstallationWindow extends Window {
 		ToolBar toolbar = new ToolBar();
 
 		buttonSave = new Button(installationConstants.getInstallationsSave());
-		buttonSave.setIcon(IconHelper.createStyle("save"));
+		//buttonSave.setIcon(IconHelper.createStyle("save"));
 		buttonSave.setData("event", InstallationController.INSTALLATIONS_SAVE);
 		buttonSave.addSelectionListener(new SaveButtonListener());
 		toolbar.add(buttonSave);

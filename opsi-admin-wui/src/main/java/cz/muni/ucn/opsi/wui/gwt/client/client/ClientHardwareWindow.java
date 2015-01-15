@@ -59,7 +59,7 @@ public class ClientHardwareWindow extends Window {
 
 		clientFactory = BeanModelLookup.get().getFactory(HardwareJSO.CLASS_NAME);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(640, 350);
@@ -161,7 +161,7 @@ public class ClientHardwareWindow extends Window {
 	 */
 	private void generateButtons() {
 		Button buttonCancel = new Button("Zavřít");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -169,10 +169,9 @@ public class ClientHardwareWindow extends Window {
 				ClientHardwareWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
 
 		Button buttonOK = new Button("Importovat vybrané položky");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -217,7 +216,9 @@ public class ClientHardwareWindow extends Window {
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 

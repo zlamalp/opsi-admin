@@ -45,7 +45,7 @@ public class ClientImportCSVFileDialog extends Dialog {
 		clientConstants = GWT.create(ClientConstants.class);
 		setHeadingHtml(clientConstants.getClientImportCSV());
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(350, 120);

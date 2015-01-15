@@ -193,20 +193,20 @@ public class GroupsWindow extends Window {
 		ToolBar toolbar = new ToolBar();
 
 		buttonNew = new Button(groupConstants.getGroupNew());
-		buttonNew.setIcon(IconHelper.createStyle("add"));
+		//buttonNew.setIcon(IconHelper.createStyle("add"));
 		buttonNew.setData("event", GroupController.GROUP_NEW);
 		buttonNew.addSelectionListener(buttonListener);
 		toolbar.add(buttonNew);
 
 		buttonEdit = new Button(groupConstants.getGroupEdit());
-		buttonEdit.setIcon(IconHelper.createStyle("edit"));
+		//buttonEdit.setIcon(IconHelper.createStyle("edit"));
 		buttonEdit.setData("event", GroupController.GROUP_EDIT);
 		buttonEdit.addSelectionListener(buttonListener);
 		buttonEdit.disable();
 		toolbar.add(buttonEdit);
 
 		buttonRemove = new Button(groupConstants.getGroupDelete());
-		buttonRemove.setIcon(IconHelper.createStyle("remove"));
+		//buttonRemove.setIcon(IconHelper.createStyle("remove"));
 		buttonRemove.setData("event", GroupController.GROUP_DELETE);
 		buttonRemove.addSelectionListener(buttonListener);
 		buttonRemove.disable();
@@ -227,19 +227,19 @@ public class GroupsWindow extends Window {
 		Menu menu = new Menu();
 
 		contextMenuNew = new MenuItem(groupConstants.getGroupNew());
-		contextMenuNew.setIcon(IconHelper.createStyle("add"));
+		//contextMenuNew.setIcon(IconHelper.createStyle("add"));
 		contextMenuNew.setData("event", GroupController.GROUP_NEW);
 		contextMenuNew.addSelectionListener(buttonListener);
 		menu.add(contextMenuNew);
 
 		contextMenuEdit = new MenuItem(groupConstants.getGroupEdit());
-		contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
+		//contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
 		contextMenuEdit.setData("event", GroupController.GROUP_EDIT);
 		contextMenuEdit.addSelectionListener(buttonListener);
 		menu.add(contextMenuEdit);
 
 		contextMenuRemove = new MenuItem(groupConstants.getGroupDelete());
-		contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
+		//contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
 		contextMenuRemove.setData("event", GroupController.GROUP_DELETE);
 		contextMenuRemove.addSelectionListener(buttonListener);
 		menu.add(contextMenuRemove);

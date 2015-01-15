@@ -68,10 +68,10 @@ public class ClientImportWindow extends Window {
 
 		clientFactory = BeanModelLookup.get().getFactory(ClientJSO.CLASS_NAME);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
-		setSize(700, 350);
+		setSize(660, 350);
 		setHeadingHtml("Import klientů do skupiny " + group.getName());
 //		setBodyStyle("padding: 0px; ");
 
@@ -104,7 +104,7 @@ public class ClientImportWindow extends Window {
 		});
 
 		ColumnConfig name = new ColumnConfig("name", clientConstants.getName(), 180);
-		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
+		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 100);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
 		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
 		//ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
@@ -206,7 +206,7 @@ public class ClientImportWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zavřít");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -214,10 +214,9 @@ public class ClientImportWindow extends Window {
 				ClientImportWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
 
 		buttonOK = new Button("Importovat vybrané položky");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.disable();
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
@@ -263,7 +262,9 @@ public class ClientImportWindow extends Window {
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 

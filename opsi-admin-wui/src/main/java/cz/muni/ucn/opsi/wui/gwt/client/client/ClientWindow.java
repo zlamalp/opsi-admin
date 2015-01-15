@@ -95,7 +95,7 @@ public class ClientWindow extends Window {
 		setMinimizable(true);
 		setMaximizable(true);
 		setHeadingHtml("Správa klientů");
-		setSize(900, 400);
+		setSize(860, 400);
 		setLayout(new FitLayout());
 
 		ToolBar toolbar = createToolbar();
@@ -251,7 +251,7 @@ public class ClientWindow extends Window {
 
 		// create column config
 		ColumnConfig name = new ColumnConfig("name", clientConstants.getName(), 180);
-		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 80);
+		ColumnConfig description = new ColumnConfig("description", clientConstants.getDescription(), 100);
 		ColumnConfig notes = new ColumnConfig("notes", clientConstants.getNotes(), 180);
 		ColumnConfig macAddress = new ColumnConfig("macAddress", clientConstants.getMacAddress(), 140);
 		//ColumnConfig ipAddress = new ColumnConfig("ipAddress", clientConstants.getIpAddress(), 80);
@@ -391,67 +391,67 @@ public class ClientWindow extends Window {
 		ToolBar toolbar = new ToolBar();
 
 		buttonNew = new Button(clientConstants.getClientNew());
-		buttonNew.setIcon(IconHelper.createStyle("add"));
+		//buttonNew.setIcon(IconHelper.createStyle("add"));
 		buttonNew.setData("event", ClientController.CLIENT_NEW);
 		buttonNew.addSelectionListener(buttonListener);
 		buttonNew.disable();
 		toolbar.add(buttonNew);
 
 		buttonEdit = new Button(clientConstants.getClientEdit());
-		buttonEdit.setIcon(IconHelper.createStyle("edit"));
+		//buttonEdit.setIcon(IconHelper.createStyle("edit"));
 		buttonEdit.setData("event", ClientController.CLIENT_EDIT);
 		buttonEdit.addSelectionListener(buttonListener);
 		buttonEdit.disable();
 		toolbar.add(buttonEdit);
 
 		buttonRemove = new Button(clientConstants.getClientDelete());
-		buttonRemove.setIcon(IconHelper.createStyle("remove"));
+		//buttonRemove.setIcon(IconHelper.createStyle("remove"));
 		buttonRemove.setData("event", ClientController.CLIENT_DELETE);
 		buttonRemove.addSelectionListener(buttonListener);
 		buttonRemove.disable();
 		toolbar.add(buttonRemove);
 
 		buttonInstall = new Button(clientConstants.getClientInstall());
-		buttonInstall.setIcon(IconHelper.createStyle("install"));
+		//buttonInstall.setIcon(IconHelper.createStyle("install"));
 		buttonInstall.disable();
 		buttonInstall.setMenu(createInstallMenu());
 		toolbar.add(buttonInstall);
 
 		buttonImport = new Button(clientConstants.getClientImport());
-		buttonImport.setIcon(IconHelper.createStyle("import"));
+		//buttonImport.setIcon(IconHelper.createStyle("import"));
 		buttonImport.disable();
 		toolbar.add(buttonImport);
 
 		final Menu importMenu = new Menu();
 
 		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi()+"...");
-		importOpsi.setIcon(IconHelper.createStyle("import"));
+		//importOpsi.setIcon(IconHelper.createStyle("import"));
 		importOpsi.setData("event", ClientController.CLIENT_IMPORT);
 		importOpsi.addSelectionListener(menuListener);
 		importMenu.add(importOpsi);
 
 		MenuItem importOpsi2 = new MenuItem(clientConstants.getClientImportOpsi2()+"...");
-		importOpsi2.setIcon(IconHelper.createStyle("import"));
+		//importOpsi2.setIcon(IconHelper.createStyle("import"));
 		importOpsi2.setData("event", ClientController.CLIENT_IMPORT2);
 		importOpsi2.addSelectionListener(menuListener);
 		importMenu.add(importOpsi2);
 
 		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV()+"...");
-		importCSV.setIcon(IconHelper.createStyle("import"));
+		//importCSV.setIcon(IconHelper.createStyle("import"));
 		importCSV.setData("event", ClientController.CLIENT_IMPORT_CSV);
 		importCSV.addSelectionListener(menuListener);
 		importMenu.add(importCSV);
 
 		buttonImport.setMenu(importMenu);
 		buttonExport = new Button(clientConstants.getClientExport());
-		buttonExport.setIcon(IconHelper.createStyle("export"));
+		//buttonExport.setIcon(IconHelper.createStyle("export"));
 		buttonExport.disable();
 		toolbar.add(buttonExport);
 
 		final Menu exportMenu = new Menu();
 
 		MenuItem exportCSV = new MenuItem(clientConstants.getClientExportCSV()+"...");
-		exportCSV.setIcon(IconHelper.createStyle("export"));
+		//exportCSV.setIcon(IconHelper.createStyle("export"));
 		exportCSV.setData("event", ClientController.CLIENT_EXPORT_CSV);
 		exportCSV.addSelectionListener(menuListener);
 		exportMenu.add(exportCSV);
@@ -512,19 +512,19 @@ public class ClientWindow extends Window {
 		Menu menu = new Menu();
 
 		contextMenuNew = new MenuItem(clientConstants.getClientNew());
-		contextMenuNew.setIcon(IconHelper.createStyle("add"));
+		//contextMenuNew.setIcon(IconHelper.createStyle("add"));
 		contextMenuNew.setData("event", ClientController.CLIENT_NEW);
 		contextMenuNew.addSelectionListener(buttonListener);
 		menu.add(contextMenuNew);
 
 		contextMenuEdit = new MenuItem(clientConstants.getClientEdit());
-		contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
+		//contextMenuEdit.setIcon(IconHelper.createStyle("edit"));
 		contextMenuEdit.setData("event", ClientController.CLIENT_EDIT);
 		contextMenuEdit.addSelectionListener(buttonListener);
 		menu.add(contextMenuEdit);
 
 		contextMenuRemove = new MenuItem(clientConstants.getClientDelete());
-		contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
+		//contextMenuRemove.setIcon(IconHelper.createStyle("remove"));
 		contextMenuRemove.setData("event", ClientController.CLIENT_DELETE);
 		contextMenuRemove.addSelectionListener(buttonListener);
 		menu.add(contextMenuRemove);

@@ -46,7 +46,7 @@ public class ClientProductPropertyWindow extends Window {
 
 		this.propertyFactory = BeanModelLookup.get().getFactory(ProductPropertyJSO.CLASS_NAME);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(340, 180);
@@ -208,7 +208,7 @@ public class ClientProductPropertyWindow extends Window {
 		addButton(buttonInstall);
 
 		Button buttonCancel = new Button("Storno");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {

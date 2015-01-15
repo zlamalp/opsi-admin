@@ -31,7 +31,7 @@ public class ClientExportCSVWindow extends Window {
 
 		this.clients = clients;
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(540, 350);
@@ -84,7 +84,7 @@ public class ClientExportCSVWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zavřít");
-		buttonCancel.setIcon(IconHelper.createStyle("cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {

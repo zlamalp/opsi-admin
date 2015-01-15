@@ -60,7 +60,7 @@ public class GroupEditWindow extends Window {
 
 		groupConstants = GWT.create(GroupConstants.class);
 
-		setIcon(IconHelper.createStyle("icon-grid"));
+		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
 		setSize(400, 150);
@@ -117,7 +117,7 @@ public class GroupEditWindow extends Window {
 	private void generateButtons() {
 
 		Button buttonCancel = new Button("Zrušit");
-		buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
+		//buttonCancel.setIcon(IconHelper.createStyle("Cancel"));
 		buttonCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -125,10 +125,10 @@ public class GroupEditWindow extends Window {
 				GroupEditWindow.this.hide(ce.getButton());
 			}
 		});
-		addButton(buttonCancel);
+
 
 		Button buttonOK = new Button("Uložit");
-		buttonOK.setIcon(IconHelper.createStyle("OK"));
+		//buttonOK.setIcon(IconHelper.createStyle("OK"));
 		buttonOK.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(final ButtonEvent ce) {
@@ -164,7 +164,9 @@ public class GroupEditWindow extends Window {
 
 			}
 		});
+
 		addButton(buttonOK);
+		addButton(buttonCancel);
 
 	}
 
