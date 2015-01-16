@@ -12,15 +12,36 @@ This application provides an alternative web user interface to OPSI and also enc
 
 ### Build and run
 
-This app uses Spring MVC, Hibernate, GWT 2.6.1, GXT 2.3.1a and some closed source libraries from the original author. In order to run or compile the app you need to gather all parts. You can then use Maven to build production war package:
+#### Dependencies
+
+This app uses Spring MVC, Hibernate, GWT 2.6.1, GXT 2.3.1a and closed source libraries (EIS) from the original author. In order to run or compile the app you need to gather all parts.
+
+Most dependencies will by downloaded by Maven from public sources. Some are not available for Maven3+, in order to install them navigate to ``.dependencies/`` and run following command:
+
+```
+mvn install:install-file -Dfile=eventservice-1.2.1.jar -DpomFile=eventservice-1.2.1.pom
+mvn install:install-file -Dfile=eventservice-rpc-1.2.1.jar -DpomFile=eventservice-rpc-1.2.1.pom
+mvn install:install-file -Dfile=gwteventservice-1.2.1.jar -DpomFile=gwteventservice-1.2.1.pom
+mvn install:install-file -Dfile=jms-1.1.jar -DpomFile=jms-1.1.pom
+```
+
+#### Configuration
+
+Default configuration files (*.properties) in sources are missing authz data for DB/OPSI/LDAP as well as URLs to them. You must set them to fit your environment before build.
+
+Application settings located in sources can be overridden without rebuild. Just put them in ``$EIS_HOME/settings-{deployPath}``. E.g. set Tomcat env property _EIS_HOME_ and then put file _settings-opsi-admin-wui_ in that location. Since this file override configuration, all possible config options must be present even if unused (without value).
+
+#### Build
+
+You can use Maven to build production war package in sources root folder:
 
 ```bash
 mvn clean install -Pmysql
 ```
 
-This app require connection to the working OPSI server, own DB (MySQL) for storing client and group information and LDAP server to provide authorization for users. App is expected to run in Apache Tomcat 6 container. If you have war packaged, simply deploy it to the Tomcat.
+#### Run
 
-Application settings located in sources can be overridden without rebuild. Just put them in ``$EIS_HOME/settings-{deployPath}``. E.g. set Tomcat env property _EIS_HOME_ and then put file _settings-opsi-admin-wui_ in that location.
+This app require connection to the working OPSI server, own DB (MySQL) for storing client and group information and LDAP server to provide authorization for users. App is expected to run in Apache Tomcat 6 container. If you have war packaged, simply deploy it to the Tomcat.
 
 ### Development
 
@@ -44,9 +65,9 @@ This app consist of 3 parts:
 
 #### Local run (GWT - DevMode)
 
-You can use either standard DevMode or SuperDevMode of GWT to run the app. Because app needs you to log-in first, you must have compiled app already present. Run: ``mvn clean install -DskipTests -Pmyslq`` in sources parent folder.
+You can use either standard DevMode or SuperDevMode of GWT to run the app. Because app needs you to log-in first, you must have compiled app already present (run ``mvn clean install -DskipTests -Pmysql`` in sources root folder).
 
-Now you can start the app by running command inside *opsi-admin-wui/* folder:
+Now you can start the app by running command inside ``opsi-admin-wui/`` folder:
 
 ```bash
 mvn gwt:run -DskipTests -Pmysql
