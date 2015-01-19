@@ -424,19 +424,19 @@ public class ClientWindow extends Window {
 
 		final Menu importMenu = new Menu();
 
-		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi()+"...");
+		MenuItem importOpsi = new MenuItem(clientConstants.getClientImportOpsi());
 		//importOpsi.setIcon(IconHelper.createStyle("import"));
 		importOpsi.setData("event", ClientController.CLIENT_IMPORT);
 		importOpsi.addSelectionListener(menuListener);
 		importMenu.add(importOpsi);
 
-		MenuItem importOpsi2 = new MenuItem(clientConstants.getClientImportOpsi2()+"...");
+		MenuItem importOpsi2 = new MenuItem(clientConstants.getClientImportOpsi2());
 		//importOpsi2.setIcon(IconHelper.createStyle("import"));
 		importOpsi2.setData("event", ClientController.CLIENT_IMPORT2);
 		importOpsi2.addSelectionListener(menuListener);
 		importMenu.add(importOpsi2);
 
-		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV()+"...");
+		MenuItem importCSV = new MenuItem(clientConstants.getClientImportCSV());
 		//importCSV.setIcon(IconHelper.createStyle("import"));
 		importCSV.setData("event", ClientController.CLIENT_IMPORT_CSV);
 		importCSV.addSelectionListener(menuListener);
@@ -450,7 +450,7 @@ public class ClientWindow extends Window {
 
 		final Menu exportMenu = new Menu();
 
-		MenuItem exportCSV = new MenuItem(clientConstants.getClientExportCSV()+"...");
+		MenuItem exportCSV = new MenuItem(clientConstants.getClientExportCSV());
 		//exportCSV.setIcon(IconHelper.createStyle("export"));
 		exportCSV.setData("event", ClientController.CLIENT_EXPORT_CSV);
 		exportCSV.addSelectionListener(menuListener);
@@ -478,12 +478,11 @@ public class ClientWindow extends Window {
 			@Override
 			public void onRequestSuccess(List<InstallationJSO> v) {
 				for (InstallationJSO in : v) {
-					// TODO & FIXME - support only win7-64 to configure netboot now.
-					MenuItem mi = new MenuItem((in.getId().equals("win7-x64")) ? in.getName() + "..." : in.getName());
+					MenuItem mi = new MenuItem(in.getName());
 					mi.addSelectionListener(installListener);
 					mi.setData("install", in);
-					if (in.getId().equals("win7-x64")) {
-						// TODO & FIXME - support only win7-64 to configure netboot now.
+					if (in.getId().startsWith("win7")) {
+						// TODO support only win7-64 to configure netboot now.
 						mi.setData("event", ClientController.CLIENT_PRODUCT_PROPERTY);
 					} else {
 						mi.setData("event", ClientController.CLIENT_INSTALL);
