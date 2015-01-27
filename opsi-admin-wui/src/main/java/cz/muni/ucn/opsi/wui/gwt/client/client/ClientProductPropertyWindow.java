@@ -355,7 +355,7 @@ public class ClientProductPropertyWindow extends Window {
 		data_partition_create.setObjectId(client.getName());
 		data_partition_create.setProductId(installation.getId());
 		data_partition_create.setPropertyId("data_partition_create");
-		data_partition_create.addValue((simpleComboBox.getSelectedIndex() == 2) ? "true" : "false");
+		data_partition_create.addValue("true");
 
 		properties.add(windows_partition_size);
 		properties.add(data_partition_preserve);
