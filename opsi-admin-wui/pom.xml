@@ -2,17 +2,20 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.muni.ucn</groupId>
+
 	<artifactId>opsi-admin-wui</artifactId>
 	<version>1.0.0-RELEASE</version>
+	<packaging>war</packaging>
+
 	<name>OPSI Admin - wui</name>
 	<description>OPSI Admin - wui</description>
-	<packaging>war</packaging>
+
 	<parent>
 		<groupId>cz.muni.ucn</groupId>
 		<artifactId>opsi-admin</artifactId>
 		<version>1.0.0-RELEASE</version>
 	</parent>
+
 	<build>
 		<finalName>${artifactId}</finalName>
 		<plugins>
@@ -262,12 +265,12 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
-			<scope>compile</scope>
 		</dependency>
+
+		<!--
 
 		<dependency>
 			<groupId>com.google.gwt</groupId>
