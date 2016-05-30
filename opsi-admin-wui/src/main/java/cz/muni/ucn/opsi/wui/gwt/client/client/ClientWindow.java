@@ -481,7 +481,8 @@ public class ClientWindow extends Window {
 					MenuItem mi = new MenuItem(in.getName());
 					mi.addSelectionListener(installListener);
 					mi.setData("install", in);
-					if (in.getId().startsWith("win7")) {
+					// show property window for selected types of installations
+					if (in.getId().startsWith("win7") || in.getId().startsWith("win10")) {
 						// TODO support only win7-64 to configure netboot now.
 						mi.setData("event", ClientController.CLIENT_PRODUCT_PROPERTY);
 					} else {
