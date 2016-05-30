@@ -3,6 +3,7 @@ package cz.muni.ucn.opsi.wui.gwt.client.client;
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.binding.FormBinding;
 import com.extjs.gxt.ui.client.data.BeanModel;
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.*;
 import com.extjs.gxt.ui.client.mvc.AppEvent;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
@@ -36,6 +37,8 @@ public class ClientProductPropertyWindow extends Window {
 	private int installCounter = 0;
 
 	final SimpleComboBox simpleComboBox = new SimpleComboBox();
+	final SimpleComboBox win10Type = new SimpleComboBox();
+	final SimpleComboBox win10Lang = new SimpleComboBox();
 
 	private static final String FIELD_SPEC = "-18";
 
@@ -49,7 +52,7 @@ public class ClientProductPropertyWindow extends Window {
 		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
-		setSize(340, 180);
+		setSize(340, 220);
 		setHeadingHtml("Instalace: " + installation.getName());
 
 		setLayout(new FitLayout());
@@ -130,9 +133,31 @@ public class ClientProductPropertyWindow extends Window {
 
 		formPanel.add(simpleComboBox);
 		formPanel.add(size);
-		formPanel.setAutoHeight(true);
+                if (installation.getId().startsWith("win10")) {
+			win10Type.setTriggerAction(ComboBox.TriggerAction.ALL);
+			
+			win10Type.add("Education");
+			win10Type.add("Pro");
+			win10Type.add("Home");
+			win10Type.setFieldLabel("Varianta");
+			//win10Type.setSelection(win10Type.getStore().getRange(1, 2));
+
+			win10Lang.setTriggerAction(ComboBox.TriggerAction.ALL);
+			win10Lang.add("Čeština");
+			win10Lang.add("Angličtina");
+			win10Lang.setFieldLabel("Jazyk");
+			//win10Lang.setSelection(win10Lang.getStore().getRange(0, 1));
+			
+			win10Type.disable();
+			win10Lang.disable();
+			formPanel.add(win10Type);
+			formPanel.add(win10Lang);
+                }
+		
+		
 		formPanel.add(info);
 		//formPanel.add(group);
+		//formPanel.setAutoHeight(true);
 
 		simpleComboBox.addSelectionChangedListener(new SelectionChangedListener() {
 			@Override
@@ -149,7 +174,14 @@ public class ClientProductPropertyWindow extends Window {
 				}
 
 				size.setVisible(simpleComboBox.getSelectedIndex() == 2);
-
+				
+				if (simpleComboBox.getSelectedIndex() == 0) {
+					win10Type.disable();
+					win10Lang.disable();
+				} else {
+					win10Type.enable();
+					win10Lang.enable();
+				}
 				/*
 
 				if (simpleComboBox.getSelectedIndex() == 0) {
@@ -349,7 +381,12 @@ public class ClientProductPropertyWindow extends Window {
 		data_partition_preserve.setObjectId(client.getName());
 		data_partition_preserve.setProductId(installation.getId());
 		data_partition_preserve.setPropertyId("data_partition_preserve");
-		data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "always" : "never");
+		
+		if (installation.getId().startsWith("win10")) {
+			data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "if_possible" : "never");
+		} else {
+			data_partition_preserve.addValue((simpleComboBox.getSelectedIndex() == 2) ? "always" : "never");
+		}
 
 		ProductPropertyJSO data_partition_create = new JSONObject().getJavaScriptObject().cast();
 		data_partition_create.setObjectId(client.getName());
@@ -360,6 +397,45 @@ public class ClientProductPropertyWindow extends Window {
 		properties.add(windows_partition_size);
 		properties.add(data_partition_preserve);
 		properties.add(data_partition_create);
+		
+		if (installation.getId().startsWith("win10")) {
+			ProductPropertyJSO image_name = new JSONObject().getJavaScriptObject().cast();
+			image_name.setObjectId(client.getName());
+			image_name.setProductId(installation.getId());
+			image_name.setPropertyId("imagename");
+			if (win10Type.getSimpleValue().toString() == "Education") {
+				image_name.addValue("Windows 10 Education");
+			} else if (win10Type.getSimpleValue().toString() == "Pro") {
+				image_name.addValue("Windows 10 Pro");
+			} else if (win10Type.getSimpleValue().toString() == "Home") {
+				image_name.addValue("Windows 10 Home");
+			} else { // default will be Pro version of Win10
+				image_name.addValue("Windows 10 Pro");
+			}
+
+			ProductPropertyJSO system_keyboard_layout = new JSONObject().getJavaScriptObject().cast();
+			system_keyboard_layout.setObjectId(client.getName());
+			system_keyboard_layout.setProductId(installation.getId());
+			system_keyboard_layout.setPropertyId("system_keyboard_layout");
+			ProductPropertyJSO system_language = new JSONObject().getJavaScriptObject().cast();
+			system_language.setObjectId(client.getName());
+			system_language.setProductId(installation.getId());
+			system_language.setPropertyId("system_language");
+			if (win10Lang.getSimpleValue().toString() == "Čeština") {
+				system_keyboard_layout.addValue("0405:00000405;0405:00000409");
+				system_language.addValue("cs-CZ");
+			} else if (win10Lang.getSimpleValue().toString() == "Angličtina") {
+				system_keyboard_layout.addValue("0409:00000409;0409:00000405");
+				system_language.addValue("en-US");
+			} else { // default will be czech language
+				system_keyboard_layout.addValue("0405:00000405;0405:00000409");
+				system_language.addValue("cs-CZ");
+			}
+			
+			properties.add(image_name);
+			properties.add(system_keyboard_layout);
+			properties.add(system_language);
+		}
 
 		return properties;
 
