@@ -269,8 +269,12 @@ public class OpsiClientServiceImpl implements OpsiClientService, InitializingBea
 		List<Map<String,Object>> result = (List<Map<String, Object>>) response.getResult();
 		List<ProductPropertyState> l = new ArrayList<ProductPropertyState>(result.size());
 		for (Map<String, Object> pmap : result) {
-			l.add(new ProductPropertyState((String) pmap.get("objectId"), (String) pmap.get("productId"),
-					(String) pmap.get("propertyId"), (List<String>)pmap.get("values")
+			List<String> values = new ArrayList<String>();
+			for (Object obj : pmap.values()) {
+				values.add(obj != null ? obj.toString() : null);
+			}
+			l.add(new ProductPropertyState(pmap.get("objectId").toString(), pmap.get("productId").toString(),
+					pmap.get("propertyId").toString(), values
 					));
 		}
 		return l;
