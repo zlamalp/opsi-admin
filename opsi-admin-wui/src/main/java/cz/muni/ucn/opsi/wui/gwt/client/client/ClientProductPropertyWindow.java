@@ -39,6 +39,7 @@ public class ClientProductPropertyWindow extends Window {
 	final SimpleComboBox simpleComboBox = new SimpleComboBox();
 	final SimpleComboBox win10Type = new SimpleComboBox();
 	final SimpleComboBox win10Lang = new SimpleComboBox();
+	final SimpleComboBox win10Profile = new SimpleComboBox();
 
 	private static final String FIELD_SPEC = "-18";
 
@@ -52,7 +53,7 @@ public class ClientProductPropertyWindow extends Window {
 		//setIcon(IconHelper.createStyle("icon-grid"));
 		setMinimizable(true);
 		setMaximizable(true);
-		setSize(340, 220);
+		setSize(340, 250);
 		setHeadingHtml("Instalace: " + installation.getName());
 
 		setLayout(new FitLayout());
@@ -147,11 +148,19 @@ public class ClientProductPropertyWindow extends Window {
 			win10Lang.add("Angličtina");
 			win10Lang.setFieldLabel("Jazyk");
 			//win10Lang.setSelection(win10Lang.getStore().getRange(0, 1));
+
+			win10Profile.setTriggerAction(ComboBox.TriggerAction.ALL);
+			win10Profile.add("C:\\Users");
+			win10Profile.add("D:\\Users");
+			win10Profile.setFieldLabel("Umístění profilu");
+			//win10Profile.setSelection(win10Profile.getStore().getRange(0, 1));
 			
 			win10Type.disable();
 			win10Lang.disable();
+			win10Profile.disable();
 			formPanel.add(win10Type);
 			formPanel.add(win10Lang);
+			formPanel.add(win10Profile);
                 }
 		
 		
@@ -165,12 +174,16 @@ public class ClientProductPropertyWindow extends Window {
 
 				if (simpleComboBox.getSelectedIndex() == 0) {
 					info.setText(installNoChange);
+					win10Profile.disable();
 				} else if (simpleComboBox.getSelectedIndex() == 1) {
 					info.setText("Všichni vybraní klienti budou přeinstalováni s nastavením: 1 disk / 1 partition (C:/ = 100%)");
+					win10Profile.disable();
 				} else if (simpleComboBox.getSelectedIndex() == 2) {
 					info.setText("Všichni vybraní klienti budou přeinstalováni s nastavením: 1 disk / 2 partition (C:/ = ? GB a D:/ = zbytek prostoru disku)");
+					win10Profile.enable();
 				} else if (simpleComboBox.getSelectedIndex() == 3) {
 					info.setText("Všichni vybraní klienti budou přeinstalováni s nastavením: 2 disky / 2 partition (C:/ = 100%)");
+					win10Profile.enable();
 				}
 
 				size.setVisible(simpleComboBox.getSelectedIndex() == 2);
@@ -432,9 +445,20 @@ public class ClientProductPropertyWindow extends Window {
 				system_language.addValue("cs-CZ");
 			}
 			
+			ProductPropertyJSO orgname = new JSONObject().getJavaScriptObject().cast();
+			orgname.setObjectId(client.getName());
+			orgname.setProductId(installation.getId());
+			orgname.setPropertyId("orgname");
+			if (win10Profile.getSimpleValue().toString().length() > 0) {
+				orgname.addValue(win10Profile.getSimpleValue().toString());
+			} else { // default will be C:\Users
+				orgname.addValue("C:\\Users");
+			}
+
 			properties.add(image_name);
 			properties.add(system_keyboard_layout);
 			properties.add(system_language);
+			properties.add(orgname);
 		}
 
 		return properties;
